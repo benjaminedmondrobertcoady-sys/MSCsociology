@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethos, Pathos, Logos — Classify the Appeal</title>
+<style>
+  /* ============================================================
+     EDIT YOUR ITEMS in the <script> block near the bottom.
+     Each item: text, answer ('ethos'|'pathos'|'logos'), note.
+     SET your Google Script URL in the SHEET_URL line below the items.
+     ============================================================ */
+  :root{
+    --ink:#20242e;
+    --paper:#f4f1ea;
+    --ethos:#1f6f54;     /* credibility — green */
+    --ethos-soft:#d4e9e0;
+    --pathos:#b5354e;    /* emotion — rose */
+    --pathos-soft:#f4d9df;
+    --logos:#2d5a8c;     /* logic — blue */
+    --logos-soft:#d6e2f0;
+    --muted:#6a6a78;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    background:var(--paper);color:var(--ink);line-height:1.5;
+    padding:clamp(16px,4vw,48px);min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+  header{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:8px;}
+  .eyebrow{
+    font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.72rem;
+    letter-spacing:0.22em;text-transform:uppercase;font-weight:700;
+    color:var(--muted);margin-bottom:10px;
+  }
+  h1{font-size:clamp(1.8rem,4.5vw,2.9rem);font-weight:800;line-height:1.04;letter-spacing:-0.02em;}
+  h1 .e{color:var(--ethos);font-style:italic;}
+  h1 .p{color:var(--pathos);font-style:italic;}
+  h1 .l{color:var(--logos);font-style:italic;}
+  .lede{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.95rem;color:var(--muted);margin-top:14px;max-width:70ch;}
+
+  .gate{
+    background:#fff;border:3px solid var(--ink);border-radius:3px;
+    padding:24px;margin:26px 0;box-shadow:5px 5px 0 var(--ink);
+  }
+  .gate h2{font-size:1.15rem;margin-bottom:6px;}
+  .gate p{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85rem;color:var(--muted);margin-bottom:14px;}
+  .gate input{
+    font-family:'Helvetica Neue',Arial,sans-serif;font-size:1rem;
+    padding:11px 14px;border:2px solid var(--ink);border-radius:2px;width:min(360px,100%);
+  }
+  .gate button{margin-left:10px;}
+  .gate .err{color:var(--pathos);font-weight:700;font-size:0.85rem;margin-top:10px;display:none;}
+
+  .activity{display:none;}
+  body.started .activity{display:block;}
+  body.started .gate{display:none;}
+
+  .bank{
+    display:flex;flex-wrap:wrap;gap:10px;padding:22px 0 26px;min-height:64px;
+    border-bottom:1px dashed #c9c4b4;margin-bottom:26px;
+  }
+  .bank-label{
+    width:100%;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.7rem;
+    letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px;
+  }
+  .tile{
+    background:#fff;border:2px solid var(--ink);border-radius:2px;padding:11px 15px;
+    font-size:0.96rem;cursor:grab;box-shadow:3px 3px 0 var(--ink);
+    transition:transform .08s ease,box-shadow .08s ease;user-select:none;touch-action:none;max-width:100%;
+  }
+  .tile:active{cursor:grabbing;}
+  .tile.dragging{opacity:.5;transform:scale(1.03);}
+  .tile.placed{box-shadow:2px 2px 0 rgba(0,0,0,.25);}
+  .tile.correct{outline:3px solid #2f8f2f;outline-offset:2px;}
+  .tile.wrong{outline:3px solid var(--pathos);outline-offset:2px;}
+  .reveal-note{
+    display:none;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.8rem;line-height:1.4;
+    margin-top:8px;padding-top:8px;border-top:1px solid #e6e1d4;color:#33333f;
+  }
+  body.revealed .reveal-note{display:block;}
+
+  .zones{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media (max-width:820px){.zones{grid-template-columns:1fr;}}
+  .zone{
+    border:3px solid var(--ink);border-radius:3px;min-height:240px;padding:16px;
+    display:flex;flex-direction:column;gap:10px;background:#fff;transition:background .12s ease;
+  }
+  .zone.ethos{border-color:var(--ethos);}
+  .zone.pathos{border-color:var(--pathos);}
+  .zone.logos{border-color:var(--logos);}
+  .zone.over.ethos{background:var(--ethos-soft);}
+  .zone.over.pathos{background:var(--pathos-soft);}
+  .zone.over.logos{background:var(--logos-soft);}
+  .zone-head{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;padding-bottom:10px;border-bottom:2px solid currentColor;margin-bottom:4px;}
+  .zone.ethos .zone-head{color:var(--ethos);}
+  .zone.pathos .zone-head{color:var(--pathos);}
+  .zone.logos .zone-head{color:var(--logos);}
+  .zone-head .big{display:block;font-size:1.1rem;text-transform:uppercase;}
+  .zone-head .sub{display:block;font-size:0.74rem;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0.03em;margin-top:3px;}
+  .zone .tiles{display:flex;flex-direction:column;gap:10px;flex:1;}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:28px;padding-top:20px;border-top:3px solid var(--ink);}
+  button{
+    font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:0.02em;
+    padding:12px 22px;border:2px solid var(--ink);border-radius:2px;background:var(--ink);color:var(--paper);
+    cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.25);transition:transform .08s ease,box-shadow .08s ease;
+  }
+  button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,.25);}
+  button:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.25);}
+  button.ghost{background:transparent;color:var(--ink);box-shadow:none;}
+  button.ghost:hover{box-shadow:none;background:#e9e4d6;}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+  button:focus-visible{outline:3px solid var(--logos);outline-offset:3px;}
+  .score{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:0.95rem;margin-left:auto;}
+  .status{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.82rem;color:var(--muted);margin-top:14px;min-height:1.2em;}
+  .hint{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.8rem;color:var(--muted);margin-top:8px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">English · Rhetoric &amp; Persuasion</div>
+    <h1><span class="e">Ethos</span>, <span class="p">Pathos</span>, <span class="l">Logos</span></h1>
+    <p class="lede">Every persuasive appeal leans on one of three foundations: the speaker's <strong>credibility</strong> (ethos), the audience's <strong>emotions</strong> (pathos), or <strong>logic and evidence</strong> (logos). Drag each example into the appeal it relies on <em>most</em>. Many use more than one — sort by the <em>primary</em> appeal, then read the notes to see the blends.</p>
+  </header>
+
+  <div class="gate">
+    <h2>Enter your name to begin</h2>
+    <p>Your name and results are recorded for your teacher. Use the name your teacher knows you by.</p>
+    <input id="nameInput" type="text" placeholder="First and last name" autocomplete="name">
+    <button id="startBtn">Start</button>
+    <div class="err" id="nameErr">Please enter your name first.</div>
+  </div>
+
+  <div class="activity">
+    <div class="bank" id="bank"><div class="bank-label">Examples to classify</div></div>
+
+    <div class="zones">
+      <div class="zone ethos" id="ethos" data-zone="ethos">
+        <div class="zone-head"><span class="big">Ethos</span><span class="sub">Credibility, authority, character — "trust me, I'm qualified"</span></div>
+        <div class="tiles" id="ethos-tiles"></div>
+      </div>
+      <div class="zone pathos" id="pathos" data-zone="pathos">
+        <div class="zone-head"><span class="big">Pathos</span><span class="sub">Emotion — fear, pity, hope, anger, belonging</span></div>
+        <div class="tiles" id="pathos-tiles"></div>
+      </div>
+      <div class="zone logos" id="logos" data-zone="logos">
+        <div class="zone-head"><span class="big">Logos</span><span class="sub">Logic, facts, statistics, reasoning</span></div>
+        <div class="tiles" id="logos-tiles"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="submitBtn">Submit &amp; reveal</button>
+      <button id="resetBtn" class="ghost">Reset</button>
+      <span class="score" id="score"></span>
+    </div>
+    <div class="status" id="status"></div>
+    <p class="hint">Tip: some examples blend two appeals — sort by the one doing the most work, then check the notes.</p>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   1) EDIT ITEMS HERE.  answer: 'ethos' | 'pathos' | 'logos'
+   ============================================================ */
+const ITEMS = [
+  { text:"\"Four out of five dentists recommend this toothpaste.\"", answer:"logos",
+    note:"Logos — it leans on a statistic. (Faint ethos too: 'dentists' borrows authority, but the number does the work.)" },
+  { text:"\"As a mother of three, I know what keeps our children safe.\"", answer:"ethos",
+    note:"Ethos — credibility through lived experience. Blends with pathos ('children', 'safe'), but the claim rests on her standing to speak." },
+  { text:"\"Imagine your family with nowhere to sleep tonight.\"", answer:"pathos",
+    note:"Pathos — an emotional appeal to fear and empathy. No evidence, no credentials." },
+  { text:"\"Studies show crime fell 30% after the program began.\"", answer:"logos",
+    note:"Logos — evidence and a figure drive the claim." },
+  { text:"\"I've served this community as a doctor for twenty years.\"", answer:"ethos",
+    note:"Ethos — authority built on profession and long service." },
+  { text:"\"Don't let them steal your children's future.\"", answer:"pathos",
+    note:"Pathos — fear and protectiveness, with loaded language ('steal', 'children's future')." },
+  { text:"\"The data is clear: every dollar invested returns three.\"", answer:"logos",
+    note:"Logos — a reasoned cost-benefit claim grounded in figures." },
+  { text:"\"Trust me — I wrote the textbook on this subject.\"", answer:"ethos",
+    note:"Ethos — an explicit appeal to the speaker's expertise." },
+  { text:"\"Nine in ten users said they'd recommend us to a friend.\"", answer:"logos",
+    note:"Logos — a statistic. (Edges toward pathos via social proof, but the number leads.)" },
+  { text:"\"Think of the lonely elderly, forgotten this winter.\"", answer:"pathos",
+    note:"Pathos — pity and seasonal imagery to stir compassion." },
+  { text:"\"Endorsed by the Australian Medical Association.\"", answer:"ethos",
+    note:"Ethos — borrowed credibility from a respected institution." },
+  { text:"\"If we cut funding now, history will not forgive us.\"", answer:"pathos",
+    note:"Pathos — appeals to shame and legacy through dramatic framing rather than evidence." },
+  { text:"\"Our results are independently audited every quarter.\"", answer:"ethos",
+    note:"Ethos — trustworthiness through verification and process." },
+  { text:"\"You deserve to feel beautiful every single day.\"", answer:"pathos",
+    note:"Pathos — flatters desire and self-image. No logic or credential at all." },
+  { text:"\"The bridge holds 40 tonnes; the truck weighs 12. It's safe.\"", answer:"logos",
+    note:"Logos — a clean deductive argument from numbers." },
+];
+
+/* ============================================================
+   2) SET YOUR GOOGLE SCRIPT URL HERE (from the receiver setup).
+      Leave as "" to run the activity WITHOUT recording results.
+   ============================================================ */
+const SHEET_URL = "";
+
+/* ---------- engine: no need to edit ---------- */
+let dragged=null, studentName="", submitted=false;
+const ZONES=['ethos','pathos','logos'];
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function makeTile(item,idx){
+  const t=document.createElement('div');
+  t.className='tile';t.draggable=true;t.dataset.answer=item.answer;t.dataset.idx=idx;
+  t.innerHTML=`<div class="tile-text">${item.text}</div><div class="reveal-note">${item.note}</div>`;
+  t.addEventListener('dragstart',e=>{if(submitted)return;dragged=t;t.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  t.addEventListener('dragend',()=>t.classList.remove('dragging'));
+  t.addEventListener('touchstart',touchStart,{passive:false});
+  return t;
+}
+
+function build(){
+  const bk=document.getElementById('bank');
+  bk.querySelectorAll('.tile').forEach(n=>n.remove());
+  ZONES.forEach(z=>document.getElementById(z+'-tiles').innerHTML='');
+  document.body.classList.remove('revealed');
+  document.getElementById('score').textContent='';
+  document.getElementById('status').textContent='';
+  document.getElementById('submitBtn').disabled=false;
+  submitted=false;
+  shuffle(ITEMS.map((it,i)=>({it,i}))).forEach(({it,i})=>bk.appendChild(makeTile(it,i)));
+}
+
+function attachZone(zoneEl){
+  zoneEl.addEventListener('dragover',e=>{if(submitted)return;e.preventDefault();zoneEl.classList.add('over');});
+  zoneEl.addEventListener('dragleave',()=>zoneEl.classList.remove('over'));
+  zoneEl.addEventListener('drop',e=>{
+    e.preventDefault();zoneEl.classList.remove('over');
+    if(!dragged||submitted)return;
+    (zoneEl.querySelector('.tiles')||zoneEl).appendChild(dragged);
+    dragged.classList.add('placed');
+  });
+}
+ZONES.forEach(id=>attachZone(document.getElementById(id)));
+
+const bank=document.getElementById('bank');
+bank.addEventListener('dragover',e=>{if(submitted)return;e.preventDefault();bank.classList.add('over');});
+bank.addEventListener('dragleave',()=>bank.classList.remove('over'));
+bank.addEventListener('drop',e=>{e.preventDefault();bank.classList.remove('over');if(!dragged||submitted)return;bank.appendChild(dragged);dragged.classList.remove('placed');});
+
+/* touch drag */
+let touchEl=null,ghost=null;
+function touchStart(e){
+  if(submitted)return;
+  touchEl=e.currentTarget;const tch=e.touches[0];
+  ghost=touchEl.cloneNode(true);
+  Object.assign(ghost.style,{position:'fixed',pointerEvents:'none',opacity:'0.85',zIndex:'999',width:touchEl.offsetWidth+'px'});
+  document.body.appendChild(ghost);moveGhost(tch);touchEl.classList.add('dragging');
+  document.addEventListener('touchmove',touchMove,{passive:false});
+  document.addEventListener('touchend',touchEnd);
+  e.preventDefault();
+}
+function moveGhost(tch){if(ghost){ghost.style.left=(tch.clientX-ghost.offsetWidth/2)+'px';ghost.style.top=(tch.clientY-22)+'px';}}
+function touchMove(e){moveGhost(e.touches[0]);e.preventDefault();}
+function touchEnd(e){
+  const tch=e.changedTouches[0];const el=document.elementFromPoint(tch.clientX,tch.clientY);
+  const zone=el&&el.closest('.zone');const toBank=el&&el.closest('.bank');
+  if(zone){(zone.querySelector('.tiles')||zone).appendChild(touchEl);touchEl.classList.add('placed');}
+  else if(toBank){document.getElementById('bank').appendChild(touchEl);touchEl.classList.remove('placed');}
+  if(ghost){ghost.remove();ghost=null;}
+  if(touchEl)touchEl.classList.remove('dragging');
+  touchEl=null;
+  document.removeEventListener('touchmove',touchMove);document.removeEventListener('touchend',touchEnd);
+}
+
+/* name gate */
+document.getElementById('startBtn').addEventListener('click',()=>{
+  const v=document.getElementById('nameInput').value.trim();
+  if(v.length<2){document.getElementById('nameErr').style.display='block';return;}
+  studentName=v;document.body.classList.add('started');build();
+});
+document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('startBtn').click();});
+
+/* submit, score, record, reveal */
+document.getElementById('submitBtn').addEventListener('click',()=>{
+  if(submitted)return;
+  let correct=0,placed=0;const detail={};
+  ZONES.forEach(z=>{
+    document.querySelectorAll(`#${z} .tile`).forEach(t=>{
+      placed++;const right=t.dataset.answer===z;
+      t.classList.add(right?'correct':'wrong');if(right)correct++;
+      detail[t.querySelector('.tile-text').textContent]=z;
+    });
+  });
+  if(placed<ITEMS.length){
+    document.getElementById('status').textContent=`Place all ${ITEMS.length} examples before submitting (${placed} placed).`;
+    document.querySelectorAll('.tile').forEach(t=>t.classList.remove('correct','wrong'));
+    return;
+  }
+  submitted=true;
+  document.body.classList.add('revealed');
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('score').textContent=`${correct} / ${ITEMS.length} correct`;
+  recordResult(correct,detail);
+});
+
+function recordResult(correct,detail){
+  const status=document.getElementById('status');
+  if(!SHEET_URL){status.textContent='Result shown above. (Not recorded — no sheet connected.)';return;}
+  status.textContent='Saving your result…';
+  const payload={name:studentName,score:correct,total:ITEMS.length,answers:detail,when:new Date().toISOString()};
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
+    .then(()=>{status.textContent='Result saved. You can review the answers and notes below.';})
+    .catch(()=>{status.textContent='Could not save automatically — please tell your teacher your score.';});
+}
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('correct','wrong'));
+  build();
+});
+</script>
+</body>
+</html>
