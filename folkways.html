@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folkways or Mores? — Sorting Activity</title>
+<style>
+  /* ============================================================
+     EDIT YOUR ITEMS in the <script> block near the bottom.
+     Each item has: text, answer ('left' or 'right'), and a note.
+     ============================================================ */
+
+  :root{
+    --ink:#221b2e;
+    --paper:#f5f2ea;
+    --left:#c98a1b;     /* folkways — warm amber */
+    --left-soft:#f6e8cc;
+    --right:#5b3a8c;    /* mores — deep purple */
+    --right-soft:#e3d9f0;
+    --line:#221b2e;
+    --muted:#6b6b7f;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  body{
+    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+    padding:clamp(16px,4vw,48px);
+    min-height:100vh;
+  }
+
+  .wrap{max-width:1100px;margin:0 auto;}
+
+  header{
+    border-bottom:3px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:8px;
+  }
+  .eyebrow{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  h1{
+    font-size:clamp(1.9rem,5vw,3.1rem);
+    font-weight:800;
+    line-height:1.02;
+    letter-spacing:-0.02em;
+  }
+  h1 .v{color:var(--left);font-style:italic;}
+  h1 .i{color:var(--right);font-style:italic;}
+  .lede{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:0.95rem;
+    color:var(--muted);
+    margin-top:14px;
+    max-width:62ch;
+  }
+
+  /* Bank of draggable tiles */
+  .bank{
+    display:flex;flex-wrap:wrap;gap:10px;
+    padding:22px 0 26px;
+    min-height:64px;
+    border-bottom:1px dashed #bdb8a8;
+    margin-bottom:26px;
+  }
+  .bank-label{
+    width:100%;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--muted);font-weight:700;margin-bottom:4px;
+  }
+
+  .tile{
+    background:#fff;
+    border:2px solid var(--ink);
+    border-radius:2px;
+    padding:11px 15px;
+    font-size:0.98rem;
+    cursor:grab;
+    box-shadow:3px 3px 0 var(--ink);
+    transition:transform .08s ease, box-shadow .08s ease;
+    user-select:none;
+    touch-action:none;
+    max-width:100%;
+  }
+  .tile:active{cursor:grabbing;}
+  .tile.dragging{opacity:.5;transform:scale(1.03);}
+  .tile.placed{box-shadow:2px 2px 0 rgba(0,0,0,.25);}
+
+  /* result colouring after reveal */
+  .tile.correct{outline:3px solid #2f8f2f;outline-offset:2px;}
+  .tile.wrong{outline:3px solid #c44536;outline-offset:2px;}
+
+  .reveal-note{
+    display:none;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:0.8rem;line-height:1.4;
+    margin-top:8px;padding-top:8px;
+    border-top:1px solid #e2ddd0;
+    color:#33333f;
+  }
+  body.revealed .reveal-note{display:block;}
+
+  /* The two sorting zones */
+  .zones{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+  }
+  @media (max-width:640px){.zones{grid-template-columns:1fr;}}
+
+  .zone{
+    border:3px solid var(--ink);
+    border-radius:3px;
+    min-height:260px;
+    padding:16px;
+    display:flex;flex-direction:column;gap:10px;
+    background:#fff;
+    transition:background .12s ease;
+  }
+  .zone.left{border-color:var(--left);}
+  .zone.right{border-color:var(--right);}
+  .zone.over.left{background:var(--left-soft);}
+  .zone.over.right{background:var(--right-soft);}
+
+  .zone-head{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:800;
+    letter-spacing:0.01em;
+    padding-bottom:10px;
+    border-bottom:2px solid currentColor;
+    margin-bottom:4px;
+  }
+  .zone.left .zone-head{color:var(--left);}
+  .zone.right .zone-head{color:var(--right);}
+  .zone-head .big{display:block;font-size:1.15rem;text-transform:uppercase;}
+  .zone-head .sub{
+    display:block;font-size:0.74rem;font-weight:600;
+    color:var(--muted);text-transform:none;letter-spacing:0.04em;margin-top:3px;
+  }
+  .zone .tiles{display:flex;flex-direction:column;gap:10px;flex:1;}
+
+  .controls{
+    display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+    margin-top:28px;padding-top:20px;border-top:3px solid var(--ink);
+  }
+  button{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:700;font-size:0.9rem;letter-spacing:0.02em;
+    padding:12px 22px;border:2px solid var(--ink);border-radius:2px;
+    background:var(--ink);color:var(--paper);cursor:pointer;
+    box-shadow:3px 3px 0 rgba(0,0,0,.25);
+    transition:transform .08s ease,box-shadow .08s ease;
+  }
+  button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,.25);}
+  button:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.25);}
+  button.ghost{background:transparent;color:var(--ink);box-shadow:none;}
+  button.ghost:hover{box-shadow:none;background:#e8e3d6;}
+  button:focus-visible{outline:3px solid var(--right);outline-offset:3px;}
+
+  .score{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:700;font-size:0.95rem;margin-left:auto;
+  }
+  .hint{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:0.8rem;color:var(--muted);margin-top:14px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sociology · Norms &amp; Social Order</div>
+    <h1>Is it a <span class="v">folkway</span>, or is it a <span class="i">more</span>?</h1>
+    <p class="lede">Drag each norm into the box where you think it belongs. <strong>Folkways</strong> are everyday customs and manners — breaking one makes you seem rude or odd, but not immoral. <strong>Mores</strong> (say "more-rayz") carry serious moral weight — breaking one makes people think you've done something genuinely wrong. When you're done, hit <strong>Reveal &amp; discuss</strong>.</p>
+  </header>
+
+  <div class="bank" id="bank">
+    <div class="bank-label">Norms to sort</div>
+  </div>
+
+  <div class="zones">
+    <div class="zone left" id="left" data-zone="left">
+      <div class="zone-head">
+        <span class="big">Folkway</span>
+        <span class="sub">An everyday custom — breaking it seems rude or strange, not immoral</span>
+      </div>
+      <div class="tiles" id="left-tiles"></div>
+    </div>
+    <div class="zone right" id="right" data-zone="right">
+      <div class="zone-head">
+        <span class="big">More</span>
+        <span class="sub">A norm with moral weight — breaking it is seen as genuinely wrong</span>
+      </div>
+      <div class="tiles" id="right-tiles"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="revealBtn">Reveal &amp; discuss</button>
+    <button id="resetBtn" class="ghost">Reset</button>
+    <span class="score" id="score"></span>
+  </div>
+  <p class="hint">Tip: some of these are genuinely arguable, and the line shifts over time and across cultures — that's the point. Be ready to defend your placement.</p>
+</div>
+
+<script>
+/* ============================================================
+   EDIT HERE. Add, remove, or change items freely.
+   answer: 'left'  = deviant but not illegal
+   answer: 'right' = illegal but not deviant
+   note: shown after Reveal — keep it short and discussable.
+   ============================================================ */
+/* DRAW controls how many tiles appear per play (split evenly across the two
+   categories). Set to a number, or 0 to load every item. */
+const DRAW = 12;
+
+const ITEMS = [
+  /* ---------- FOLKWAYS — everyday customs (answer:'left') ---------- */
+  { text:"Saying \"please\" and \"thank you\"", answer:"left",
+    note:"A politeness custom. Skipping it seems rude, not wicked." },
+  { text:"Queuing and waiting your turn", answer:"left",
+    note:"A strong everyday norm — yet jumping it earns annoyance, not moral outrage. Borderline in some settings." },
+  { text:"Greeting people when you enter a room", answer:"left",
+    note:"Social custom; ignoring it reads as cold or odd, not immoral." },
+  { text:"Wearing clothing that fits the occasion", answer:"left",
+    note:"Etiquette norm. Underdressing embarrasses; it doesn't offend morality." },
+  { text:"Covering your mouth when you cough", answer:"left",
+    note:"A manners/hygiene custom — though in a pandemic this can edge toward a more. Worth debating." },
+  { text:"Using cutlery the expected way", answer:"left",
+    note:"Table manners — a classic folkway that varies hugely by culture." },
+  { text:"Not talking loudly during a movie", answer:"left",
+    note:"Courtesy norm. Breaking it makes you inconsiderate, not bad." },
+  { text:"Making eye contact in conversation", answer:"left",
+    note:"An interaction custom — and one that differs sharply across cultures." },
+  { text:"Bringing a small gift when invited to dinner", answer:"left",
+    note:"A courtesy convention; forgetting it is a minor faux pas." },
+  { text:"Holding a door open for the person behind you", answer:"left",
+    note:"Everyday politeness. Letting it slam is rude, not immoral." },
+  { text:"Standing a normal distance from others", answer:"left",
+    note:"Personal-space custom — unwritten and culturally variable." },
+  { text:"Raising your hand before speaking in class", answer:"left",
+    note:"An institutional custom; breaking it is disruptive, not wrong." },
+  { text:"Returning your shopping trolley", answer:"left",
+    note:"A small civic courtesy — the classic 'no consequences' test of character, but still a folkway." },
+  { text:"Sending a thank-you message after a gift", answer:"left",
+    note:"Politeness custom; skipping it seems ungracious, not immoral." },
+  { text:"Not interrupting when others are speaking", answer:"left",
+    note:"Conversation etiquette — annoying to break, not morally serious." },
+  { text:"Taking your hat off where it's customary", answer:"left",
+    note:"A tradition-based custom that varies by place and setting." },
+  { text:"Waiting for everyone to be served before eating", answer:"left",
+    note:"Table custom; jumping in early is impatient, not wicked." },
+  { text:"Using an indoor voice indoors", answer:"left",
+    note:"A norm of consideration; breaking it is disruptive, not immoral." },
+  { text:"Wearing shoes in public places", answer:"left",
+    note:"A convention of dress/hygiene — legal and moral to ignore, just unusual." },
+  { text:"Not staring at strangers", answer:"left",
+    note:"An unwritten courtesy norm; staring is creepy, not criminal." },
+
+  /* ---------- MORES — morally weighty norms (answer:'right') ---------- */
+  { text:"Not stealing from others", answer:"right",
+    note:"A core moral norm underpinning law itself." },
+  { text:"Not physically assaulting people", answer:"right",
+    note:"A fundamental more — violation brings strong moral condemnation." },
+  { text:"Not cheating on a partner", answer:"right",
+    note:"Morally weighty in most cultures, though not illegal — a good example of a more without a law." },
+  { text:"Not lying under oath", answer:"right",
+    note:"Breaches a deep norm of honesty and justice; also illegal." },
+  { text:"Respecting the dead", answer:"right",
+    note:"A near-universal more — desecration provokes visceral moral disgust." },
+  { text:"Caring for dependent children", answer:"right",
+    note:"A profound moral obligation; neglect is condemned everywhere." },
+  { text:"Not abusing vulnerable people", answer:"right",
+    note:"A central more carrying the strongest moral weight." },
+  { text:"Respecting personal consent", answer:"right",
+    note:"A foundational modern more underpinning bodily-autonomy ethics." },
+  { text:"Not driving while intoxicated", answer:"right",
+    note:"Borderline-by-history: once treated lightly, now a strong more AND a law. Shows how norms harden over time." },
+  { text:"Not committing serious fraud", answer:"right",
+    note:"Breaches honesty norms at a level society treats as genuinely wrong." },
+  { text:"Not abandoning your family responsibilities", answer:"right",
+    note:"A deep moral expectation about duty to kin." },
+  { text:"Not exploiting people financially", answer:"right",
+    note:"A more about fairness and not preying on others." },
+  { text:"Not deliberately spreading dangerous misinformation", answer:"right",
+    note:"An emerging more — society increasingly treats this as morally serious, not just careless." },
+  { text:"Not desecrating places of worship or memorials", answer:"right",
+    note:"Violates sacred/respect norms that carry heavy moral charge." },
+  { text:"Not discriminating in ways society strongly condemns", answer:"right",
+    note:"A modern more — and one whose boundaries have shifted markedly over time." },
+  { text:"Helping someone in immediate danger when you can", answer:"right",
+    note:"A moral duty of rescue — though how strong an obligation is genuinely debated. Borderline." },
+  { text:"Not betraying deeply held trust", answer:"right",
+    note:"Loyalty and trust are core moral norms; betrayal cuts deep." },
+  { text:"Respecting bodily autonomy", answer:"right",
+    note:"A foundational more in contemporary ethics." },
+  { text:"Not engaging in incest", answer:"right",
+    note:"One of the most widespread mores across human societies — a near-universal taboo." },
+  { text:"Not doing things seen as fundamentally cruel", answer:"right",
+    note:"Cruelty violates a baseline moral norm shared across cultures." },
+];
+
+/* ---------- engine below: no need to edit ---------- */
+let dragged = null;
+let currentCount = 0;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function makeTile(item,idx){
+  const t=document.createElement('div');
+  t.className='tile';
+  t.draggable=true;
+  t.dataset.answer=item.answer;
+  t.dataset.idx=idx;
+  t.innerHTML=`<div class="tile-text">${item.text}</div><div class="reveal-note">${item.note}</div>`;
+  t.addEventListener('dragstart',e=>{dragged=t;t.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  t.addEventListener('dragend',()=>{t.classList.remove('dragging');});
+  // touch support
+  t.addEventListener('touchstart',touchStart,{passive:false});
+  return t;
+}
+
+function pickSubset(){
+  if(!DRAW||DRAW>=ITEMS.length) return ITEMS.map((it,i)=>({it,i}));
+  const indexed=ITEMS.map((it,i)=>({it,i}));
+  const lefts=shuffle(indexed.filter(x=>x.it.answer==='left'));
+  const rights=shuffle(indexed.filter(x=>x.it.answer==='right'));
+  const half=Math.floor(DRAW/2);
+  const chosen=lefts.slice(0,half).concat(rights.slice(0,DRAW-half));
+  return shuffle(chosen);
+}
+
+function build(){
+  const bank=document.getElementById('bank');
+  bank.querySelectorAll('.tile').forEach(n=>n.remove());
+  document.getElementById('left-tiles').innerHTML='';
+  document.getElementById('right-tiles').innerHTML='';
+  document.body.classList.remove('revealed');
+  document.getElementById('score').textContent='';
+  currentCount=0;
+  pickSubset().forEach(({it,i})=>{bank.appendChild(makeTile(it,i));currentCount++;});
+}
+
+function attachZone(zoneEl){
+  zoneEl.addEventListener('dragover',e=>{e.preventDefault();zoneEl.classList.add('over');});
+  zoneEl.addEventListener('dragleave',()=>zoneEl.classList.remove('over'));
+  zoneEl.addEventListener('drop',e=>{
+    e.preventDefault();zoneEl.classList.remove('over');
+    if(!dragged)return;
+    const target=zoneEl.querySelector('.tiles')||zoneEl;
+    target.appendChild(dragged);
+    dragged.classList.add('placed');
+  });
+}
+['left','right'].forEach(id=>attachZone(document.getElementById(id)));
+
+// allow dragging back to bank
+const bank=document.getElementById('bank');
+bank.addEventListener('dragover',e=>{e.preventDefault();bank.classList.add('over');});
+bank.addEventListener('dragleave',()=>bank.classList.remove('over'));
+bank.addEventListener('drop',e=>{
+  e.preventDefault();bank.classList.remove('over');
+  if(!dragged)return;bank.appendChild(dragged);dragged.classList.remove('placed');
+});
+
+/* ---- touch drag (mobile/tablet) ---- */
+let touchEl=null,ghost=null;
+function touchStart(e){
+  touchEl=e.currentTarget;
+  const tch=e.touches[0];
+  ghost=touchEl.cloneNode(true);
+  ghost.style.position='fixed';ghost.style.pointerEvents='none';
+  ghost.style.opacity='0.85';ghost.style.zIndex='999';ghost.style.width=touchEl.offsetWidth+'px';
+  document.body.appendChild(ghost);
+  moveGhost(tch);
+  touchEl.classList.add('dragging');
+  document.addEventListener('touchmove',touchMove,{passive:false});
+  document.addEventListener('touchend',touchEnd);
+  e.preventDefault();
+}
+function moveGhost(tch){if(ghost){ghost.style.left=(tch.clientX-ghost.offsetWidth/2)+'px';ghost.style.top=(tch.clientY-22)+'px';}}
+function touchMove(e){const tch=e.touches[0];moveGhost(tch);e.preventDefault();}
+function touchEnd(e){
+  const tch=e.changedTouches[0];
+  const el=document.elementFromPoint(tch.clientX,tch.clientY);
+  const zone=el&&el.closest('.zone');
+  const toBank=el&&el.closest('.bank');
+  if(zone){(zone.querySelector('.tiles')||zone).appendChild(touchEl);touchEl.classList.add('placed');}
+  else if(toBank){document.getElementById('bank').appendChild(touchEl);touchEl.classList.remove('placed');}
+  if(ghost){ghost.remove();ghost=null;}
+  if(touchEl)touchEl.classList.remove('dragging');
+  touchEl=null;
+  document.removeEventListener('touchmove',touchMove);
+  document.removeEventListener('touchend',touchEnd);
+}
+
+/* ---- reveal & reset ---- */
+document.getElementById('revealBtn').addEventListener('click',()=>{
+  document.body.classList.add('revealed');
+  let correct=0,placed=0;
+  ['left','right'].forEach(z=>{
+    document.querySelectorAll(`#${z} .tile`).forEach(t=>{
+      placed++;
+      if(t.dataset.answer===z){t.classList.add('correct');t.classList.remove('wrong');correct++;}
+      else{t.classList.add('wrong');t.classList.remove('correct');}
+    });
+  });
+  const total=currentCount;
+  document.getElementById('score').textContent =
+    placed===0 ? 'Sort some tiles first!' : `${correct} / ${total} match the intended answer`;
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('correct','wrong'));
+  build();
+});
+
+build();
+</script>
+</body>
+</html>
