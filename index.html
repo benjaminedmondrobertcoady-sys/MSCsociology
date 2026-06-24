@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Thinkery — Interactive Thinking Activities</title>
+<style>
+  /* ============================================================
+     THE THINKERY — hub / splash page
+     TO ADD AN ACTIVITY: copy a <a class="card"> block inside the
+     right subject's <div class="grid">; change href, title, blurb, tag.
+     ============================================================ */
+  :root{
+    --bg:#fbf4e6;
+    --ink:#1b1a2b;
+    --muted:#6a6878;
+    --soc:#c98a1b;
+    --soc-deep:#8f610c;
+    --eng:#2d5a8c;
+    --eng-deep:#1d3c5e;
+    --accent:#d4486b;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    color:var(--ink);line-height:1.5;min-height:100vh;
+    background:
+      radial-gradient(circle at 10% 6%, #ffe6b8 0, transparent 40%),
+      radial-gradient(circle at 92% 2%, #cfe0f4 0, transparent 36%),
+      radial-gradient(circle at 78% 92%, #f7d2dd 0, transparent 40%),
+      var(--bg);
+    padding:clamp(20px,5vw,64px);
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+
+  .brandbar{display:flex;align-items:center;gap:12px;margin-bottom:clamp(28px,5vw,48px);}
+  .mark{
+    width:46px;height:46px;border-radius:12px;flex:none;display:block;
+    box-shadow:0 6px 18px -6px rgba(0,0,0,.4);
+  }
+  .brandname{font-weight:800;letter-spacing:-0.01em;font-size:1.05rem;}
+  .brandname span{color:var(--accent);}
+
+  header{margin-bottom:clamp(34px,6vw,60px);}
+  .kicker{
+    display:inline-block;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
+    font-weight:800;color:var(--ink);background:#ffd27a;padding:6px 14px;border-radius:100px;
+    transform:rotate(-1.5deg);margin-bottom:22px;
+  }
+  h1{
+    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    font-size:clamp(2.6rem,8vw,4.6rem);font-weight:800;line-height:0.98;letter-spacing:-0.025em;
+  }
+  h1 .the{
+    display:block;font-size:0.32em;letter-spacing:0.32em;text-transform:uppercase;
+    font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;color:var(--muted);margin-bottom:6px;
+  }
+  h1 .word{
+    background:linear-gradient(105deg,var(--soc) 0%,var(--accent) 50%,var(--eng) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .intro{font-size:1.08rem;color:var(--muted);margin-top:20px;max-width:58ch;}
+  .intro b{color:var(--ink);font-weight:700;}
+
+  .subject{margin-top:clamp(38px,5vw,58px);}
+  .subject-head{display:flex;align-items:baseline;gap:13px;margin-bottom:22px;}
+  .dot{width:16px;height:16px;border-radius:50%;flex:none;align-self:center;}
+  .subject.soc .dot{background:var(--soc);}
+  .subject.eng .dot{background:var(--eng);}
+  .subject-head h2{font-size:1.45rem;font-weight:800;letter-spacing:-0.01em;}
+  .subject-head .count{font-size:0.8rem;color:var(--muted);font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:20px;}
+
+  .card{
+    display:block;text-decoration:none;color:inherit;background:var(--card);
+    border-radius:18px;padding:26px;position:relative;overflow:hidden;
+    border:1px solid rgba(0,0,0,.05);
+    box-shadow:0 2px 0 rgba(0,0,0,.03),0 14px 34px -18px rgba(0,0,0,.4);
+    transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;}
+  .subject.soc .card::before{background:var(--soc);}
+  .subject.eng .card::before{background:var(--eng);}
+  .card:hover{transform:translateY(-5px);box-shadow:0 4px 0 rgba(0,0,0,.04),0 26px 46px -20px rgba(0,0,0,.5);}
+  .card:focus-visible{outline:3px solid var(--ink);outline-offset:3px;}
+
+  .tag{
+    display:inline-block;font-size:0.64rem;letter-spacing:0.12em;text-transform:uppercase;
+    font-weight:800;padding:4px 11px;border-radius:100px;margin-bottom:15px;
+  }
+  .subject.soc .tag{background:#fbe6c4;color:var(--soc-deep);}
+  .subject.eng .tag{background:#d8e6f5;color:var(--eng-deep);}
+
+  .card h3{
+    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    font-size:1.35rem;font-weight:800;line-height:1.1;margin-bottom:9px;
+  }
+  .card p{font-size:0.9rem;color:var(--muted);margin-bottom:14px;}
+  .skill{display:block;font-size:0.72rem;color:var(--muted);margin-bottom:16px;font-style:italic;}
+  .play{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:0.85rem;}
+  .subject.soc .play{color:var(--soc-deep);}
+  .subject.eng .play{color:var(--eng-deep);}
+  .play .arrow{transition:transform .15s ease;}
+  .card:hover .play .arrow{transform:translateX(5px);}
+  .recnote{
+    display:inline-block;margin-top:14px;font-size:0.7rem;color:var(--muted);
+    background:#f1ece0;padding:3px 9px;border-radius:6px;
+  }
+
+  .card.soon{background:transparent;border:2px dashed rgba(0,0,0,.18);box-shadow:none;cursor:default;}
+  .card.soon::before{display:none;}
+  .card.soon:hover{transform:none;box-shadow:none;}
+  .card.soon h3{color:var(--muted);}
+  .card.soon .play{color:var(--muted);}
+
+  footer{
+    margin-top:clamp(50px,7vw,84px);padding-top:24px;border-top:1px solid rgba(0,0,0,.1);
+    font-size:0.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brandbar">
+    <img class="mark" src="thinkery-logo.png" alt="The Thinkery logo">
+    <div class="brandname">The <span>Thinkery</span></div>
+  </div>
+
+  <header>
+    <span class="kicker">Interactive thinking activities</span>
+    <h1><span class="the">Welcome to the</span><span class="word">Thinkery</span></h1>
+    <p class="intro">A growing collection of quick, hands-on activities that build <b>thinking skills</b> — sorting, classifying, ranking, and connecting ideas, then defending your choices out loud. The interesting learning lives in the grey areas. <b>Pick a room and start thinking.</b></p>
+  </header>
+
+  <section class="subject soc">
+    <div class="subject-head">
+      <span class="dot"></span>
+      <h2>Sociology</h2>
+      <span class="count">Deviance &amp; social norms</span>
+    </div>
+    <div class="grid">
+
+      <a class="card" href="sociologygame.html">
+        <span class="tag">Deviance</span>
+        <h3>Deviant or Illegal?</h3>
+        <p>Sort behaviours into "deviant but not illegal" and "illegal but not deviant" — and wrestle with the cases that are both, or neither.</p>
+        <span class="skill">Thinking skill: classifying &amp; distinguishing</span>
+        <span class="play">Play <span class="arrow">→</span></span>
+      </a>
+
+      <a class="card" href="folkways.html">
+        <span class="tag">Norms</span>
+        <h3>Folkways or Mores?</h3>
+        <p>Decide which everyday expectations are minor customs and which carry real moral weight — and notice how the line shifts across cultures.</p>
+        <span class="skill">Thinking skill: judging moral weight</span>
+        <span class="play">Play <span class="arrow">→</span></span>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="subject eng">
+    <div class="subject-head">
+      <span class="dot"></span>
+      <h2>English</h2>
+      <span class="count">Rhetoric &amp; persuasion</span>
+    </div>
+    <div class="grid">
+
+      <a class="card" href="ethos_pathos_logos.html">
+        <span class="tag">Rhetoric</span>
+        <h3>Ethos, Pathos, Logos</h3>
+        <p>Classify persuasive examples by their primary appeal — credibility, emotion, or logic — then unpack the ones that blend all three.</p>
+        <span class="skill">Thinking skill: identifying persuasive technique</span>
+        <span class="play">Play <span class="arrow">→</span></span>
+        <span class="recnote">Records results for the teacher</span>
+      </a>
+
+      <div class="card soon">
+        <span class="tag" style="background:#eee;color:#888;">Coming soon</span>
+        <h3>More on the way</h3>
+        <p>Spectrum lines, quadrant matrices, diamond ranking and hexagonal thinking are in the workshop.</p>
+        <span class="play">In progress</span>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>The Thinkery — a free teaching resource. Runs in the browser; no logins, no installs.</span>
+    <span>Built for the classroom. Other teachers welcome.</span>
+  </footer>
+</div>
+</body>
+</html>
