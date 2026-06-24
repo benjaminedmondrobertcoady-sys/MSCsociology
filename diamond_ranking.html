@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamond Ranking — How Serious Is It?</title>
+<style>
+  /* ============================================================
+     DIAMOND RANKING (1-2-3-2-1)
+     EDIT: the PROMPT and the nine ITEMS in the <script> block.
+     No scoring — this is prioritisation. Students arrange, then
+     can Share their diamond (as a link) to show on the big screen.
+     ============================================================ */
+  :root{
+    --ink:#20242e;
+    --paper:#f4f1ea;
+    --accent:#9c3a6b;        /* diamond plum */
+    --accent-soft:#f0dbe6;
+    --top:#1f6f54;           /* most serious — green band */
+    --bottom:#b5354e;        /* least serious — rose band */
+    --muted:#6a6a78;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    background:var(--paper);color:var(--ink);line-height:1.5;
+    padding:clamp(16px,4vw,48px);min-height:100vh;
+  }
+  .wrap{max-width:1000px;margin:0 auto;}
+  header{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:8px;}
+  .eyebrow{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:10px;}
+  h1{font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:800;line-height:1.05;letter-spacing:-0.02em;}
+  .prompt{font-family:'Helvetica Neue',Arial,sans-serif;font-size:1.02rem;color:var(--ink);margin-top:14px;max-width:64ch;font-weight:600;}
+  .lede{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.9rem;color:var(--muted);margin-top:10px;max-width:64ch;}
+
+  .layout{display:grid;grid-template-columns:1fr;gap:30px;margin-top:26px;}
+  @media(min-width:860px){.layout{grid-template-columns:300px 1fr;}}
+
+  /* bank */
+  .bank-wrap h2,.diamond-wrap h2{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px;}
+  .bank{display:flex;flex-direction:column;gap:10px;min-height:60px;padding:14px;border:2px dashed #c2bdad;border-radius:6px;background:#fbfaf6;}
+
+  .tile{
+    background:#fff;border:2px solid var(--ink);border-radius:3px;padding:10px 13px;
+    font-size:0.9rem;cursor:grab;box-shadow:3px 3px 0 var(--ink);
+    transition:transform .08s,box-shadow .08s;user-select:none;touch-action:none;line-height:1.3;
+  }
+  .tile:active{cursor:grabbing;}
+  .tile.dragging{opacity:.5;}
+  .tile.placed{box-shadow:2px 2px 0 rgba(0,0,0,.3);font-size:0.84rem;padding:8px 11px;}
+
+  /* diamond */
+  .diamond{display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .row{display:flex;gap:12px;justify-content:center;width:100%;}
+  .slot{
+    width:150px;min-height:62px;border:2px solid #cfcabb;border-radius:4px;background:#fff;
+    display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;
+    transition:background .12s,border-color .12s;
+  }
+  .slot.over{background:var(--accent-soft);border-color:var(--accent);}
+  .slot .tile{box-shadow:1px 1px 0 rgba(0,0,0,.3);width:100%;}
+
+  .band{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.72rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px;width:100%;justify-content:center;margin:2px 0;}
+  .band.top{color:var(--top);}
+  .band.bottom{color:var(--bottom);}
+  .band .liner{height:2px;flex:1;max-width:90px;}
+  .band.top .liner{background:var(--top);}
+  .band.bottom .liner{background:var(--bottom);}
+
+  .justify{margin-top:26px;}
+  .justify label{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85rem;font-weight:700;display:block;margin-bottom:8px;}
+  .justify .opt{color:var(--muted);font-weight:400;}
+  .justify textarea{
+    width:100%;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.92rem;
+    padding:12px;border:2px solid var(--ink);border-radius:3px;resize:vertical;min-height:70px;
+  }
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:26px;padding-top:20px;border-top:3px solid var(--ink);}
+  button{
+    font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:0.02em;
+    padding:12px 22px;border:2px solid var(--ink);border-radius:2px;background:var(--ink);color:var(--paper);
+    cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.25);transition:transform .08s,box-shadow .08s;
+  }
+  button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,.25);}
+  button:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.25);}
+  button.ghost{background:transparent;color:var(--ink);box-shadow:none;}
+  button.ghost:hover{background:#e9e4d6;box-shadow:none;}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+  .status{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.82rem;color:var(--muted);margin-top:14px;min-height:1.2em;}
+
+  /* share box */
+  .sharebox{display:none;margin-top:16px;padding:16px;border:2px solid var(--accent);border-radius:6px;background:#fff;}
+  .sharebox.show{display:block;}
+  .sharebox p{font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85rem;margin-bottom:10px;}
+  .sharebox input{width:100%;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.82rem;padding:10px;border:2px solid var(--ink);border-radius:3px;background:#faf8f3;}
+
+  /* teacher view banner when loaded from a share link */
+  .presented{display:none;background:var(--accent);color:#fff;padding:10px 16px;border-radius:6px;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;margin-bottom:18px;}
+  body.presented-mode .presented{display:block;}
+  body.presented-mode .controls,body.presented-mode .bank-wrap,body.presented-mode .justify textarea{display:none;}
+  .presented-justify{display:none;font-family:'Helvetica Neue',Arial,sans-serif;margin-top:20px;padding:16px;border-left:5px solid var(--accent);background:#fff;}
+  body.presented-mode .presented-justify.has-text{display:block;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sociology · Deviance · Diamond Ranking</div>
+    <h1>How serious is it?</h1>
+    <p class="prompt" id="promptLine"></p>
+    <p class="lede">Drag the nine acts into the diamond. The single act at the <strong>top</strong> is the one you judge <strong>most serious</strong>; the one at the <strong>bottom</strong> is <strong>least serious</strong>. The shape forces you to choose — you can't call everything equal. Be ready to defend your order.</p>
+  </header>
+
+  <div class="presented" id="presentedBanner"></div>
+
+  <div class="layout">
+    <div class="bank-wrap">
+      <h2>The nine acts</h2>
+      <div class="bank" id="bank"></div>
+    </div>
+
+    <div class="diamond-wrap">
+      <h2>Your diamond</h2>
+      <div class="diamond" id="diamond">
+        <div class="band top"><span class="liner"></span> Most serious <span class="liner"></span></div>
+        <div class="row" data-count="1"></div>
+        <div class="row" data-count="2"></div>
+        <div class="row" data-count="3"></div>
+        <div class="row" data-count="2"></div>
+        <div class="row" data-count="1"></div>
+        <div class="band bottom"><span class="liner"></span> Least serious <span class="liner"></span></div>
+      </div>
+
+      <div class="justify">
+        <label>In a sentence, why did you put your top choice first? <span class="opt">(optional)</span></label>
+        <textarea id="justifyText" placeholder="The act I ranked most serious is… because…"></textarea>
+        <div class="presented-justify" id="presentedJustify"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="shareBtn">Share to screen</button>
+    <button id="resetBtn" class="ghost">Reset</button>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div class="sharebox" id="sharebox">
+    <p><strong>Your share link is ready.</strong> Copy it and send it to your teacher (or open it on the classroom screen) to show your diamond.</p>
+    <input id="shareLink" readonly onclick="this.select()">
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EDIT THE PROMPT AND NINE ITEMS HERE.
+   Order doesn't matter — students arrange them.
+   ============================================================ */
+const PROMPT = "Rank these nine acts from most serious to least serious.";
+const ITEMS = [
+  "Drink-driving through a school zone",
+  "Shoplifting makeup from a large chain store",
+  "Vaping in the school toilets",
+  "Spreading a damaging rumour about a classmate",
+  "Graffiti tagging a train carriage",
+  "Using a fake ID to get into a club at 17",
+  "Downloading and sharing pirated films",
+  "Deliberately excluding someone from a friend group online",
+  "Jumping the queue at the canteen",
+];
+
+/* ---------- engine: no need to edit ---------- */
+let dragged=null;
+const ROWS=[...document.querySelectorAll('.row')];
+document.getElementById('promptLine').textContent=PROMPT;
+
+function makeTile(text){
+  const t=document.createElement('div');
+  t.className='tile';t.draggable=true;t.textContent=text;
+  t.addEventListener('dragstart',e=>{dragged=t;t.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  t.addEventListener('dragend',()=>t.classList.remove('dragging'));
+  t.addEventListener('touchstart',touchStart,{passive:false});
+  return t;
+}
+
+function buildSlots(){
+  ROWS.forEach(row=>{
+    row.innerHTML='';
+    const n=+row.dataset.count;
+    for(let i=0;i<n;i++){
+      const s=document.createElement('div');
+      s.className='slot';
+      attachSlot(s);
+      row.appendChild(s);
+    }
+  });
+}
+
+function build(){
+  buildSlots();
+  const bank=document.getElementById('bank');
+  bank.innerHTML='';
+  ITEMS.forEach(txt=>bank.appendChild(makeTile(txt)));
+  document.getElementById('status').textContent='';
+  document.getElementById('sharebox').classList.remove('show');
+}
+
+function placeInto(container){
+  if(!dragged)return;
+  // slots hold one tile; if occupied, swap the existing tile back to bank
+  if(container.classList.contains('slot') && container.children.length){
+    document.getElementById('bank').appendChild(container.firstChild);
+    container.firstChild && container.firstChild.classList.remove('placed');
+  }
+  container.appendChild(dragged);
+  if(container.classList.contains('slot'))dragged.classList.add('placed');
+  else dragged.classList.remove('placed');
+}
+
+function attachSlot(s){
+  s.addEventListener('dragover',e=>{e.preventDefault();s.classList.add('over');});
+  s.addEventListener('dragleave',()=>s.classList.remove('over'));
+  s.addEventListener('drop',e=>{e.preventDefault();s.classList.remove('over');placeInto(s);});
+}
+const bankEl=document.getElementById('bank');
+bankEl.addEventListener('dragover',e=>{e.preventDefault();});
+bankEl.addEventListener('drop',e=>{e.preventDefault();if(dragged){bankEl.appendChild(dragged);dragged.classList.remove('placed');}});
+
+/* touch */
+let touchEl=null,ghost=null;
+function touchStart(e){
+  touchEl=e.currentTarget;const tch=e.touches[0];
+  ghost=touchEl.cloneNode(true);
+  Object.assign(ghost.style,{position:'fixed',pointerEvents:'none',opacity:'0.85',zIndex:'999',width:touchEl.offsetWidth+'px'});
+  document.body.appendChild(ghost);moveGhost(tch);touchEl.classList.add('dragging');
+  document.addEventListener('touchmove',touchMove,{passive:false});
+  document.addEventListener('touchend',touchEnd);
+  e.preventDefault();
+}
+function moveGhost(tch){if(ghost){ghost.style.left=(tch.clientX-ghost.offsetWidth/2)+'px';ghost.style.top=(tch.clientY-20)+'px';}}
+function touchMove(e){moveGhost(e.touches[0]);e.preventDefault();}
+function touchEnd(e){
+  const tch=e.changedTouches[0];const el=document.elementFromPoint(tch.clientX,tch.clientY);
+  dragged=touchEl;
+  const slot=el&&el.closest('.slot');const toBank=el&&el.closest('.bank');
+  if(slot)placeInto(slot);
+  else if(toBank){document.getElementById('bank').appendChild(touchEl);touchEl.classList.remove('placed');}
+  if(ghost){ghost.remove();ghost=null;}
+  if(touchEl)touchEl.classList.remove('dragging');
+  touchEl=null;dragged=null;
+  document.removeEventListener('touchmove',touchMove);document.removeEventListener('touchend',touchEnd);
+}
+
+/* share: encode arrangement into a link */
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  const order=[];
+  ROWS.forEach(row=>{
+    [...row.children].forEach(slot=>{
+      order.push(slot.firstChild?ITEMS.indexOf(slot.firstChild.textContent):-1);
+    });
+  });
+  const placed=order.filter(i=>i>=0).length;
+  if(placed<ITEMS.length){
+    document.getElementById('status').textContent=`Place all nine acts in the diamond first (${placed}/9 placed).`;
+    return;
+  }
+  const payload={o:order,j:document.getElementById('justifyText').value.trim()};
+  const code=btoa(encodeURIComponent(JSON.stringify(payload)));
+  const link=location.origin+location.pathname+'?d='+code;
+  const box=document.getElementById('sharebox');
+  document.getElementById('shareLink').value=link;
+  box.classList.add('show');
+  document.getElementById('status').textContent='Link ready — copy it from the box below.';
+});
+
+document.getElementById('resetBtn').addEventListener('click',build);
+
+/* load from a share link (teacher view) */
+function tryLoadShared(){
+  const params=new URLSearchParams(location.search);
+  const code=params.get('d');
+  if(!code)return false;
+  try{
+    const payload=JSON.parse(decodeURIComponent(atob(code)));
+    buildSlots();
+    const slots=[...document.querySelectorAll('.slot')];
+    payload.o.forEach((itemIdx,slotIdx)=>{
+      if(itemIdx>=0 && slots[slotIdx]){
+        const t=makeTile(ITEMS[itemIdx]);t.classList.add('placed');t.draggable=false;
+        slots[slotIdx].appendChild(t);
+      }
+    });
+    document.body.classList.add('presented-mode');
+    document.getElementById('presentedBanner').textContent='Presenting a student\u2019s diamond';
+    if(payload.j){
+      const pj=document.getElementById('presentedJustify');
+      pj.textContent='“'+payload.j+'”';
+      pj.classList.add('has-text');
+    }
+    return true;
+  }catch(err){return false;}
+}
+
+if(!tryLoadShared())build();
+</script>
+</body>
+</html>
