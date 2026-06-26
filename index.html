@@ -3,198 +3,301 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Thinkery — Interactive Thinking Activities</title>
+<title>EduQuest — Where Thinking Takes You Further</title>
 <style>
   /* ============================================================
-     THE THINKERY — hub / splash page
-     TO ADD AN ACTIVITY: copy a <a class="card"> block inside the
-     right subject's <div class="grid">; change href, title, blurb, tag.
+     EDUQUEST — "EduQuest '96" Utopian Scholastic style
+     Icons (icon_*.png) live alongside this file in the repo.
+     TO ADD AN ACTIVITY: copy an <a class="entry"> block in the
+     right chapter; change href, title, blurb, and icon src.
      ============================================================ */
   :root{
-    --bg:#fbf4e6;
-    --ink:#1b1a2b;
-    --muted:#6a6878;
-    --soc:#c98a1b;
-    --soc-deep:#8f610c;
-    --eng:#2d5a8c;
-    --eng-deep:#1d3c5e;
-    --accent:#d4486b;
-    --card:#ffffff;
+    --navy:#1b2f7a;
+    --navy-d:#13235e;
+    --green:#256b3f;
+    --gold:#d8a93a;
+    --gold-d:#9c7415;
+    --cream:#f3ead0;
+    --cream-d:#e7dab4;
+    --parch:#f7efd8;
+    --ink:#2a2410;
+    --rule:#b9a878;
+    --sky1:#bcd6f0;
+    --sky2:#dcebf8;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
-    font-family:'Helvetica Neue',Arial,sans-serif;
-    color:var(--ink);line-height:1.5;min-height:100vh;
+    font-family:Georgia,'Times New Roman',serif;color:var(--ink);
+    background:#0d1838;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 3px, transparent 3px 6px),
+      linear-gradient(180deg,#16275e 0,#0d1838 100%);
+    padding:clamp(8px,2vw,22px);min-height:100vh;
+  }
+  .page{
+    max-width:1080px;margin:0 auto;background:var(--cream);
+    border:2px solid var(--gold-d);box-shadow:0 0 0 2px var(--navy-d),0 12px 40px rgba(0,0,0,.6);
+  }
+
+  /* ---------- top virtue strip ---------- */
+  .virtue{
+    background:linear-gradient(90deg,var(--navy-d),var(--navy));color:var(--gold);
+    font-size:0.78rem;letter-spacing:.08em;padding:5px 14px;display:flex;justify-content:space-between;align-items:center;
+    border-bottom:2px solid var(--gold-d);
+  }
+  .virtue .m span{color:#fff;}
+  .virtue .d{color:#cdd8f0;font-style:italic;}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    position:relative;overflow:hidden;
+    background:linear-gradient(180deg,var(--sky2) 0%,var(--sky1) 70%,#cfe0d6 100%);
+    border-bottom:4px solid var(--gold);
+    padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px);
+    display:flex;align-items:center;gap:20px;min-height:150px;
+  }
+  /* faint marble-city skyline drawn in CSS on the right */
+  .masthead::after{
+    content:"";position:absolute;right:0;top:0;bottom:0;width:46%;pointer-events:none;opacity:.5;
     background:
-      radial-gradient(circle at 10% 6%, #ffe6b8 0, transparent 40%),
-      radial-gradient(circle at 92% 2%, #cfe0f4 0, transparent 36%),
-      radial-gradient(circle at 78% 92%, #f7d2dd 0, transparent 40%),
-      var(--bg);
-    padding:clamp(20px,5vw,64px);
+      linear-gradient(180deg,transparent 30%, rgba(255,255,255,.5) 100%),
+      repeating-linear-gradient(90deg, transparent 0 26px, rgba(255,255,255,.55) 26px 30px, transparent 30px 34px),
+      repeating-linear-gradient(90deg, rgba(120,140,180,.18) 0 60px, transparent 60px 120px);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);
+    mask-image:linear-gradient(90deg,transparent,#000 40%);
   }
-  .wrap{max-width:1080px;margin:0 auto;}
-
-  .brandbar{display:flex;align-items:center;gap:12px;margin-bottom:clamp(28px,5vw,48px);}
-  .mark{
-    width:46px;height:46px;border-radius:12px;flex:none;display:block;
-    box-shadow:0 6px 18px -6px rgba(0,0,0,.4);
+  .crest{
+    width:96px;height:112px;flex:none;position:relative;z-index:2;
+    background:linear-gradient(180deg,var(--navy),var(--navy-d));
+    border:3px solid var(--gold);border-radius:8px 8px 50% 50%/8px 8px 16% 16%;
+    box-shadow:0 4px 10px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   }
-  .brandname{font-weight:800;letter-spacing:-0.01em;font-size:1.05rem;}
-  .brandname span{color:var(--accent);}
-
-  header{margin-bottom:clamp(34px,6vw,60px);}
-  .kicker{
-    display:inline-block;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
-    font-weight:800;color:var(--ink);background:#ffd27a;padding:6px 14px;border-radius:100px;
-    transform:rotate(-1.5deg);margin-bottom:22px;
+  .crest .torch{font-size:2.1rem;line-height:1;filter:drop-shadow(0 0 6px rgba(255,200,80,.8));}
+  .crest .motto{color:var(--gold);font-size:0.6rem;letter-spacing:.12em;font-weight:bold;background:var(--navy-d);padding:2px 6px;border:1px solid var(--gold);border-radius:3px;}
+  .laurel{position:absolute;z-index:2;color:var(--gold);font-size:1.4rem;}
+  .title{position:relative;z-index:2;}
+  .title h1{
+    font-family:'Palatino Linotype',Palatino,Georgia,serif;font-style:italic;font-weight:bold;
+    font-size:clamp(2.4rem,6.5vw,4rem);color:var(--navy);line-height:0.95;
+    text-shadow:1px 1px 0 #fff,2px 2px 4px rgba(0,0,0,.2);
   }
-  h1{
-    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
-    font-size:clamp(2.6rem,8vw,4.6rem);font-weight:800;line-height:0.98;letter-spacing:-0.025em;
-  }
-  h1 .the{
-    display:block;font-size:0.32em;letter-spacing:0.32em;text-transform:uppercase;
-    font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;color:var(--muted);margin-bottom:6px;
-  }
-  h1 .word{
-    background:linear-gradient(105deg,var(--soc) 0%,var(--accent) 50%,var(--eng) 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .intro{font-size:1.08rem;color:var(--muted);margin-top:20px;max-width:58ch;}
-  .intro b{color:var(--ink);font-weight:700;}
-
-  .subject{margin-top:clamp(38px,5vw,58px);}
-  .subject-head{display:flex;align-items:baseline;gap:13px;margin-bottom:22px;}
-  .dot{width:16px;height:16px;border-radius:50%;flex:none;align-self:center;}
-  .subject.soc .dot{background:var(--soc);}
-  .subject.eng .dot{background:var(--eng);}
-  .subject-head h2{font-size:1.45rem;font-weight:800;letter-spacing:-0.01em;}
-  .subject-head .count{font-size:0.8rem;color:var(--muted);font-weight:600;}
-
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:20px;}
-
-  .card{
-    display:block;text-decoration:none;color:inherit;background:var(--card);
-    border-radius:18px;padding:26px;position:relative;overflow:hidden;
-    border:1px solid rgba(0,0,0,.05);
-    box-shadow:0 2px 0 rgba(0,0,0,.03),0 14px 34px -18px rgba(0,0,0,.4);
-    transition:transform .15s ease,box-shadow .15s ease;
-  }
-  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;}
-  .subject.soc .card::before{background:var(--soc);}
-  .subject.eng .card::before{background:var(--eng);}
-  .card:hover{transform:translateY(-5px);box-shadow:0 4px 0 rgba(0,0,0,.04),0 26px 46px -20px rgba(0,0,0,.5);}
-  .card:focus-visible{outline:3px solid var(--ink);outline-offset:3px;}
-
-  .tag{
-    display:inline-block;font-size:0.64rem;letter-spacing:0.12em;text-transform:uppercase;
-    font-weight:800;padding:4px 11px;border-radius:100px;margin-bottom:15px;
-  }
-  .subject.soc .tag{background:#fbe6c4;color:var(--soc-deep);}
-  .subject.eng .tag{background:#d8e6f5;color:var(--eng-deep);}
-
-  .card h3{
-    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
-    font-size:1.35rem;font-weight:800;line-height:1.1;margin-bottom:9px;
-  }
-  .card p{font-size:0.9rem;color:var(--muted);margin-bottom:14px;}
-  .skill{display:block;font-size:0.72rem;color:var(--muted);margin-bottom:16px;font-style:italic;}
-  .play{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:0.85rem;}
-  .subject.soc .play{color:var(--soc-deep);}
-  .subject.eng .play{color:var(--eng-deep);}
-  .play .arrow{transition:transform .15s ease;}
-  .card:hover .play .arrow{transform:translateX(5px);}
-  .recnote{
-    display:inline-block;margin-top:14px;font-size:0.7rem;color:var(--muted);
-    background:#f1ece0;padding:3px 9px;border-radius:6px;
+  .title .tag{
+    font-style:italic;font-weight:bold;color:var(--green);font-size:clamp(1rem,2.6vw,1.5rem);
+    text-shadow:1px 1px 0 rgba(255,255,255,.6);margin-top:4px;
   }
 
-  .card.soon{background:transparent;border:2px dashed rgba(0,0,0,.18);box-shadow:none;cursor:default;}
-  .card.soon::before{display:none;}
-  .card.soon:hover{transform:none;box-shadow:none;}
-  .card.soon h3{color:var(--muted);}
-  .card.soon .play{color:var(--muted);}
+  /* ---------- body grid ---------- */
+  .body{display:grid;grid-template-columns:200px 1fr 220px;gap:0;}
+  @media(max-width:900px){.body{grid-template-columns:1fr;}}
 
-  footer{
-    margin-top:clamp(50px,7vw,84px);padding-top:24px;border-top:1px solid rgba(0,0,0,.1);
-    font-size:0.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;
-  }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+  /* left menu */
+  .sidebar{background:var(--cream-d);border-right:2px solid var(--rule);padding:14px;}
+  .sidebar.right{border-right:none;border-left:2px solid var(--rule);}
+  .menu-title{font-variant:small-caps;letter-spacing:.1em;color:var(--navy);font-weight:bold;font-size:0.95rem;
+    text-align:center;border-bottom:2px solid var(--rule);padding-bottom:6px;margin-bottom:8px;}
+  .menu a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--navy);font-weight:bold;font-size:0.92rem;
+    padding:7px 6px;border-bottom:1px dotted var(--rule);}
+  .menu a:hover{background:#fff7e0;color:var(--gold-d);}
+  .menu a .b{width:16px;text-align:center;}
+  .badge-netscape{margin-top:14px;background:#fff;border:2px solid;border-color:#fff var(--rule) var(--rule) #fff;
+    padding:8px;font-size:0.62rem;color:#333;text-align:center;}
+  .badge-netscape b{display:block;font-size:0.8rem;color:var(--navy);}
+
+  /* center content */
+  .main{padding:clamp(14px,2.5vw,24px);background:var(--parch);}
+  .welcome-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;}
+  .welcome-bar .col{color:var(--gold);}
+  .welcome-bar h2{font-size:1.15rem;color:var(--gold);font-weight:bold;}
+  .welcome-bar .sub{margin-left:auto;font-style:italic;font-size:0.82rem;color:#d7e0f5;}
+
+  .welcome{display:flex;gap:16px;padding:16px;background:var(--cream);border:2px solid var(--rule);border-top:none;margin-bottom:22px;align-items:flex-start;}
+  .dropcap{width:84px;height:84px;flex:none;}
+  .welcome p{font-size:0.98rem;line-height:1.5;}
+  .welcome p a{color:var(--navy);font-weight:bold;}
+
+  .chapter-bar{background:linear-gradient(90deg,var(--green),#1c5230);color:#fff;padding:7px 14px;display:flex;align-items:center;gap:10px;font-variant:small-caps;letter-spacing:.08em;font-weight:bold;}
+  .chapter-bar .num{background:var(--gold);color:var(--navy);width:24px;height:24px;border:2px solid #fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex:none;}
+  .chapter-bar .right{margin-left:auto;font-size:0.72rem;color:#dff0e4;font-variant:normal;font-style:italic;}
+
+  .entries{border:2px solid var(--rule);border-top:none;background:var(--cream);padding:6px;margin-bottom:22px;}
+  .entry{display:flex;gap:14px;align-items:center;text-decoration:none;color:var(--ink);padding:12px;border:2px solid transparent;}
+  .entry+.entry{border-top:1px dotted var(--rule);}
+  .entry:hover{background:#fff7e0;border-color:#fff var(--rule) var(--rule) #fff;}
+  .entry img.ic{width:56px;height:56px;flex:none;object-fit:contain;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));}
+  .entry .tx h3{font-size:1.1rem;color:var(--navy);font-weight:bold;margin-bottom:2px;}
+  .entry .tx p{font-size:0.82rem;line-height:1.4;color:#3a3520;}
+  .entry .tx .skill{font-size:0.72rem;color:var(--green);font-style:italic;display:inline-block;margin-top:3px;}
+  .entry .tx .rec{display:inline-block;font-size:0.66rem;color:#7a5500;background:#fff1c4;border:1px solid var(--gold-d);padding:1px 6px;margin-top:4px;}
+  .entry .open{margin-left:auto;flex:none;align-self:center;font-size:0.74rem;font-weight:bold;color:var(--navy);
+    background:var(--cream-d);padding:7px 13px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;font-variant:small-caps;letter-spacing:.05em;}
+  .entry:hover .open{background:var(--gold);}
+
+  /* right sidebar boxes */
+  .sbox{margin-bottom:16px;border:2px solid var(--rule);background:var(--cream);}
+  .sbox-bar{padding:5px 10px;color:#fff;font-variant:small-caps;font-weight:bold;letter-spacing:.06em;font-size:0.85rem;}
+  .sbox.spot .sbox-bar{background:linear-gradient(90deg,var(--green),#1c5230);}
+  .sbox.links .sbox-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));}
+  .sbox.hist .sbox-bar{background:linear-gradient(90deg,var(--gold-d),#7a5500);}
+  .sbox .in{padding:10px;font-size:0.82rem;line-height:1.45;}
+  .sbox .in a{color:var(--navy);font-weight:bold;text-decoration:none;display:block;padding:3px 0;}
+  .sbox .in a:hover{color:var(--gold-d);}
+  .sbox .in .feat{color:var(--navy);font-weight:bold;margin-bottom:4px;}
+
+  footer{background:linear-gradient(90deg,var(--navy-d),var(--navy));color:#cdd8f0;text-align:center;
+    padding:10px;font-size:0.78rem;border-top:3px solid var(--gold);}
+  footer .links{color:#fff;}
+  footer .links span{color:var(--gold);}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="page">
 
-  <div class="brandbar">
-    <img class="mark" src="thinkery-logo.png" alt="The Thinkery logo">
-    <div class="brandname">The <span>Thinkery</span></div>
+  <div class="virtue">
+    <div class="m">Knowledge <span>◇</span> Virtue <span>◇</span> Progress</div>
+    <div class="d">A Resource for Thinking Classrooms</div>
   </div>
 
-  <header>
-    <span class="kicker">Interactive thinking activities</span>
-    <h1><span class="the">Welcome to the</span><span class="word">Thinkery</span></h1>
-    <p class="intro">A growing collection of quick, hands-on activities that build <b>thinking skills</b> — sorting, classifying, ranking, and connecting ideas, then defending your choices out loud. The interesting learning lives in the grey areas. <b>Pick a room and start thinking.</b></p>
-  </header>
-
-  <section class="subject soc">
-    <div class="subject-head">
-      <span class="dot"></span>
-      <h2>Sociology</h2>
-      <span class="count">Deviance &amp; social norms</span>
+  <div class="masthead">
+    <div class="crest">
+      <span class="torch">🔥</span>
+      <span class="motto">AD LUCEM</span>
     </div>
-    <div class="grid">
-
-      <a class="card" href="sociologygame.html">
-        <span class="tag">Deviance</span>
-        <h3>Deviant or Illegal?</h3>
-        <p>Sort behaviours into "deviant but not illegal" and "illegal but not deviant" — and wrestle with the cases that are both, or neither.</p>
-        <span class="skill">Thinking skill: classifying &amp; distinguishing</span>
-        <span class="play">Play <span class="arrow">→</span></span>
-      </a>
-
-      <a class="card" href="folkways.html">
-        <span class="tag">Norms</span>
-        <h3>Folkways or Mores?</h3>
-        <p>Decide which everyday expectations are minor customs and which carry real moral weight — and notice how the line shifts across cultures.</p>
-        <span class="skill">Thinking skill: judging moral weight</span>
-        <span class="play">Play <span class="arrow">→</span></span>
-      </a>
-
-      <a class="card" href="diamond_ranking.html">
-        <span class="tag">Deviance</span>
-        <h3>How Serious Is It?</h3>
-        <p>Rank nine deviant acts from most to least serious in a forced diamond — then share your arrangement to the class screen and defend your order.</p>
-        <span class="skill">Thinking skill: prioritising &amp; justifying</span>
-        <span class="play">Play <span class="arrow">→</span></span>
-      </a>
-
+    <div class="title">
+      <h1>The Thinkery</h1>
+      <div class="tag">Where Thinking Takes You Further.</div>
     </div>
-  </section>
+  </div>
 
-  <section class="subject eng">
-    <div class="subject-head">
-      <span class="dot"></span>
-      <h2>English</h2>
-      <span class="count">Rhetoric &amp; persuasion</span>
-    </div>
-    <div class="grid">
+  <div class="body">
 
-      <a class="card" href="ethos_pathos_logos.html">
-        <span class="tag">Rhetoric</span>
-        <h3>Ethos, Pathos, Logos</h3>
-        <p>Classify persuasive examples by their primary appeal — credibility, emotion, or logic — then unpack the ones that blend all three.</p>
-        <span class="skill">Thinking skill: identifying persuasive technique</span>
-        <span class="play">Play <span class="arrow">→</span></span>
-        <span class="recnote">Records results for the teacher</span>
-      </a>
+    <!-- LEFT MENU -->
+    <nav class="sidebar">
+      <div class="menu-title">Main Menu</div>
+      <div class="menu">
+        <a href="#"><span class="b">🏛️</span> Home</a>
+        <a href="#sociology"><span class="b">📖</span> Sociology</a>
+        <a href="#english"><span class="b">✒️</span> English</a>
+        <a href="#"><span class="b">🔍</span> About</a>
+        <a href="#"><span class="b">🗺️</span> Site Map</a>
+        <a href="#"><span class="b">✉️</span> Contact</a>
+      </div>
+      <div class="badge-netscape">
+        Best explored with<br><b>An Open Mind</b><br>version 2.0 +
+      </div>
+    </nav>
 
-    </div>
-  </section>
+    <!-- CENTER -->
+    <main class="main">
+      <div class="welcome-bar">
+        <span class="col">▌</span>
+        <h2>Welcome to The Thinkery!</h2>
+        <span class="sub">Your gateway to better thinking.</span>
+      </div>
+      <div class="welcome">
+        <img class="dropcap" src="icon_alpha.png" alt="A">
+        <p> treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas — and then defend your choices. The interesting learning lives in the <b>grey areas</b>. Choose a chapter below and open an activity to begin. <a href="#sociology">Explore the subjects ▸</a></p>
+      </div>
+
+      <!-- CHAPTER I -->
+      <div id="sociology"></div>
+      <div class="chapter-bar"><span class="num">I</span> Sociology <span class="right">Deviance &amp; Social Norms</span></div>
+      <div class="entries">
+
+        <a class="entry" href="sociologygame.html">
+          <img class="ic" src="icon_globe.png" alt="">
+          <span class="tx">
+            <h3>Deviant or Illegal?</h3>
+            <p>Sort behaviours into "deviant but not illegal" and "illegal but not deviant" — and wrestle with the cases that are both, or neither.</p>
+            <span class="skill">Thinking skill: classifying &amp; distinguishing</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+        <a class="entry" href="folkways.html">
+          <img class="ic" src="icon_column.png" alt="">
+          <span class="tx">
+            <h3>Folkways or Mores?</h3>
+            <p>Decide which everyday expectations are minor customs and which carry real moral weight — and notice how the line shifts across cultures.</p>
+            <span class="skill">Thinking skill: judging moral weight</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+        <a class="entry" href="diamond_ranking.html">
+          <img class="ic" src="icon_chalkboard.png" alt="">
+          <span class="tx">
+            <h3>How Serious Is It?</h3>
+            <p>Rank nine deviant acts from most to least serious in a forced diamond — then share your arrangement to the class screen and defend your order.</p>
+            <span class="skill">Thinking skill: prioritising &amp; justifying</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+        <a class="entry" href="continuum_gemeinschaft.html">
+          <img class="ic" src="icon_palette.png" alt="">
+          <span class="tx">
+            <h3>Community to Society</h3>
+            <p>Place relationships and institutions along the Gemeinschaft–Gesellschaft line, then mark where modern society sits — and share it to the class screen.</p>
+            <span class="skill">Thinking skill: judging degree &amp; transition</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+      </div>
+
+      <!-- CHAPTER II -->
+      <div id="english"></div>
+      <div class="chapter-bar"><span class="num">II</span> English <span class="right">Rhetoric &amp; Persuasion</span></div>
+      <div class="entries">
+
+        <a class="entry" href="ethos_pathos_logos.html">
+          <img class="ic" src="icon_computer.png" alt="">
+          <span class="tx">
+            <h3>Ethos, Pathos, Logos</h3>
+            <p>Classify persuasive examples by their primary appeal — credibility, emotion, or logic — then unpack the ones that blend all three.</p>
+            <span class="skill">Thinking skill: identifying persuasive technique</span>
+            <span class="rec">✎ Records results for the teacher</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="sidebar right">
+      <div class="sbox spot">
+        <div class="sbox-bar">★ Spotlight</div>
+        <div class="in">
+          <div class="feat">New this week:</div>
+          Community to Society — explore Tönnies' great continuum and see where modern life really sits.
+          <a href="continuum_gemeinschaft.html">Take a look ▸</a>
+        </div>
+      </div>
+      <div class="sbox links">
+        <div class="sbox-bar">Quick Links</div>
+        <div class="in">
+          <a href="sociologygame.html">▸ Deviant or Illegal?</a>
+          <a href="folkways.html">▸ Folkways or Mores?</a>
+          <a href="diamond_ranking.html">▸ How Serious Is It?</a>
+          <a href="ethos_pathos_logos.html">▸ Ethos, Pathos, Logos</a>
+        </div>
+      </div>
+      <div class="sbox hist">
+        <div class="sbox-bar">Did You Know?</div>
+        <div class="in">
+          Tönnies coined <i>Gemeinschaft</i> and <i>Gesellschaft</i> in 1887 — and sociologists have argued about the line between them ever since.
+        </div>
+      </div>
+    </aside>
+
+  </div>
 
   <footer>
-    <span>The Thinkery — a free teaching resource. Runs in the browser; no logins, no installs.</span>
-    <span>Built for the classroom. Other teachers welcome.</span>
+    <div class="links">Home <span>|</span> Site Map <span>|</span> Subjects <span>|</span> About <span>|</span> Contact</div>
+    <div style="margin-top:5px;">The Thinkery — a free teaching resource. Other teachers welcome. ★</div>
   </footer>
+
 </div>
 </body>
 </html>
