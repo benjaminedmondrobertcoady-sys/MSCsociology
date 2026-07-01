@@ -179,9 +179,6 @@
         <a href="#"><span class="b">🏛️</span> Home</a>
         <a href="#sociology"><span class="b">📖</span> Sociology</a>
         <a href="#english"><span class="b">✒️</span> English</a>
-        <a href="#"><span class="b">🔍</span> About</a>
-        <a href="#"><span class="b">🗺️</span> Site Map</a>
-        <a href="#"><span class="b">✉️</span> Contact</a>
       </div>
 
       <!-- SPOTLIGHT: single rotating box, cycles the 32-card pool -->
@@ -394,15 +391,11 @@ function eqRender(){
     }
 
     var act = document.getElementById('wAct');
-    if (e.to){
-      act.textContent = e.act || 'Explore \u25b8';
-      act.setAttribute('href', e.to);
-      act.onclick = null;
-    } else {
-      act.textContent = e.act || 'Another \u25c7';
-      act.removeAttribute('href');
-      act.onclick = function(ev){ ev.preventDefault(); eqRender(); };
-    }
+    /* Spotlight is a browse-only toggle: every card re-rolls, none funnel.
+       Card `to:` data is kept for a future "Explore" button beneath this one. */
+    act.textContent = 'Another \u25c7';
+    act.removeAttribute('href');
+    act.onclick = function(ev){ ev.preventDefault(); eqRender(); };
     box.style.opacity = '1';
   }, 120);
 }
