@@ -1,287 +1,302 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduQuest — Where Thinking Takes You Further</title>
-<style>
-  /* ============================================================
-     THE THINKERY — "EduQuest '96" Utopian Scholastic style
-     Icons (icon_*.png) live alongside this file in the repo.
-     TO ADD AN ACTIVITY: copy an <a class="entry"> block in the
-     right chapter; change href, title, blurb, and icon src.
-     ============================================================ */
-  :root{
-    --navy:#1b2f7a;
-    --navy-d:#13235e;
-    --green:#256b3f;
-    --gold:#d8a93a;
-    --gold-d:#9c7415;
-    --cream:#f3ead0;
-    --cream-d:#e7dab4;
-    --parch:#f7efd8;
-    --ink:#2a2410;
-    --rule:#b9a878;
-    --sky1:#bcd6f0;
-    --sky2:#dcebf8;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    font-family:Georgia,'Times New Roman',serif;color:var(--ink);
-    background:#0d1838;
-    background-image:
-      repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 3px, transparent 3px 6px),
-      linear-gradient(180deg,#16275e 0,#0d1838 100%);
-    padding:clamp(8px,2vw,22px);min-height:100vh;
-  }
-  .page{
-    max-width:1080px;margin:0 auto;background:var(--cream);
-    border:2px solid var(--gold-d);box-shadow:0 0 0 2px var(--navy-d),0 12px 40px rgba(0,0,0,.6);
-  }
-
-  /* ---------- top virtue strip ---------- */
-  .virtue{
-    background:linear-gradient(90deg,var(--navy-d),var(--navy));color:var(--gold);
-    font-size:0.78rem;letter-spacing:.08em;padding:5px 14px;display:flex;justify-content:space-between;align-items:center;
-    border-bottom:2px solid var(--gold-d);
-  }
-  .virtue .m span{color:#fff;}
-  .virtue .d{color:#cdd8f0;font-style:italic;}
-
-  /* ---------- masthead ---------- */
-  .masthead{
-    position:relative;overflow:hidden;
-    background:linear-gradient(180deg,var(--sky2) 0%,var(--sky1) 70%,#cfe0d6 100%);
-    border-bottom:4px solid var(--gold);
-    padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px);
-    display:flex;align-items:center;gap:20px;min-height:150px;
-  }
-  /* faint marble-city skyline drawn in CSS on the right */
-  .masthead::after{
-    content:"";position:absolute;right:0;top:0;bottom:0;width:46%;pointer-events:none;opacity:.5;
-    background:
-      linear-gradient(180deg,transparent 30%, rgba(255,255,255,.5) 100%),
-      repeating-linear-gradient(90deg, transparent 0 26px, rgba(255,255,255,.55) 26px 30px, transparent 30px 34px),
-      repeating-linear-gradient(90deg, rgba(120,140,180,.18) 0 60px, transparent 60px 120px);
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);
-    mask-image:linear-gradient(90deg,transparent,#000 40%);
-  }
-  .crest{
-    width:118px;height:118px;flex:none;position:relative;z-index:2;object-fit:contain;
-    filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));
-  }
-  .laurel{position:absolute;z-index:2;color:var(--gold);font-size:1.4rem;}
-  .title{position:relative;z-index:2;}
-  .title h1{
-    font-family:'Palatino Linotype',Palatino,Georgia,serif;font-style:italic;font-weight:bold;
-    font-size:clamp(2.4rem,6.5vw,4rem);color:var(--navy);line-height:0.95;
-    text-shadow:1px 1px 0 #fff,2px 2px 4px rgba(0,0,0,.2);
-  }
-  .title .tag{
-    font-style:italic;font-weight:bold;color:var(--green);font-size:clamp(1rem,2.6vw,1.5rem);
-    text-shadow:1px 1px 0 rgba(255,255,255,.6);margin-top:4px;
-  }
-
-  /* ---------- body grid ---------- */
-  .body{display:grid;grid-template-columns:200px 1fr 220px;gap:0;}
-  @media(max-width:900px){.body{grid-template-columns:1fr;}}
-
-  /* left menu */
-  .sidebar{background:var(--cream-d);border-right:2px solid var(--rule);padding:14px;}
-  .sidebar.right{border-right:none;border-left:2px solid var(--rule);}
-  .menu-title{font-variant:small-caps;letter-spacing:.1em;color:var(--navy);font-weight:bold;font-size:0.95rem;
-    text-align:center;border-bottom:2px solid var(--rule);padding-bottom:6px;margin-bottom:8px;}
-  .menu a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--navy);font-weight:bold;font-size:0.92rem;
-    padding:7px 6px;border-bottom:1px dotted var(--rule);}
-  .menu a:hover{background:#fff7e0;color:var(--gold-d);}
-  .menu a .b{width:16px;text-align:center;}
-  .badge-netscape{margin-top:14px;background:#fff;border:2px solid;border-color:#fff var(--rule) var(--rule) #fff;
-    padding:8px;font-size:0.62rem;color:#333;text-align:center;}
-  .badge-netscape b{display:block;font-size:0.8rem;color:var(--navy);}
-
-  /* center content */
-  .main{padding:clamp(14px,2.5vw,24px);background:var(--parch);}
-  .welcome-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;}
-  .welcome-bar .col{color:var(--gold);}
-  .welcome-bar h2{font-size:1.15rem;color:var(--gold);font-weight:bold;}
-  .welcome-bar .sub{margin-left:auto;font-style:italic;font-size:0.82rem;color:#d7e0f5;}
-
-  .welcome{display:flex;gap:16px;padding:16px;background:var(--cream);border:2px solid var(--rule);border-top:none;margin-bottom:22px;align-items:flex-start;}
-  .dropcap{width:84px;height:84px;flex:none;}
-  .welcome p{font-size:0.98rem;line-height:1.5;}
-  .welcome p a{color:var(--navy);font-weight:bold;}
-
-  .chapter-bar{background:linear-gradient(90deg,var(--green),#1c5230);color:#fff;padding:7px 14px;display:flex;align-items:center;gap:10px;font-variant:small-caps;letter-spacing:.08em;font-weight:bold;}
-  .chapter-bar .num{background:var(--gold);color:var(--navy);width:24px;height:24px;border:2px solid #fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex:none;}
-  .chapter-bar .right{margin-left:auto;font-size:0.72rem;color:#dff0e4;font-variant:normal;font-style:italic;}
-
-  .entries{border:2px solid var(--rule);border-top:none;background:var(--cream);padding:6px;margin-bottom:22px;}
-  .entry{display:flex;gap:14px;align-items:center;text-decoration:none;color:var(--ink);padding:12px;border:2px solid transparent;}
-  .entry+.entry{border-top:1px dotted var(--rule);}
-  .entry:hover{background:#fff7e0;border-color:#fff var(--rule) var(--rule) #fff;}
-  .entry img.ic{width:56px;height:56px;flex:none;object-fit:contain;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));}
-  .entry .tx h3{font-size:1.1rem;color:var(--navy);font-weight:bold;margin-bottom:2px;}
-  .entry .tx p{font-size:0.82rem;line-height:1.4;color:#3a3520;}
-  .entry .tx .skill{font-size:0.72rem;color:var(--green);font-style:italic;display:inline-block;margin-top:3px;}
-  .entry .tx .rec{display:inline-block;font-size:0.66rem;color:#7a5500;background:#fff1c4;border:1px solid var(--gold-d);padding:1px 6px;margin-top:4px;}
-  .entry .open{margin-left:auto;flex:none;align-self:center;font-size:0.74rem;font-weight:bold;color:var(--navy);
-    background:var(--cream-d);padding:7px 13px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;font-variant:small-caps;letter-spacing:.05em;}
-  .entry:hover .open{background:var(--gold);}
-
-  /* right sidebar boxes */
-  .sbox{margin-bottom:16px;border:2px solid var(--rule);background:var(--cream);}
-  .sbox-bar{padding:5px 10px;color:#fff;font-variant:small-caps;font-weight:bold;letter-spacing:.06em;font-size:0.85rem;}
-  .sbox.spot .sbox-bar{background:linear-gradient(90deg,var(--green),#1c5230);}
-  .sbox.links .sbox-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));}
-  .sbox.hist .sbox-bar{background:linear-gradient(90deg,var(--gold-d),#7a5500);}
-  .sbox .in{padding:10px;font-size:0.82rem;line-height:1.45;}
-  .sbox .in a{color:var(--navy);font-weight:bold;text-decoration:none;display:block;padding:3px 0;}
-  .sbox .in a:hover{color:var(--gold-d);}
-  .sbox .in .feat{color:var(--navy);font-weight:bold;margin-bottom:4px;}
-
-  footer{background:linear-gradient(90deg,var(--navy-d),var(--navy));color:#cdd8f0;text-align:center;
-    padding:10px;font-size:0.78rem;border-top:3px solid var(--gold);}
-  footer .links{color:#fff;}
-  footer .links span{color:var(--gold);}
-</style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.1">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
 </head>
 <body>
-<div class="page">
-
-  <div class="virtue">
-    <div class="m">Knowledge <span>◇</span> Virtue <span>◇</span> Progress</div>
-    <div class="d">A Resource for Thinking Classrooms</div>
-  </div>
-
-  <div class="masthead">
-    <img class="crest" src="eduquest-logo.png" alt="EduQuest toucan logo">
-    <div class="title">
-      <h1>EduQuest</h1>
-      <div class="tag">Where Thinking Takes You Further.</div>
-    </div>
-  </div>
-
-  <div class="body">
-
-    <!-- LEFT MENU -->
-    <nav class="sidebar">
-      <div class="menu-title">Main Menu</div>
-      <div class="menu">
-        <a href="#"><span class="b">🏛️</span> Home</a>
-        <a href="#sociology"><span class="b">📖</span> Sociology</a>
-        <a href="#english"><span class="b">✒️</span> English</a>
-        <a href="#"><span class="b">🔍</span> About</a>
-        <a href="#"><span class="b">🗺️</span> Site Map</a>
-        <a href="#"><span class="b">✉️</span> Contact</a>
-      </div>
-      <div class="badge-netscape">
-        Best explored with<br><b>An Open Mind</b><br>version 2.0 +
-      </div>
-    </nav>
-
-    <!-- CENTER -->
-    <main class="main">
-      <div class="welcome-bar">
-        <span class="col">▌</span>
-        <h2>Welcome to EduQuest!</h2>
-        <span class="sub">Your gateway to better thinking.</span>
-      </div>
-      <div class="welcome">
-        <img class="dropcap" src="icon_alpha.png" alt="A">
-        <p> treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas — and then defend your choices. The interesting learning lives in the <b>grey areas</b>. Choose a chapter below and open an activity to begin. <a href="#sociology">Explore the subjects ▸</a></p>
-      </div>
-
-      <!-- CHAPTER I -->
-      <div id="sociology"></div>
-      <div class="chapter-bar"><span class="num">I</span> Sociology <span class="right">Deviance &amp; Social Norms</span></div>
-      <div class="entries">
-
-        <a class="entry" href="sociologygame.html">
-          <img class="ic" src="icon_globe.png" alt="">
-          <span class="tx">
-            <h3>Deviant or Illegal?</h3>
-            <p>Sort behaviours into "deviant but not illegal" and "illegal but not deviant" — and wrestle with the cases that are both, or neither.</p>
-            <span class="skill">Thinking skill: classifying &amp; distinguishing</span>
-          </span>
-          <span class="open">Open ▸</span>
-        </a>
-
-        <a class="entry" href="folkways.html">
-          <img class="ic" src="icon_column.png" alt="">
-          <span class="tx">
-            <h3>Folkways or Mores?</h3>
-            <p>Decide which everyday expectations are minor customs and which carry real moral weight — and notice how the line shifts across cultures.</p>
-            <span class="skill">Thinking skill: judging moral weight</span>
-          </span>
-          <span class="open">Open ▸</span>
-        </a>
-
-        <a class="entry" href="diamond_ranking.html">
-          <img class="ic" src="icon_chalkboard.png" alt="">
-          <span class="tx">
-            <h3>How Serious Is It?</h3>
-            <p>Rank nine deviant acts from most to least serious in a forced diamond — then share your arrangement to the class screen and defend your order.</p>
-            <span class="skill">Thinking skill: prioritising &amp; justifying</span>
-          </span>
-          <span class="open">Open ▸</span>
-        </a>
-
-      </div>
-
-      <!-- CHAPTER II -->
-      <div id="english"></div>
-      <div class="chapter-bar"><span class="num">II</span> English <span class="right">Rhetoric &amp; Persuasion</span></div>
-      <div class="entries">
-
-        <a class="entry" href="ethos_pathos_logos.html">
-          <img class="ic" src="icon_computer.png" alt="">
-          <span class="tx">
-            <h3>Ethos, Pathos, Logos</h3>
-            <p>Classify persuasive examples by their primary appeal — credibility, emotion, or logic — then unpack the ones that blend all three.</p>
-            <span class="skill">Thinking skill: identifying persuasive technique</span>
-            <span class="rec">✎ Records results for the teacher</span>
-          </span>
-          <span class="open">Open ▸</span>
-        </a>
-
-      </div>
-    </main>
-
-    <!-- RIGHT SIDEBAR -->
-    <aside class="sidebar right">
-      <div class="sbox spot">
-        <div class="sbox-bar">★ Spotlight</div>
-        <div class="in">
-          <div class="feat">New this week:</div>
-          How Serious Is It? — rank deviant acts in a forced diamond and defend your order to the class.
-          <a href="diamond_ranking.html">Take a look ▸</a>
-        </div>
-      </div>
-      <div class="sbox links">
-        <div class="sbox-bar">Quick Links</div>
-        <div class="in">
-          <a href="sociologygame.html">▸ Deviant or Illegal?</a>
-          <a href="folkways.html">▸ Folkways or Mores?</a>
-          <a href="diamond_ranking.html">▸ How Serious Is It?</a>
-          <a href="ethos_pathos_logos.html">▸ Ethos, Pathos, Logos</a>
-        </div>
-      </div>
-      <div class="sbox hist">
-        <div class="sbox-bar">Did You Know?</div>
-        <div class="in">
-          The line between what is "deviant" and what is "illegal" shifts across time and cultures — which is exactly what makes it worth arguing about.
-        </div>
-      </div>
-    </aside>
-
-  </div>
-
-  <footer>
-    <div class="links">Home <span>|</span> Site Map <span>|</span> Subjects <span>|</span> About <span>|</span> Contact</div>
-    <div style="margin-top:5px;">EduQuest — a free teaching resource. Other teachers welcome. ★</div>
-  </footer>
-
-</div>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;EduQuest — Where Thinking Takes You Further&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* ============================================================</p>
+<p class="p1"><span class="Apple-converted-space">     </span>THE THINKERY — "EduQuest '96" Utopian Scholastic style</p>
+<p class="p1"><span class="Apple-converted-space">     </span>Icons (icon_*.png) live alongside this file in the repo.</p>
+<p class="p1"><span class="Apple-converted-space">     </span>TO ADD AN ACTIVITY: copy an &lt;a class="entry"&gt; block in the</p>
+<p class="p1"><span class="Apple-converted-space">     </span>right chapter; change href, title, blurb, and icon src.</p>
+<p class="p1"><span class="Apple-converted-space">     </span>============================================================ */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>:root{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--navy:#1b2f7a;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--navy-d:#13235e;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--green:#256b3f;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--gold:#d8a93a;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--gold-d:#9c7415;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--cream:#f3ead0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--cream-d:#e7dab4;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--parch:#f7efd8;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--ink:#2a2410;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--rule:#b9a878;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--sky1:#bcd6f0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--sky2:#dcebf8;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>*{box-sizing:border-box;margin:0;padding:0;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>body{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family:Georgia,'Times New Roman',serif;color:var(--ink);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background:#0d1838;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background-image:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 3px, transparent 3px 6px),</p>
+<p class="p1"><span class="Apple-converted-space">      </span>linear-gradient(180deg,#16275e 0,#0d1838 100%);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding:clamp(8px,2vw,22px);min-height:100vh;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.page{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>max-width:1080px;margin:0 auto;background:var(--cream);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border:2px solid var(--gold-d);box-shadow:0 0 0 2px var(--navy-d),0 12px 40px rgba(0,0,0,.6);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* ---------- top virtue strip ---------- */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.virtue{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background:linear-gradient(90deg,var(--navy-d),var(--navy));color:var(--gold);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size:0.78rem;letter-spacing:.08em;padding:5px 14px;display:flex;justify-content:space-between;align-items:center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-bottom:2px solid var(--gold-d);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.virtue .m span{color:#fff;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.virtue .d{color:#cdd8f0;font-style:italic;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* ---------- masthead ---------- */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.masthead{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>position:relative;overflow:hidden;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background:linear-gradient(180deg,var(--sky2) 0%,var(--sky1) 70%,#cfe0d6 100%);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-bottom:4px solid var(--gold);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display:flex;align-items:center;gap:20px;min-height:150px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* faint marble-city skyline drawn in CSS on the right */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.masthead::after{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>content:"";position:absolute;right:0;top:0;bottom:0;width:46%;pointer-events:none;opacity:.5;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background:</p>
+<p class="p1"><span class="Apple-converted-space">      </span>linear-gradient(180deg,transparent 30%, rgba(255,255,255,.5) 100%),</p>
+<p class="p1"><span class="Apple-converted-space">      </span>repeating-linear-gradient(90deg, transparent 0 26px, rgba(255,255,255,.55) 26px 30px, transparent 30px 34px),</p>
+<p class="p1"><span class="Apple-converted-space">      </span>repeating-linear-gradient(90deg, rgba(120,140,180,.18) 0 60px, transparent 60px 120px);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>-webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>mask-image:linear-gradient(90deg,transparent,#000 40%);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.crest{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width:118px;height:118px;flex:none;position:relative;z-index:2;object-fit:contain;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.laurel{position:absolute;z-index:2;color:var(--gold);font-size:1.4rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.title{position:relative;z-index:2;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.title h1{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family:'Palatino Linotype',Palatino,Georgia,serif;font-style:italic;font-weight:bold;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size:clamp(2.4rem,6.5vw,4rem);color:var(--navy);line-height:0.95;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-shadow:1px 1px 0 #fff,2px 2px 4px rgba(0,0,0,.2);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.title .tag{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-style:italic;font-weight:bold;color:var(--green);font-size:clamp(1rem,2.6vw,1.5rem);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-shadow:1px 1px 0 rgba(255,255,255,.6);margin-top:4px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* ---------- body grid ---------- */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.body{display:grid;grid-template-columns:200px 1fr 220px;gap:0;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@media(max-width:900px){.body{grid-template-columns:1fr;}}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* left menu */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sidebar{background:var(--cream-d);border-right:2px solid var(--rule);padding:14px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sidebar.right{border-right:none;border-left:2px solid var(--rule);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.menu-title{font-variant:small-caps;letter-spacing:.1em;color:var(--navy);font-weight:bold;font-size:0.95rem;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-align:center;border-bottom:2px solid var(--rule);padding-bottom:6px;margin-bottom:8px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.menu a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--navy);font-weight:bold;font-size:0.92rem;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding:7px 6px;border-bottom:1px dotted var(--rule);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.menu a:hover{background:#fff7e0;color:var(--gold-d);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.menu a .b{width:16px;text-align:center;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.badge-netscape{margin-top:14px;background:#fff;border:2px solid;border-color:#fff var(--rule) var(--rule) #fff;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding:8px;font-size:0.62rem;color:#333;text-align:center;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.badge-netscape b{display:block;font-size:0.8rem;color:var(--navy);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* center content */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.main{padding:clamp(14px,2.5vw,24px);background:var(--parch);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar .col{color:var(--gold);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar h2{font-size:1.15rem;color:var(--gold);font-weight:bold;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar .sub{margin-left:auto;font-style:italic;font-size:0.82rem;color:#d7e0f5;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.welcome{display:flex;gap:16px;padding:16px;background:var(--cream);border:2px solid var(--rule);border-top:none;margin-bottom:22px;align-items:flex-start;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.dropcap{width:84px;height:84px;flex:none;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.welcome p{font-size:0.98rem;line-height:1.5;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.welcome p a{color:var(--navy);font-weight:bold;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.chapter-bar{background:linear-gradient(90deg,var(--green),#1c5230);color:#fff;padding:7px 14px;display:flex;align-items:center;gap:10px;font-variant:small-caps;letter-spacing:.08em;font-weight:bold;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.chapter-bar .num{background:var(--gold);color:var(--navy);width:24px;height:24px;border:2px solid #fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex:none;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.chapter-bar .right{margin-left:auto;font-size:0.72rem;color:#dff0e4;font-variant:normal;font-style:italic;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entries{border:2px solid var(--rule);border-top:none;background:var(--cream);padding:6px;margin-bottom:22px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry{display:flex;gap:14px;align-items:center;text-decoration:none;color:var(--ink);padding:12px;border:2px solid transparent;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry+.entry{border-top:1px dotted var(--rule);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry:hover{background:#fff7e0;border-color:#fff var(--rule) var(--rule) #fff;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry img.ic{width:56px;height:56px;flex:none;object-fit:contain;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx h3{font-size:1.1rem;color:var(--navy);font-weight:bold;margin-bottom:2px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx p{font-size:0.82rem;line-height:1.4;color:#3a3520;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx .skill{font-size:0.72rem;color:var(--green);font-style:italic;display:inline-block;margin-top:3px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx .rec{display:inline-block;font-size:0.66rem;color:#7a5500;background:#fff1c4;border:1px solid var(--gold-d);padding:1px 6px;margin-top:4px;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry .open{margin-left:auto;flex:none;align-self:center;font-size:0.74rem;font-weight:bold;color:var(--navy);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background:var(--cream-d);padding:7px 13px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;font-variant:small-caps;letter-spacing:.05em;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.entry:hover .open{background:var(--gold);}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* right sidebar boxes */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox{margin-bottom:16px;border:2px solid var(--rule);background:var(--cream);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox-bar{padding:5px 10px;color:#fff;font-variant:small-caps;font-weight:bold;letter-spacing:.06em;font-size:0.85rem;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox.spot .sbox-bar{background:linear-gradient(90deg,var(--green),#1c5230);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox.links .sbox-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox.hist .sbox-bar{background:linear-gradient(90deg,var(--gold-d),#7a5500);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in{padding:10px;font-size:0.82rem;line-height:1.45;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in a{color:var(--navy);font-weight:bold;text-decoration:none;display:block;padding:3px 0;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in a:hover{color:var(--gold-d);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in .feat{color:var(--navy);font-weight:bold;margin-bottom:4px;}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>footer{background:linear-gradient(90deg,var(--navy-d),var(--navy));color:#cdd8f0;text-align:center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding:10px;font-size:0.78rem;border-top:3px solid var(--gold);}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>footer .links{color:#fff;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>footer .links span{color:var(--gold);}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1">&lt;div class="page"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="virtue"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="m"&gt;Knowledge &lt;span&gt;◇&lt;/span&gt; Virtue &lt;span&gt;◇&lt;/span&gt; Progress&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="d"&gt;A Resource for Thinking Classrooms&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="masthead"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;img class="crest" src="eduquest-logo.png" alt="EduQuest toucan logo"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="title"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1&gt;EduQuest&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="tag"&gt;Where Thinking Takes You Further.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="body"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- LEFT MENU --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav class="sidebar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="menu-title"&gt;Main Menu&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="menu"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;🏛️&lt;/span&gt; Home&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#sociology"&gt;&lt;span class="b"&gt;📖&lt;/span&gt; Sociology&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#english"&gt;&lt;span class="b"&gt;✒️&lt;/span&gt; English&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;🔍&lt;/span&gt; About&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;🗺️&lt;/span&gt; Site Map&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;✉️&lt;/span&gt; Contact&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="badge-netscape"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>Best explored with&lt;br&gt;&lt;b&gt;An Open Mind&lt;/b&gt;&lt;br&gt;version 2.0 +</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- CENTER --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;main class="main"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="welcome-bar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="col"&gt;▌&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Welcome to EduQuest!&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="sub"&gt;Your gateway to better thinking.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="welcome"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;img class="dropcap" src="icon_alpha.png" alt="A"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt; treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas — and then defend your choices. The interesting learning lives in the &lt;b&gt;grey areas&lt;/b&gt;. Choose a chapter below and open an activity to begin. &lt;a href="#sociology"&gt;Explore the subjects ▸&lt;/a&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- CHAPTER I --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="sociology"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="chapter-bar"&gt;&lt;span class="num"&gt;I&lt;/span&gt; Sociology &lt;span class="right"&gt;Deviance &amp;amp; Social Norms&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="entries"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="sociologygame.html"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_globe.png" alt=""&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Deviant or Illegal?&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Sort behaviours into "deviant but not illegal" and "illegal but not deviant" — and wrestle with the cases that are both, or neither.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: classifying &amp;amp; distinguishing&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="folkways.html"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_column.png" alt=""&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Folkways or Mores?&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Decide which everyday expectations are minor customs and which carry real moral weight — and notice how the line shifts across cultures.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: judging moral weight&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="diamond_ranking.html"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_chalkboard.png" alt=""&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;How Serious Is It?&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Rank nine deviant acts from most to least serious in a forced diamond — then share your arrangement to the class screen and defend your order.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: prioritising &amp;amp; justifying&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- CHAPTER II --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="english"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="chapter-bar"&gt;&lt;span class="num"&gt;II&lt;/span&gt; English &lt;span class="right"&gt;Rhetoric &amp;amp; Persuasion&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="entries"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="ethos_pathos_logos.html"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_computer.png" alt=""&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Ethos, Pathos, Logos&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Classify persuasive examples by their primary appeal — credibility, emotion, or logic — then unpack the ones that blend all three.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: identifying persuasive technique&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="rec"&gt;✎ Records results for the teacher&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/main&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- RIGHT SIDEBAR --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;aside class="sidebar right"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sbox spot"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sbox-bar"&gt;★ Spotlight&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="in"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="feat"&gt;New this week:&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>How Serious Is It? — rank deviant acts in a forced diamond and defend your order to the class.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="diamond_ranking.html"&gt;Take a look ▸&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sbox links"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sbox-bar"&gt;Quick Links&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="in"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="sociologygame.html"&gt;▸ Deviant or Illegal?&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="folkways.html"&gt;▸ Folkways or Mores?&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="diamond_ranking.html"&gt;▸ How Serious Is It?&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="ethos_pathos_logos.html"&gt;▸ Ethos, Pathos, Logos&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sbox hist"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sbox-bar"&gt;Did You Know?&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="in"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>The line between what is "deviant" and what is "illegal" shifts across time and cultures — which is exactly what makes it worth arguing about.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/aside&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;footer&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="links"&gt;Home &lt;span&gt;|&lt;/span&gt; Site Map &lt;span&gt;|&lt;/span&gt; Subjects &lt;span&gt;|&lt;/span&gt; About &lt;span&gt;|&lt;/span&gt; Contact&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="margin-top:5px;"&gt;EduQuest — a free teaching resource. Other teachers welcome. ★&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/footer&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
 </body>
 </html>
