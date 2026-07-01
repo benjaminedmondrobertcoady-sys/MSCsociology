@@ -55,8 +55,8 @@
     position:relative;overflow:hidden;
     background:linear-gradient(180deg,var(--sky2) 0%,var(--sky1) 70%,#cfe0d6 100%);
     border-bottom:4px solid var(--gold);
-    padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px);
-    display:flex;align-items:center;gap:20px;min-height:150px;
+    padding:clamp(10px,1.6vw,16px) clamp(16px,3vw,30px);
+    display:flex;align-items:center;gap:20px;min-height:auto;
   }
   /* faint marble-city skyline drawn in CSS on the right */
   .masthead::after{
@@ -69,7 +69,7 @@
     mask-image:linear-gradient(90deg,transparent,#000 40%);
   }
   .mast-logo{position:relative;z-index:2;display:block;margin:0 auto;
-    max-height:170px;max-width:94%;width:auto;height:auto;object-fit:contain;
+    max-height:300px;width:auto;height:auto;max-width:82%;object-fit:contain;
     filter:drop-shadow(0 4px 10px rgba(0,0,0,.35));}
   .masthead{justify-content:center;}
 
@@ -88,17 +88,18 @@
   .menu a .b{width:16px;text-align:center;}
 
   /* ---------- left-column discovery widget (replaces old netscape badge) ---------- */
-  .widget{margin-top:14px;border:2px solid var(--rule);background:var(--cream);
-    opacity:1;transition:opacity .18s ease;}
+  .widget{margin-top:26px;border:2px solid var(--rule);background:var(--cream);
+    opacity:1;transition:opacity .18s ease;position:relative;}
   .w-kicker{font-variant:small-caps;letter-spacing:.09em;font-weight:bold;font-size:0.74rem;
     margin-bottom:5px;}
   .w-kicker.wonder{color:var(--green);}
   .w-kicker.think {color:var(--navy);}
   .w-kicker.word  {color:var(--gold-d);}
   .w-kicker.figure{color:var(--navy);}
-  .widget-title{display:block;width:100%;padding:8px 8px 2px;text-align:center;}
+  .widget-title{display:block;width:112%;margin:-20px 0 2px -6%;text-align:center;
+    background:transparent;border:none;padding:0;pointer-events:none;}
   .widget-title img{max-width:100%;height:auto;display:block;margin:0 auto;
-    filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));}
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));}
   .widget .w-in{padding:10px;}
   .widget .w-pic{width:100%;height:92px;object-fit:cover;display:block;margin-bottom:9px;
     border:2px solid var(--gold-d);filter:saturate(.78) sepia(.12) contrast(.97);
