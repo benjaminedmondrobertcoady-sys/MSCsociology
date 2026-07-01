@@ -1,439 +1,423 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.1">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduQuest, Thinking Library</title>
+<style>
+  /* ============================================================
+     THE THINKERY. "EduQuest '96" Utopian Scholastic style
+     Icons (icon_*.png) live alongside this file in the repo.
+     TO ADD AN ACTIVITY: copy an <a class="entry"> block in the
+     right chapter; change href, title, blurb, and icon src.
+     TO ADD A WIDGET CARD: copy one line in the WIDGETS array
+     near the bottom of this file. That is the only edit needed.
+     ============================================================ */
+  :root{
+    --navy:#1b2f7a;
+    --navy-d:#13235e;
+    --green:#256b3f;
+    --gold:#d8a93a;
+    --gold-d:#9c7415;
+    --cream:#f3ead0;
+    --cream-d:#e7dab4;
+    --parch:#f7efd8;
+    --ink:#2a2410;
+    --rule:#b9a878;
+    --sky1:#bcd6f0;
+    --sky2:#dcebf8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;color:var(--ink);
+    background:#0d1838;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 3px, transparent 3px 6px),
+      linear-gradient(180deg,#16275e 0,#0d1838 100%);
+    padding:clamp(8px,2vw,22px);min-height:100vh;
+  }
+  .page{
+    max-width:1080px;margin:0 auto;background:var(--cream);
+    border:2px solid var(--gold-d);box-shadow:0 0 0 2px var(--navy-d),0 12px 40px rgba(0,0,0,.6);
+  }
+
+  /* ---------- top virtue strip ---------- */
+  .virtue{
+    background:linear-gradient(90deg,var(--navy-d),var(--navy));color:var(--gold);
+    font-size:0.78rem;letter-spacing:.08em;padding:5px 14px;display:flex;justify-content:space-between;align-items:center;
+    border-bottom:2px solid var(--gold-d);
+  }
+  .virtue .m span{color:#fff;}
+  .virtue .d{color:#cdd8f0;font-style:italic;}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    position:relative;overflow:hidden;
+    background:linear-gradient(180deg,var(--sky2) 0%,var(--sky1) 70%,#cfe0d6 100%);
+    border-bottom:4px solid var(--gold);
+    padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px);
+    display:flex;align-items:center;gap:20px;min-height:150px;
+  }
+  /* faint marble-city skyline drawn in CSS on the right */
+  .masthead::after{
+    content:"";position:absolute;right:0;top:0;bottom:0;width:46%;pointer-events:none;opacity:.5;
+    background:
+      linear-gradient(180deg,transparent 30%, rgba(255,255,255,.5) 100%),
+      repeating-linear-gradient(90deg, transparent 0 26px, rgba(255,255,255,.55) 26px 30px, transparent 30px 34px),
+      repeating-linear-gradient(90deg, rgba(120,140,180,.18) 0 60px, transparent 60px 120px);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);
+    mask-image:linear-gradient(90deg,transparent,#000 40%);
+  }
+  .mast-logo{position:relative;z-index:2;display:block;margin:0 auto;
+    max-height:170px;max-width:94%;width:auto;height:auto;object-fit:contain;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.35));}
+  .masthead{justify-content:center;}
+
+  /* ---------- body grid ---------- */
+  .body{display:grid;grid-template-columns:200px 1fr 220px;gap:0;}
+  @media(max-width:900px){.body{grid-template-columns:1fr;}}
+
+  /* left menu */
+  .sidebar{background:var(--cream-d);border-right:2px solid var(--rule);padding:14px;}
+  .sidebar.right{border-right:none;border-left:2px solid var(--rule);}
+  .menu-title{font-variant:small-caps;letter-spacing:.1em;color:var(--navy);font-weight:bold;font-size:0.95rem;
+    text-align:center;border-bottom:2px solid var(--rule);padding-bottom:6px;margin-bottom:8px;}
+  .menu a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--navy);font-weight:bold;font-size:0.92rem;
+    padding:7px 6px;border-bottom:1px dotted var(--rule);}
+  .menu a:hover{background:#fff7e0;color:var(--gold-d);}
+  .menu a .b{width:16px;text-align:center;}
+
+  /* ---------- left-column discovery widget (replaces old netscape badge) ---------- */
+  .widget{margin-top:14px;border:2px solid var(--rule);background:var(--cream);
+    opacity:1;transition:opacity .18s ease;}
+  .w-kicker{font-variant:small-caps;letter-spacing:.09em;font-weight:bold;font-size:0.74rem;
+    margin-bottom:5px;}
+  .w-kicker.wonder{color:var(--green);}
+  .w-kicker.think {color:var(--navy);}
+  .w-kicker.word  {color:var(--gold-d);}
+  .w-kicker.figure{color:var(--navy);}
+  .widget-title{display:block;width:100%;padding:8px 8px 2px;text-align:center;}
+  .widget-title img{max-width:100%;height:auto;display:block;margin:0 auto;
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));}
+  .widget .w-in{padding:10px;}
+  .widget .w-pic{width:100%;height:92px;object-fit:cover;display:block;margin-bottom:9px;
+    border:2px solid var(--gold-d);filter:saturate(.78) sepia(.12) contrast(.97);
+    box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .widget .w-title{font-size:1.02rem;color:var(--navy);font-weight:bold;line-height:1.15;margin-bottom:5px;}
+  .widget .w-blurb{font-size:0.8rem;line-height:1.4;color:#3a3520;margin-bottom:9px;}
+  .widget .w-act{display:inline-block;font-size:0.74rem;font-weight:bold;color:var(--navy);
+    background:var(--cream-d);padding:5px 11px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;
+    font-variant:small-caps;letter-spacing:.04em;text-decoration:none;cursor:pointer;}
+  .widget .w-act:hover{background:var(--gold);}
+
+  /* center content */
+  .main{padding:clamp(14px,2.5vw,24px);background:var(--parch);}
+  .welcome-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;}
+  .welcome-bar .col{color:var(--gold);}
+  .welcome-bar h2{font-size:1.15rem;color:var(--gold);font-weight:bold;}
+  .welcome-bar .sub{margin-left:auto;font-style:italic;font-size:0.82rem;color:#d7e0f5;}
+
+  .welcome{display:flex;gap:16px;padding:16px;background:var(--cream);border:2px solid var(--rule);border-top:none;margin-bottom:22px;align-items:flex-start;}
+  .dropcap{width:84px;height:84px;flex:none;}
+  .welcome p{font-size:0.98rem;line-height:1.5;}
+  .welcome p a{color:var(--navy);font-weight:bold;}
+
+  .chapter-bar{background:linear-gradient(90deg,var(--green),#1c5230);color:#fff;padding:7px 14px;display:flex;align-items:center;gap:10px;font-variant:small-caps;letter-spacing:.08em;font-weight:bold;}
+  .chapter-bar .num{background:var(--gold);color:var(--navy);width:24px;height:24px;border:2px solid #fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex:none;}
+  .chapter-bar .right{margin-left:auto;font-size:0.72rem;color:#dff0e4;font-variant:normal;font-style:italic;}
+
+  .entries{border:2px solid var(--rule);border-top:none;background:var(--cream);padding:6px;margin-bottom:22px;}
+  .entry{display:flex;gap:14px;align-items:center;text-decoration:none;color:var(--ink);padding:12px;border:2px solid transparent;}
+  .entry+.entry{border-top:1px dotted var(--rule);}
+  .entry:hover{background:#fff7e0;border-color:#fff var(--rule) var(--rule) #fff;}
+  .entry img.ic{width:56px;height:56px;flex:none;object-fit:contain;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));}
+  .entry .tx h3{font-size:1.1rem;color:var(--navy);font-weight:bold;margin-bottom:2px;}
+  .entry .tx p{font-size:0.82rem;line-height:1.4;color:#3a3520;}
+  .entry .tx .skill{font-size:0.72rem;color:var(--green);font-style:italic;display:inline-block;margin-top:3px;}
+  .entry .tx .rec{display:inline-block;font-size:0.66rem;color:#7a5500;background:#fff1c4;border:1px solid var(--gold-d);padding:1px 6px;margin-top:4px;}
+  .entry .open{margin-left:auto;flex:none;align-self:center;font-size:0.74rem;font-weight:bold;color:var(--navy);
+    background:var(--cream-d);padding:7px 13px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;font-variant:small-caps;letter-spacing:.05em;}
+  .entry:hover .open{background:var(--gold);}
+
+  /* right sidebar boxes */
+  .sbox{margin-bottom:16px;border:2px solid var(--rule);background:var(--cream);}
+  .sbox-bar{padding:5px 10px;color:#fff;font-variant:small-caps;font-weight:bold;letter-spacing:.06em;font-size:0.85rem;}
+  .sbox.spot .sbox-bar{background:linear-gradient(90deg,var(--green),#1c5230);}
+  .sbox.links .sbox-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));}
+  .sbox.hist .sbox-bar{background:linear-gradient(90deg,var(--gold-d),#7a5500);}
+  .sbox .in{padding:10px;font-size:0.82rem;line-height:1.45;}
+  .sbox .in a{color:var(--navy);font-weight:bold;text-decoration:none;display:block;padding:3px 0;}
+  .sbox .in a:hover{color:var(--gold-d);}
+  .sbox .in .feat{color:var(--navy);font-weight:bold;margin-bottom:4px;}
+
+  footer .foot-toucan{display:block;margin:0 auto 8px;max-width:150px;height:auto;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  footer{background:linear-gradient(90deg,var(--navy-d),var(--navy));color:#cdd8f0;text-align:center;
+    padding:10px;font-size:0.78rem;border-top:3px solid var(--gold);}
+  footer .links{color:#fff;}
+  footer .links span{color:var(--gold);}
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1">&lt;title&gt;EduQuest, Thinking Library&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ============================================================</p>
-<p class="p1"><span class="Apple-converted-space">     </span>THE THINKERY. "EduQuest '96" Utopian Scholastic style</p>
-<p class="p1"><span class="Apple-converted-space">     </span>Icons (icon_*.png) live alongside this file in the repo.</p>
-<p class="p1"><span class="Apple-converted-space">     </span>TO ADD AN ACTIVITY: copy an &lt;a class="entry"&gt; block in the</p>
-<p class="p1"><span class="Apple-converted-space">     </span>right chapter; change href, title, blurb, and icon src.</p>
-<p class="p1"><span class="Apple-converted-space">     </span>TO ADD A WIDGET CARD: copy one line in the WIDGETS array</p>
-<p class="p1"><span class="Apple-converted-space">     </span>near the bottom of this file. That is the only edit needed.</p>
-<p class="p1"><span class="Apple-converted-space">     </span>============================================================ */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>:root{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--navy:#1b2f7a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--navy-d:#13235e;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--green:#256b3f;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--gold:#d8a93a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--gold-d:#9c7415;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--cream:#f3ead0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--cream-d:#e7dab4;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--parch:#f7efd8;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--ink:#2a2410;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--rule:#b9a878;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--sky1:#bcd6f0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--sky2:#dcebf8;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>*{box-sizing:border-box;margin:0;padding:0;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>body{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family:Georgia,'Times New Roman',serif;color:var(--ink);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:#0d1838;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background-image:</p>
-<p class="p1"><span class="Apple-converted-space">      </span>repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 3px, transparent 3px 6px),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>linear-gradient(180deg,#16275e 0,#0d1838 100%);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding:clamp(8px,2vw,22px);min-height:100vh;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.page{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>max-width:1080px;margin:0 auto;background:var(--cream);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border:2px solid var(--gold-d);box-shadow:0 0 0 2px var(--navy-d),0 12px 40px rgba(0,0,0,.6);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ---------- top virtue strip ---------- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.virtue{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:linear-gradient(90deg,var(--navy-d),var(--navy));color:var(--gold);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size:0.78rem;letter-spacing:.08em;padding:5px 14px;display:flex;justify-content:space-between;align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-bottom:2px solid var(--gold-d);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.virtue .m span{color:#fff;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.virtue .d{color:#cdd8f0;font-style:italic;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ---------- masthead ---------- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.masthead{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>position:relative;overflow:hidden;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:linear-gradient(180deg,var(--sky2) 0%,var(--sky1) 70%,#cfe0d6 100%);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-bottom:4px solid var(--gold);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display:flex;align-items:center;gap:20px;min-height:150px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* faint marble-city skyline drawn in CSS on the right */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.masthead::after{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>content:"";position:absolute;right:0;top:0;bottom:0;width:46%;pointer-events:none;opacity:.5;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:</p>
-<p class="p1"><span class="Apple-converted-space">      </span>linear-gradient(180deg,transparent 30%, rgba(255,255,255,.5) 100%),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>repeating-linear-gradient(90deg, transparent 0 26px, rgba(255,255,255,.55) 26px 30px, transparent 30px 34px),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>repeating-linear-gradient(90deg, rgba(120,140,180,.18) 0 60px, transparent 60px 120px);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>-webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>mask-image:linear-gradient(90deg,transparent,#000 40%);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.mast-logo{position:relative;z-index:2;display:block;margin:0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>max-height:170px;max-width:94%;width:auto;height:auto;object-fit:contain;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>filter:drop-shadow(0 4px 10px rgba(0,0,0,.35));}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.masthead{justify-content:center;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ---------- body grid ---------- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.body{display:grid;grid-template-columns:200px 1fr 220px;gap:0;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>@media(max-width:900px){.body{grid-template-columns:1fr;}}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* left menu */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sidebar{background:var(--cream-d);border-right:2px solid var(--rule);padding:14px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sidebar.right{border-right:none;border-left:2px solid var(--rule);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.menu-title{font-variant:small-caps;letter-spacing:.1em;color:var(--navy);font-weight:bold;font-size:0.95rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align:center;border-bottom:2px solid var(--rule);padding-bottom:6px;margin-bottom:8px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.menu a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--navy);font-weight:bold;font-size:0.92rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding:7px 6px;border-bottom:1px dotted var(--rule);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.menu a:hover{background:#fff7e0;color:var(--gold-d);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.menu a .b{width:16px;text-align:center;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ---------- left-column discovery widget (replaces old netscape badge) ---------- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget{margin-top:14px;border:2px solid var(--rule);background:var(--cream);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>opacity:1;transition:opacity .18s ease;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.w-kicker{font-variant:small-caps;letter-spacing:.09em;font-weight:bold;font-size:0.74rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom:5px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.w-kicker.wonder{color:var(--green);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.w-kicker.think {color:var(--navy);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.w-kicker.word<span class="Apple-converted-space">  </span>{color:var(--gold-d);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.w-kicker.figure{color:var(--navy);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget-title{display:block;width:100%;padding:8px 8px 2px;text-align:center;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget-title img{max-width:100%;height:auto;display:block;margin:0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget .w-in{padding:10px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget .w-pic{width:100%;height:92px;object-fit:cover;display:block;margin-bottom:9px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border:2px solid var(--gold-d);filter:saturate(.78) sepia(.12) contrast(.97);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>box-shadow:0 1px 3px rgba(0,0,0,.3);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget .w-title{font-size:1.02rem;color:var(--navy);font-weight:bold;line-height:1.15;margin-bottom:5px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget .w-blurb{font-size:0.8rem;line-height:1.4;color:#3a3520;margin-bottom:9px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget .w-act{display:inline-block;font-size:0.74rem;font-weight:bold;color:var(--navy);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:var(--cream-d);padding:5px 11px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-variant:small-caps;letter-spacing:.04em;text-decoration:none;cursor:pointer;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.widget .w-act:hover{background:var(--gold);}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* center content */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.main{padding:clamp(14px,2.5vw,24px);background:var(--parch);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar .col{color:var(--gold);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar h2{font-size:1.15rem;color:var(--gold);font-weight:bold;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.welcome-bar .sub{margin-left:auto;font-style:italic;font-size:0.82rem;color:#d7e0f5;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.welcome{display:flex;gap:16px;padding:16px;background:var(--cream);border:2px solid var(--rule);border-top:none;margin-bottom:22px;align-items:flex-start;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.dropcap{width:84px;height:84px;flex:none;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.welcome p{font-size:0.98rem;line-height:1.5;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.welcome p a{color:var(--navy);font-weight:bold;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.chapter-bar{background:linear-gradient(90deg,var(--green),#1c5230);color:#fff;padding:7px 14px;display:flex;align-items:center;gap:10px;font-variant:small-caps;letter-spacing:.08em;font-weight:bold;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.chapter-bar .num{background:var(--gold);color:var(--navy);width:24px;height:24px;border:2px solid #fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex:none;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.chapter-bar .right{margin-left:auto;font-size:0.72rem;color:#dff0e4;font-variant:normal;font-style:italic;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entries{border:2px solid var(--rule);border-top:none;background:var(--cream);padding:6px;margin-bottom:22px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry{display:flex;gap:14px;align-items:center;text-decoration:none;color:var(--ink);padding:12px;border:2px solid transparent;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry+.entry{border-top:1px dotted var(--rule);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry:hover{background:#fff7e0;border-color:#fff var(--rule) var(--rule) #fff;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry img.ic{width:56px;height:56px;flex:none;object-fit:contain;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx h3{font-size:1.1rem;color:var(--navy);font-weight:bold;margin-bottom:2px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx p{font-size:0.82rem;line-height:1.4;color:#3a3520;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx .skill{font-size:0.72rem;color:var(--green);font-style:italic;display:inline-block;margin-top:3px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry .tx .rec{display:inline-block;font-size:0.66rem;color:#7a5500;background:#fff1c4;border:1px solid var(--gold-d);padding:1px 6px;margin-top:4px;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry .open{margin-left:auto;flex:none;align-self:center;font-size:0.74rem;font-weight:bold;color:var(--navy);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background:var(--cream-d);padding:7px 13px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;font-variant:small-caps;letter-spacing:.05em;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.entry:hover .open{background:var(--gold);}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* right sidebar boxes */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox{margin-bottom:16px;border:2px solid var(--rule);background:var(--cream);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox-bar{padding:5px 10px;color:#fff;font-variant:small-caps;font-weight:bold;letter-spacing:.06em;font-size:0.85rem;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox.spot .sbox-bar{background:linear-gradient(90deg,var(--green),#1c5230);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox.links .sbox-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox.hist .sbox-bar{background:linear-gradient(90deg,var(--gold-d),#7a5500);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in{padding:10px;font-size:0.82rem;line-height:1.45;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in a{color:var(--navy);font-weight:bold;text-decoration:none;display:block;padding:3px 0;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in a:hover{color:var(--gold-d);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.sbox .in .feat{color:var(--navy);font-weight:bold;margin-bottom:4px;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>footer .foot-toucan{display:block;margin:0 auto 8px;max-width:150px;height:auto;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>footer{background:linear-gradient(90deg,var(--navy-d),var(--navy));color:#cdd8f0;text-align:center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding:10px;font-size:0.78rem;border-top:3px solid var(--gold);}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>footer .links{color:#fff;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>footer .links span{color:var(--gold);}</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;div class="page"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="virtue"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="m"&gt;Knowledge &lt;span&gt;◇&lt;/span&gt; Virtue &lt;span&gt;◇&lt;/span&gt; Progress&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="d"&gt;A Resource for Thinking Classrooms&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="masthead"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;img class="mast-logo" id="mastLogo" src="logo1.png" alt="EduQuest, Thinking Library"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="body"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- LEFT MENU --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav class="sidebar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="menu-title"&gt;Main Menu&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="menu"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;🏛️&lt;/span&gt; Home&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#sociology"&gt;&lt;span class="b"&gt;📖&lt;/span&gt; Sociology&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#english"&gt;&lt;span class="b"&gt;✒️&lt;/span&gt; English&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;🔍&lt;/span&gt; About&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;🗺️&lt;/span&gt; Site Map&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="#"&gt;&lt;span class="b"&gt;✉️&lt;/span&gt; Contact&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- SPOTLIGHT: single rotating box, cycles the 32-card pool --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="widget" id="discoveryWidget"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="widget-title"&gt;&lt;img src="spotlight-title.png" alt="Spotlight"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="w-in"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="w-pic" id="wPic" alt=""&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="w-kicker" id="wBar"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="w-title" id="wTitle"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="w-blurb" id="wBlurb"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;a class="w-act" id="wAct"&gt;&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- CENTER --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;main class="main"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="welcome-bar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="col"&gt;▌&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Welcome to EduQuest!&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="sub"&gt;Your gateway to better thinking.&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="welcome"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;img class="dropcap" src="icon_alpha.png" alt="A"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt; treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas, and then defend your choices. The interesting learning lives in the &lt;b&gt;grey areas&lt;/b&gt;. Choose a chapter below and open an activity to begin. &lt;a href="#sociology"&gt;Explore the subjects ▸&lt;/a&gt;&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- CHAPTER I --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="sociology"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="chapter-bar"&gt;&lt;span class="num"&gt;I&lt;/span&gt; Sociology &lt;span class="right"&gt;Deviance &amp;amp; Social Norms&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="entries"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="sociologygame.html"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_globe.png" alt=""&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Deviant or Illegal?&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Sort behaviours into "deviant but not illegal" and "illegal but not deviant". Then wrestle with the cases that are both, or neither.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: classifying &amp;amp; distinguishing&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="folkways.html"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_column.png" alt=""&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Folkways or Mores?&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Decide which everyday expectations are minor customs and which carry real moral weight, and notice how the line shifts across cultures.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: judging moral weight&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="diamond_ranking.html"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_chalkboard.png" alt=""&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;How Serious Is It?&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Rank nine deviant acts from most to least serious in a forced diamond. Then share your arrangement to the class screen and defend your order.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: prioritising &amp;amp; justifying&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- CHAPTER II --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="english"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="chapter-bar"&gt;&lt;span class="num"&gt;II&lt;/span&gt; English &lt;span class="right"&gt;Rhetoric &amp;amp; Persuasion&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="entries"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a class="entry" href="ethos_pathos_logos.html"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="ic" src="icon_computer.png" alt=""&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="tx"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Ethos, Pathos, Logos&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Classify persuasive examples by their primary appeal, whether credibility, emotion, or logic, then unpack the ones that blend all three.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="skill"&gt;Thinking skill: identifying persuasive technique&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="rec"&gt;✎ Records results for the teacher&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="open"&gt;Open ▸&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/a&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/main&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- RIGHT SIDEBAR --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;aside class="sidebar right"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sbox spot"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sbox-bar"&gt;★ Featured Activity&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="in"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="feat"&gt;New this week:&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>How Serious Is It? Rank deviant acts in a forced diamond and defend your order to the class.</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="diamond_ranking.html"&gt;Take a look ▸&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sbox links"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="sbox-bar"&gt;Quick Links&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="in"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="sociologygame.html"&gt;▸ Deviant or Illegal?&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="folkways.html"&gt;▸ Folkways or Mores?&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="diamond_ranking.html"&gt;▸ How Serious Is It?&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;a href="ethos_pathos_logos.html"&gt;▸ Ethos, Pathos, Logos&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/aside&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;footer&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;img class="foot-toucan" src="eduquest-logo.png" alt="EduQuest toucan mascot"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="links"&gt;Home &lt;span&gt;|&lt;/span&gt; Site Map &lt;span&gt;|&lt;/span&gt; Subjects &lt;span&gt;|&lt;/span&gt; About &lt;span&gt;|&lt;/span&gt; Contact&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="margin-top:5px;"&gt;EduQuest, a free teaching resource. Other teachers welcome. &amp;#9733;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/footer&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">/* ============================================================</p>
-<p class="p1"><span class="Apple-converted-space">   </span>EDUQUEST DISCOVERY WIDGET</p>
-<p class="p1"><span class="Apple-converted-space">   </span>One slot, random on load, never the same card twice running.</p>
-<p class="p1"><span class="Apple-converted-space">   </span>Each card shows a random plate from its category image pool</p>
-<p class="p1"><span class="Apple-converted-space">   </span>(wonder1.jpg ... etc). A missing plate just renders text only.</p>
-<p class="p1"><span class="Apple-converted-space">   </span>Wonder cards with no "to" re-roll via "Another". Cards with a</p>
-<p class="p1"><span class="Apple-converted-space">   </span>"to" funnel into a real activity via "Explore".</p>
-<p class="p1"><span class="Apple-converted-space">   </span>TO ADD A CARD: copy one line in the WIDGETS array. cat sets</p>
-<p class="p1"><span class="Apple-converted-space">   </span>the colour, the weight, and which image pool it draws from.</p>
-<p class="p1"><span class="Apple-converted-space">   </span>TO ADD PLATES: raise the number in IMG_COUNTS and add the</p>
-<p class="p1"><span class="Apple-converted-space">   </span>files (e.g. wonder7.jpg). No code change needed beyond that.</p>
-<p class="p1"><span class="Apple-converted-space">   </span>No em dashes anywhere in this copy. Keep it that way.</p>
-<p class="p1"><span class="Apple-converted-space">   </span>============================================================ */</p>
-<p class="p1">var IMG_COUNTS = {wonder:6, think:4, word:4, figure:3};</p>
-<p class="p2"><br></p>
-<p class="p1">var WIDGETS = [</p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ----- WONDER : natural world, Greek myth, astonishing social facts ----- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83d\udd0d Discovery', <span class="Apple-converted-space">  </span>title:'The Axolotl', <span class="Apple-converted-space">    </span>blurb:'It regrows its limbs, its heart and parts of its brain. It also never grows up.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83d\udc19 Creature',<span class="Apple-converted-space">    </span>title:'The Octopus', <span class="Apple-converted-space">    </span>blurb:'It has three hearts, blue blood, and a knot of neurons in every arm.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83d\udc3b Creature',<span class="Apple-converted-space">    </span>title:'The Tardigrade',<span class="Apple-converted-space">  </span>blurb:'It survives boiling, freezing, crushing pressure and the vacuum of space.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83c\udfdb Myth',<span class="Apple-converted-space">        </span>title:'Cassandra', <span class="Apple-converted-space">      </span>blurb:'Apollo gave her true prophecy, then cursed her so that no one would believe it.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83c\udfdb Myth',<span class="Apple-converted-space">        </span>title:'The Sirens',<span class="Apple-converted-space">      </span>blurb:'Their song was so persuasive that sailors steered onto the rocks to hear it.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83c\udfdb Myth',<span class="Apple-converted-space">        </span>title:'Prometheus',<span class="Apple-converted-space">      </span>blurb:'He stole fire from the gods to give it to us, and paid for it forever.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83c\udfdb Myth',<span class="Apple-converted-space">        </span>title:'The Labyrinth', <span class="Apple-converted-space">  </span>blurb:'Daedalus built a maze so cunning that he himself could barely escape it.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83c\udfdb Myth',<span class="Apple-converted-space">        </span>title:'Pandora', <span class="Apple-converted-space">        </span>blurb:'She was told never to open the jar. She opened it. Only hope was left inside.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83d\udd0d Did You Know?', title:'Feral Children', blurb:'Children raised without contact never fully learn language. Society makes us human.', act:'Explore \u25b8', to:'folkways.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83d\udd0d Experiment',<span class="Apple-converted-space">  </span>title:'Breaching Experiments', blurb:'Break one tiny social rule on purpose and watch how fiercely people react.', act:'Explore \u25b8', to:'folkways.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'wonder', bar:'\ud83d\udd0d Idea',<span class="Apple-converted-space">        </span>title:'The Sociological Imagination', blurb:'It is the trick of seeing your private troubles as wider, shared public issues.', act:'Explore \u25b8', to:'sociologygame.html'},</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ----- THINK : provocations that funnel into an activity ----- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'think', bar:'\u2753 Question', title:'Is breaking the law always wrong?', blurb:'Some illegal acts feel right. Some legal ones feel wrong.', act:'Explore \u25b8', to:'sociologygame.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'think', bar:'\u2753 Question', title:'Do small social rules matter as much as laws?', blurb:'A rude act and an illegal act are not the same thing.', act:'Explore \u25b8', to:'folkways.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'think', bar:'\u2753 Question', title:'Which wrong is worst, and who decides?', blurb:'Rank nine wrongs from worst to least, then defend your order.', act:'Explore \u25b8', to:'diamond_ranking.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'think', bar:'\u2753 Question', title:'Can a message be fair and manipulative at once?', blurb:'The best persuasion often hides how it is working on you.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'think', bar:'\u2753 Question', title:'Where do your values actually come from?', blurb:'You did not choose most of them. Society handed them over.', act:'Explore \u25b8', to:'folkways.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'think', bar:'\u2753 Question', title:'Who gets to decide what counts as normal?', blurb:'Normal is not a fact. It is an agreement, and agreements change.', act:'Explore \u25b8', to:'sociologygame.html'},</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ----- WORD : sociology and English vocabulary ----- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Deviance',<span class="Apple-converted-space">      </span>blurb:'Behaviour that breaks a social norm. It is not always against the law.', act:'Explore \u25b8', to:'sociologygame.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Folkways',<span class="Apple-converted-space">      </span>blurb:'The small everyday customs we follow without ever being told to.', act:'Explore \u25b8', to:'folkways.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Mores', <span class="Apple-converted-space">        </span>blurb:'The norms we treat as moral. Break these and people judge you hard.', act:'Explore \u25b8', to:'folkways.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Anomie',<span class="Apple-converted-space">        </span>blurb:'Durkheim\u2019s word for the unease people feel when shared rules break down.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Socialisation', blurb:'The lifelong process of learning how to be a member of your society.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Ethnocentrism', blurb:'Judging another culture by the standards of your own.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Subculture',<span class="Apple-converted-space">    </span>blurb:'A group inside society that lives by its own distinct set of norms.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Ethos', <span class="Apple-converted-space">        </span>blurb:'Persuasion that works by making you trust the speaker.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Pathos',<span class="Apple-converted-space">        </span>blurb:'Persuasion that works by moving your emotions.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Logos', <span class="Apple-converted-space">        </span>blurb:'Persuasion that works through logic and evidence.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'word', bar:'\ud83d\udcd6 Word', title:'Rhetoric',<span class="Apple-converted-space">      </span>blurb:'The ancient art of using language to persuade an audience.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* ----- FIGURE : thinkers (shown least often) ----- */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'figure', bar:'\ud83d\udc64 Thinker', title:'\u00c9mile Durkheim', blurb:'He argued that even crime has a function in a healthy society.', act:'Explore \u25b8', to:'sociologygame.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'figure', bar:'\ud83d\udc64 Thinker', title:'Erving Goffman', <span class="Apple-converted-space">  </span>blurb:'He showed that we all perform a role, the way actors do on a stage.'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'figure', bar:'\ud83d\udc64 Thinker', title:'C. Wright Mills',<span class="Apple-converted-space">  </span>blurb:'He coined the sociological imagination, linking private lives to public history.', act:'Explore \u25b8', to:'sociologygame.html'},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{cat:'figure', bar:'\ud83d\udc64 Thinker', title:'Aristotle',<span class="Apple-converted-space">        </span>blurb:'Over two thousand years ago he named the three appeals: ethos, pathos and logos.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'}</p>
-<p class="p1">];</p>
-<p class="p2"><br></p>
-<p class="p1">var WEIGHTS = {wonder:3, think:3, word:2, figure:1};</p>
-<p class="p2"><br></p>
-<p class="p1">function eqPick(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var last = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try { last = sessionStorage.getItem('eq_last') || ''; } catch(e){}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var pool = [];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for (var i=0; i&lt;WIDGETS.length; i++){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (WIDGETS[i].title === last) continue;<span class="Apple-converted-space">            </span>/* never twice running */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var n = WEIGHTS[WIDGETS[i].cat] || 1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (var k=0; k&lt;n; k++) pool.push(i);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!pool.length){ for (var j=0;j&lt;WIDGETS.length;j++) pool.push(j); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var choice = pool[Math.floor(Math.random()*pool.length)];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try { sessionStorage.setItem('eq_last', WIDGETS[choice].title); } catch(e){}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return WIDGETS[choice];</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function eqRender(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var box = document.getElementById('discoveryWidget');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>box.style.opacity = '0';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setTimeout(function(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var e = eqPick();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('wBar').textContent = e.bar;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('wBar').className = 'w-kicker ' + e.cat;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('wTitle').textContent = e.title;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('wBlurb').textContent = e.blurb;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>var pic = document.getElementById('wPic');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>var count = IMG_COUNTS[e.cat] || 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (count &gt; 0){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>var idx = 1 + Math.floor(Math.random()*count);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pic.style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pic.onerror = function(){ this.style.display = 'none'; };</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pic.src = e.cat + idx + '.jpg';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pic.alt = e.title;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pic.style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>var act = document.getElementById('wAct');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (e.to){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>act.textContent = e.act || 'Explore \u25b8';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>act.setAttribute('href', e.to);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>act.onclick = null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>act.textContent = e.act || 'Another \u25c7';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>act.removeAttribute('href');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>act.onclick = function(ev){ ev.preventDefault(); eqRender(); };</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>box.style.opacity = '1';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}, 120);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">/* Masthead: rotate through logo1..logo4 at random on load. To add more,</p>
-<p class="p1"><span class="Apple-converted-space">   </span>raise LOGO_COUNT and add logo5.png etc. */</p>
-<p class="p1">var LOGO_COUNT = 4;</p>
-<p class="p1">function eqMasthead(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var n = 1 + Math.floor(Math.random() * LOGO_COUNT);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>var img = document.getElementById('mastLogo');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (img) img.src = 'logo' + n + '.png';</p>
-<p class="p1">}</p>
-<p class="p1">document.addEventListener('DOMContentLoaded', eqMasthead);</p>
-<p class="p1">document.addEventListener('DOMContentLoaded', eqRender);</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<div class="page">
+
+  <div class="virtue">
+    <div class="m">Knowledge <span>◇</span> Virtue <span>◇</span> Progress</div>
+    <div class="d">A Resource for Thinking Classrooms</div>
+  </div>
+
+  <div class="masthead">
+    <img class="mast-logo" id="mastLogo" src="logo1.png" alt="EduQuest, Thinking Library">
+  </div>
+
+  <div class="body">
+
+    <!-- LEFT MENU -->
+    <nav class="sidebar">
+      <div class="menu-title">Main Menu</div>
+      <div class="menu">
+        <a href="#"><span class="b">🏛️</span> Home</a>
+        <a href="#sociology"><span class="b">📖</span> Sociology</a>
+        <a href="#english"><span class="b">✒️</span> English</a>
+        <a href="#"><span class="b">🔍</span> About</a>
+        <a href="#"><span class="b">🗺️</span> Site Map</a>
+        <a href="#"><span class="b">✉️</span> Contact</a>
+      </div>
+
+      <!-- SPOTLIGHT: single rotating box, cycles the 32-card pool -->
+      <div class="widget" id="discoveryWidget">
+        <div class="widget-title"><img src="spotlight-title.png" alt="Spotlight"></div>
+        <div class="w-in">
+          <img class="w-pic" id="wPic" alt="">
+          <div class="w-kicker" id="wBar"></div>
+          <div class="w-title" id="wTitle"></div>
+          <div class="w-blurb" id="wBlurb"></div>
+          <a class="w-act" id="wAct"></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CENTER -->
+    <main class="main">
+      <div class="welcome-bar">
+        <span class="col">▌</span>
+        <h2>Welcome to EduQuest!</h2>
+        <span class="sub">Your gateway to better thinking.</span>
+      </div>
+      <div class="welcome">
+        <img class="dropcap" src="icon_alpha.png" alt="A">
+        <p> treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas, and then defend your choices. The interesting learning lives in the <b>grey areas</b>. Choose a chapter below and open an activity to begin. <a href="#sociology">Explore the subjects ▸</a></p>
+      </div>
+
+      <!-- CHAPTER I -->
+      <div id="sociology"></div>
+      <div class="chapter-bar"><span class="num">I</span> Sociology <span class="right">Deviance &amp; Social Norms</span></div>
+      <div class="entries">
+
+        <a class="entry" href="sociologygame.html">
+          <img class="ic" src="icon_globe.png" alt="">
+          <span class="tx">
+            <h3>Deviant or Illegal?</h3>
+            <p>Sort behaviours into "deviant but not illegal" and "illegal but not deviant". Then wrestle with the cases that are both, or neither.</p>
+            <span class="skill">Thinking skill: classifying &amp; distinguishing</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+        <a class="entry" href="folkways.html">
+          <img class="ic" src="icon_column.png" alt="">
+          <span class="tx">
+            <h3>Folkways or Mores?</h3>
+            <p>Decide which everyday expectations are minor customs and which carry real moral weight, and notice how the line shifts across cultures.</p>
+            <span class="skill">Thinking skill: judging moral weight</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+        <a class="entry" href="diamond_ranking.html">
+          <img class="ic" src="icon_chalkboard.png" alt="">
+          <span class="tx">
+            <h3>How Serious Is It?</h3>
+            <p>Rank nine deviant acts from most to least serious in a forced diamond. Then share your arrangement to the class screen and defend your order.</p>
+            <span class="skill">Thinking skill: prioritising &amp; justifying</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+      </div>
+
+      <!-- CHAPTER II -->
+      <div id="english"></div>
+      <div class="chapter-bar"><span class="num">II</span> English <span class="right">Rhetoric &amp; Persuasion</span></div>
+      <div class="entries">
+
+        <a class="entry" href="ethos_pathos_logos.html">
+          <img class="ic" src="icon_computer.png" alt="">
+          <span class="tx">
+            <h3>Ethos, Pathos, Logos</h3>
+            <p>Classify persuasive examples by their primary appeal, whether credibility, emotion, or logic, then unpack the ones that blend all three.</p>
+            <span class="skill">Thinking skill: identifying persuasive technique</span>
+            <span class="rec">✎ Records results for the teacher</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="sidebar right">
+      <div class="sbox spot">
+        <div class="sbox-bar">★ Featured Activity</div>
+        <div class="in">
+          <div class="feat">New this week:</div>
+          How Serious Is It? Rank deviant acts in a forced diamond and defend your order to the class.
+          <a href="diamond_ranking.html">Take a look ▸</a>
+        </div>
+      </div>
+      <div class="sbox links">
+        <div class="sbox-bar">Quick Links</div>
+        <div class="in">
+          <a href="sociologygame.html">▸ Deviant or Illegal?</a>
+          <a href="folkways.html">▸ Folkways or Mores?</a>
+          <a href="diamond_ranking.html">▸ How Serious Is It?</a>
+          <a href="ethos_pathos_logos.html">▸ Ethos, Pathos, Logos</a>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer>
+    <img class="foot-toucan" src="eduquest-logo.png" alt="EduQuest toucan mascot">
+    <div class="links">Home <span>|</span> Site Map <span>|</span> Subjects <span>|</span> About <span>|</span> Contact</div>
+    <div style="margin-top:5px;">EduQuest, a free teaching resource. Other teachers welcome. &#9733;</div>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   EDUQUEST DISCOVERY WIDGET
+   One slot, random on load, never the same card twice running.
+   Each card shows a random plate from its category image pool
+   (wonder1.png ... etc). A missing plate just renders text only.
+   Wonder cards with no "to" re-roll via "Another". Cards with a
+   "to" funnel into a real activity via "Explore".
+   TO ADD A CARD: copy one line in the WIDGETS array. cat sets
+   the colour, the weight, and which image pool it draws from.
+   TO ADD PLATES: raise the number in IMG_COUNTS and add the
+   files (e.g. wonder7.png). No code change needed beyond that.
+   No em dashes anywhere in this copy. Keep it that way.
+   ============================================================ */
+var IMG_COUNTS = {wonder:6, think:4, word:4, figure:3};
+
+var WIDGETS = [
+  /* ----- WONDER : natural world, Greek myth, astonishing social facts ----- */
+  {cat:'wonder', bar:'\ud83d\udd0d Discovery',   title:'The Axolotl',     blurb:'It regrows its limbs, its heart and parts of its brain. It also never grows up.'},
+  {cat:'wonder', bar:'\ud83d\udc19 Creature',    title:'The Octopus',     blurb:'It has three hearts, blue blood, and a knot of neurons in every arm.'},
+  {cat:'wonder', bar:'\ud83d\udc3b Creature',    title:'The Tardigrade',  blurb:'It survives boiling, freezing, crushing pressure and the vacuum of space.'},
+  {cat:'wonder', bar:'\ud83c\udfdb Myth',        title:'Cassandra',       blurb:'Apollo gave her true prophecy, then cursed her so that no one would believe it.'},
+  {cat:'wonder', bar:'\ud83c\udfdb Myth',        title:'The Sirens',      blurb:'Their song was so persuasive that sailors steered onto the rocks to hear it.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},
+  {cat:'wonder', bar:'\ud83c\udfdb Myth',        title:'Prometheus',      blurb:'He stole fire from the gods to give it to us, and paid for it forever.'},
+  {cat:'wonder', bar:'\ud83c\udfdb Myth',        title:'The Labyrinth',   blurb:'Daedalus built a maze so cunning that he himself could barely escape it.'},
+  {cat:'wonder', bar:'\ud83c\udfdb Myth',        title:'Pandora',         blurb:'She was told never to open the jar. She opened it. Only hope was left inside.'},
+  {cat:'wonder', bar:'\ud83d\udd0d Did You Know?', title:'Feral Children', blurb:'Children raised without contact never fully learn language. Society makes us human.', act:'Explore \u25b8', to:'folkways.html'},
+  {cat:'wonder', bar:'\ud83d\udd0d Experiment',  title:'Breaching Experiments', blurb:'Break one tiny social rule on purpose and watch how fiercely people react.', act:'Explore \u25b8', to:'folkways.html'},
+  {cat:'wonder', bar:'\ud83d\udd0d Idea',        title:'The Sociological Imagination', blurb:'It is the trick of seeing your private troubles as wider, shared public issues.', act:'Explore \u25b8', to:'sociologygame.html'},
+
+  /* ----- THINK : provocations that funnel into an activity ----- */
+  {cat:'think', bar:'\u2753 Question', title:'Is breaking the law always wrong?', blurb:'Some illegal acts feel right. Some legal ones feel wrong.', act:'Explore \u25b8', to:'sociologygame.html'},
+  {cat:'think', bar:'\u2753 Question', title:'Do small social rules matter as much as laws?', blurb:'A rude act and an illegal act are not the same thing.', act:'Explore \u25b8', to:'folkways.html'},
+  {cat:'think', bar:'\u2753 Question', title:'Which wrong is worst, and who decides?', blurb:'Rank nine wrongs from worst to least, then defend your order.', act:'Explore \u25b8', to:'diamond_ranking.html'},
+  {cat:'think', bar:'\u2753 Question', title:'Can a message be fair and manipulative at once?', blurb:'The best persuasion often hides how it is working on you.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},
+  {cat:'think', bar:'\u2753 Question', title:'Where do your values actually come from?', blurb:'You did not choose most of them. Society handed them over.', act:'Explore \u25b8', to:'folkways.html'},
+  {cat:'think', bar:'\u2753 Question', title:'Who gets to decide what counts as normal?', blurb:'Normal is not a fact. It is an agreement, and agreements change.', act:'Explore \u25b8', to:'sociologygame.html'},
+
+  /* ----- WORD : sociology and English vocabulary ----- */
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Deviance',      blurb:'Behaviour that breaks a social norm. It is not always against the law.', act:'Explore \u25b8', to:'sociologygame.html'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Folkways',      blurb:'The small everyday customs we follow without ever being told to.', act:'Explore \u25b8', to:'folkways.html'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Mores',         blurb:'The norms we treat as moral. Break these and people judge you hard.', act:'Explore \u25b8', to:'folkways.html'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Anomie',        blurb:'Durkheim\u2019s word for the unease people feel when shared rules break down.'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Socialisation', blurb:'The lifelong process of learning how to be a member of your society.'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Ethnocentrism', blurb:'Judging another culture by the standards of your own.'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Subculture',    blurb:'A group inside society that lives by its own distinct set of norms.'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Ethos',         blurb:'Persuasion that works by making you trust the speaker.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Pathos',        blurb:'Persuasion that works by moving your emotions.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Logos',         blurb:'Persuasion that works through logic and evidence.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},
+  {cat:'word', bar:'\ud83d\udcd6 Word', title:'Rhetoric',      blurb:'The ancient art of using language to persuade an audience.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'},
+
+  /* ----- FIGURE : thinkers (shown least often) ----- */
+  {cat:'figure', bar:'\ud83d\udc64 Thinker', title:'\u00c9mile Durkheim', blurb:'He argued that even crime has a function in a healthy society.', act:'Explore \u25b8', to:'sociologygame.html'},
+  {cat:'figure', bar:'\ud83d\udc64 Thinker', title:'Erving Goffman',   blurb:'He showed that we all perform a role, the way actors do on a stage.'},
+  {cat:'figure', bar:'\ud83d\udc64 Thinker', title:'C. Wright Mills',  blurb:'He coined the sociological imagination, linking private lives to public history.', act:'Explore \u25b8', to:'sociologygame.html'},
+  {cat:'figure', bar:'\ud83d\udc64 Thinker', title:'Aristotle',        blurb:'Over two thousand years ago he named the three appeals: ethos, pathos and logos.', act:'Explore \u25b8', to:'ethos_pathos_logos.html'}
+];
+
+var WEIGHTS = {wonder:3, think:3, word:2, figure:1};
+
+function eqPick(){
+  var last = '';
+  try { last = sessionStorage.getItem('eq_last') || ''; } catch(e){}
+  var pool = [];
+  for (var i=0; i<WIDGETS.length; i++){
+    if (WIDGETS[i].title === last) continue;            /* never twice running */
+    var n = WEIGHTS[WIDGETS[i].cat] || 1;
+    for (var k=0; k<n; k++) pool.push(i);
+  }
+  if (!pool.length){ for (var j=0;j<WIDGETS.length;j++) pool.push(j); }
+  var choice = pool[Math.floor(Math.random()*pool.length)];
+  try { sessionStorage.setItem('eq_last', WIDGETS[choice].title); } catch(e){}
+  return WIDGETS[choice];
+}
+
+function eqRender(){
+  var box = document.getElementById('discoveryWidget');
+  box.style.opacity = '0';
+  setTimeout(function(){
+    var e = eqPick();
+    document.getElementById('wBar').textContent = e.bar;
+    document.getElementById('wBar').className = 'w-kicker ' + e.cat;
+    document.getElementById('wTitle').textContent = e.title;
+    document.getElementById('wBlurb').textContent = e.blurb;
+
+    var pic = document.getElementById('wPic');
+    var count = IMG_COUNTS[e.cat] || 0;
+    if (count > 0){
+      var idx = 1 + Math.floor(Math.random()*count);
+      pic.style.display = 'block';
+      pic.onerror = function(){ this.style.display = 'none'; };
+      pic.src = e.cat + idx + '.png';
+      pic.alt = e.title;
+    } else {
+      pic.style.display = 'none';
+    }
+
+    var act = document.getElementById('wAct');
+    if (e.to){
+      act.textContent = e.act || 'Explore \u25b8';
+      act.setAttribute('href', e.to);
+      act.onclick = null;
+    } else {
+      act.textContent = e.act || 'Another \u25c7';
+      act.removeAttribute('href');
+      act.onclick = function(ev){ ev.preventDefault(); eqRender(); };
+    }
+    box.style.opacity = '1';
+  }, 120);
+}
+
+/* Masthead: rotate through logo1..logo4 at random on load. To add more,
+   raise LOGO_COUNT and add logo5.png etc. */
+var LOGO_COUNT = 4;
+function eqMasthead(){
+  var n = 1 + Math.floor(Math.random() * LOGO_COUNT);
+  var img = document.getElementById('mastLogo');
+  if (img) img.src = 'logo' + n + '.png';
+}
+document.addEventListener('DOMContentLoaded', eqMasthead);
+document.addEventListener('DOMContentLoaded', eqRender);
+</script>
+
 </body>
 </html>
