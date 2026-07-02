@@ -185,34 +185,65 @@
     font-family:'DotGothic16','Courier New',monospace !important;
   }
 
-
-/* ---------- EduQuest World Bulletin ---------- */
-.bulletin{
-  display:flex;
-  align-items:center;
-  min-height:34px;
-  background:linear-gradient(90deg,#fff7d8,var(--cream-d));
-  border-bottom:3px solid var(--gold-d);
-  font-size:0.82rem;
-}
-.bulletin-label{
-  flex:none;
-  padding:7px 12px;
-  background:linear-gradient(180deg,var(--gold),var(--gold-d));
-  color:var(--navy-d);
-  font-weight:bold;
-  font-variant:small-caps;
-  letter-spacing:.06em;
-  border-right:2px solid var(--gold-d);
-}
-.bulletin-message{
-  padding:7px 14px;
-  color:var(--navy);
-  font-weight:bold;
-  opacity:1;
-  transition:opacity .45s ease;
-}
-.bulletin-message.fade{opacity:0;}
+  /* ---------- EduQuest World Bulletin: right-to-left GeoCities pan ---------- */
+  .bulletin{
+    position:relative;
+    min-height:36px;
+    overflow:hidden;
+    background:linear-gradient(90deg,#fff7d8,var(--cream-d));
+    border-bottom:3px solid var(--gold-d);
+    font-size:0.82rem;
+  }
+  .bulletin-label{
+    position:relative;
+    z-index:3;
+    display:inline-flex;
+    align-items:center;
+    min-height:36px;
+    padding:7px 12px;
+    background:linear-gradient(180deg,var(--gold),var(--gold-d));
+    color:var(--navy-d);
+    font-weight:bold;
+    font-variant:small-caps;
+    letter-spacing:.06em;
+    border-right:2px solid var(--gold-d);
+    box-shadow:4px 0 8px rgba(0,0,0,.16);
+    text-shadow:0 1px 0 rgba(255,255,255,.5);
+  }
+  .bulletin-window{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    overflow:hidden;
+  }
+  .bulletin-track{
+    position:absolute;
+    top:50%;
+    left:0;
+    white-space:nowrap;
+    color:var(--navy);
+    font-weight:bold;
+    letter-spacing:.01em;
+    text-shadow:0 1px 0 rgba(255,255,255,.65);
+    transform:translateX(var(--bulletin-start, 1000px)) translateY(-50%);
+    will-change:transform;
+  }
+  .bulletin-track.run{
+    animation:eqBulletinPan var(--bulletin-speed, 12s) linear forwards;
+  }
+  @keyframes eqBulletinPan{
+    from{transform:translateX(var(--bulletin-start, 1000px)) translateY(-50%);}
+    to{transform:translateX(var(--bulletin-end, -1000px)) translateY(-50%);}
+  }
+  @media(max-width:700px){
+    .bulletin{font-size:0.75rem;}
+    .bulletin-label{padding:7px 9px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bulletin-window{position:relative;display:inline-block;vertical-align:middle;overflow:hidden;width:calc(100% - 165px);}
+    .bulletin-track{position:relative;top:auto;left:auto;display:block;padding:7px 12px;transform:none;white-space:normal;}
+    .bulletin-track.run{animation:none;}
+  }
 
 </style>
 </head>
@@ -230,10 +261,11 @@
     <img class="mast-logo" id="mastLogo" src="logo1.png" alt="EduQuest, Thinking Library">
   </div>
 
-
-  <div class="bulletin" aria-live="polite">
+  <div class="bulletin" aria-label="EduQuest World Bulletin">
     <div class="bulletin-label">★ World Bulletin ★</div>
-    <div class="bulletin-message" id="bulletinMessage"></div>
+    <div class="bulletin-window" aria-live="polite" aria-atomic="true">
+      <div class="bulletin-track" id="bulletinTrack"></div>
+    </div>
   </div>
 
   <div class="body">
@@ -502,44 +534,79 @@ document.addEventListener('DOMContentLoaded', eqRender);
 })();
 </script>
 
-
 <script>
+/* ============================================================
+   EDUQUEST WORLD BULLETIN
+   A right-to-left, GeoCities-style panning bulletin.
+   The gold label sits above the moving text so each item appears
+   to vanish underneath the World Bulletin sign on the left.
+   ============================================================ */
 (function(){
-var BULLETINS=[
-"🌱 Forests can recover when people protect them. Nature is more resilient than it first appears.",
-"🐋 Whale populations have made remarkable recoveries in parts of the world.",
-"☀️ Solar and wind power are becoming ordinary parts of everyday life.",
-"🦋 Small habitats, gardens and wetlands can help insects, birds and local wildlife return.",
-"🌊 Rivers become cleaner when communities decide they are worth saving.",
-"🏛 Society is not just around us. It teaches us what feels normal.",
-"👥 A folkway is a small rule until someone breaks it.",
-"⚖️ Some things are illegal but not widely seen as deviant. Some things are deviant but not illegal.",
-"🔍 The sociological imagination means seeing private troubles as public issues.",
-"🌏 Norms change across cultures, places and historical moments.",
-"📚 Every expert began as a beginner with one good question.",
-"💡 Classification is thinking with sharper edges.",
-"🧭 A good question is a map. A better question is a compass.",
-"⭐ Welcome, explorers. Every subject contains a hidden doorway.",
-"✒️ Words are tools. Use them carefully."
-];
-var el=document.getElementById('bulletinMessage');
-if(!el)return;
-var order=BULLETINS.slice().sort(()=>Math.random()-0.5);
-var i=0;
-function next(){
- el.classList.add('fade');
- setTimeout(function(){
-   el.textContent=order[i];
-   el.classList.remove('fade');
-   i=(i+1)%order.length;
-   if(i===0) order.sort(()=>Math.random()-0.5);
- },450);
-}
-next();
-setInterval(next,6500);
+  var BULLETINS = [
+    /* planet watch */
+    "🌱 Planet Watch: Forests can recover when people protect them. Nature is more resilient than it first appears.",
+    "🐋 Planet Watch: Whale populations have made remarkable recoveries in parts of the world.",
+    "☀️ Planet Watch: Solar and wind power are becoming ordinary parts of everyday life.",
+    "🦋 Planet Watch: Small habitats, gardens and wetlands can help insects, birds and local wildlife return.",
+    "🌊 Planet Watch: Rivers become cleaner when communities decide they are worth saving.",
+
+    /* sociology desk */
+    "🏛 Sociology Desk: Society is not just around us. It teaches us what feels normal.",
+    "👥 Sociology Desk: A folkway is a small rule until someone breaks it.",
+    "⚖️ Sociology Desk: Some things are illegal but not widely seen as deviant. Some things are deviant but not illegal.",
+    "🔍 Sociology Desk: The sociological imagination means seeing private troubles as public issues.",
+    "🌏 Sociology Desk: Norms change across cultures, places and historical moments.",
+
+    /* thinking library */
+    "📚 Thinking Library: Every expert began as a beginner with one good question.",
+    "💡 Thinking Library: Classification is thinking with sharper edges.",
+    "🧭 Thinking Library: A good question is a map. A better question is a compass.",
+    "⭐ Thinking Library: Welcome, explorers. Every subject contains a hidden doorway.",
+    "✒️ Thinking Library: Words are tools. Use them carefully."
+  ];
+
+  var track = document.getElementById('bulletinTrack');
+  var windowBox = track ? track.parentNode : null;
+  if(!track || !windowBox) return;
+
+  var order = BULLETINS.slice().sort(function(){ return Math.random() - 0.5; });
+  var i = 0;
+  var pauseBetweenItems = 2100;
+  var pixelsPerSecond = 78;
+
+  function prepareNext(){
+    track.classList.remove('run');
+    track.textContent = order[i];
+    i = (i + 1) % order.length;
+    if(i === 0){ order.sort(function(){ return Math.random() - 0.5; }); }
+
+    requestAnimationFrame(function(){
+      var start = windowBox.offsetWidth + 18;
+      var end = -track.offsetWidth - 28;
+      var distance = start - end;
+      var seconds = Math.max(9, Math.min(18, distance / pixelsPerSecond));
+
+      track.style.setProperty('--bulletin-start', start + 'px');
+      track.style.setProperty('--bulletin-end', end + 'px');
+      track.style.setProperty('--bulletin-speed', seconds + 's');
+
+      void track.offsetWidth;
+      track.classList.add('run');
+    });
+  }
+
+  track.addEventListener('animationend', function(){
+    setTimeout(prepareNext, pauseBetweenItems);
+  });
+
+  window.addEventListener('resize', function(){
+    track.classList.remove('run');
+    setTimeout(prepareNext, 250);
+  });
+
+  prepareNext();
 })();
 </script>
-
 
 </body>
 </html>
