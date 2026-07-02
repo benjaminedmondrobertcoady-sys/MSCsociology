@@ -177,9 +177,9 @@
   .us-toggle:hover{background:var(--gold);color:var(--navy-d);}
   .us-toggle[aria-pressed="true"]{background:var(--gold);color:var(--navy-d);}
 
-  /* Toggle changes ONE thing for now: the typeface swaps to a low-res
-     multimedia bitmap face. Everything else (layout, colour) is unchanged.
-     Pile more retro changes into this block later if desired. */
+  /* Scholastic Mode shifts the page toward a warmer 1990s educational
+     multimedia feel using Microsoft-era fonts, softer colours, bevels,
+     and a brief CD-ROM style activation notice. */
   body.us-mode h2,
 body.us-mode h3,
 body.us-mode .chapter-bar,
@@ -288,6 +288,198 @@ body.us-mode .bulletin{
     .bulletin-track.run{animation:none;}
   }
 
+  /* ---------- Right sidebar gadgets: Puzzle Corner + Date Desk ---------- */
+  .gadget{
+    margin-bottom:16px;
+    border:2px solid var(--rule);
+    background:linear-gradient(180deg,#f8f0d6,#e9dbb5);
+    box-shadow:inset 1px 1px 0 #fff,0 2px 5px rgba(0,0,0,.18);
+    overflow:hidden;
+  }
+  .gadget-bar{
+    padding:5px 10px;
+    color:#fff;
+    font-variant:small-caps;
+    font-weight:bold;
+    letter-spacing:.06em;
+    font-size:0.85rem;
+    background:linear-gradient(90deg,var(--teal),var(--teal-d));
+  }
+  .puzzle-wrap{padding:10px;}
+  .puzzle-board{
+    width:100%;
+    aspect-ratio:1/1;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    gap:2px;
+    padding:4px;
+    background:#b9a878;
+    border:2px solid;
+    border-color:#fff var(--gold-d) var(--gold-d) #fff;
+    box-shadow:inset 1px 1px 2px rgba(0,0,0,.25);
+  }
+  .puzzle-tile{
+    border:1px solid #7a5500;
+    background-image:url("puzzle.jpg");
+    background-size:300% 300%;
+    cursor:pointer;
+    box-shadow:inset 1px 1px 0 rgba(255,255,255,.55);
+  }
+  .puzzle-tile.empty{
+    background-image:none;
+    background:#2f2a1a;
+    border-color:#2f2a1a;
+    box-shadow:inset 0 0 8px rgba(0,0,0,.55);
+    cursor:default;
+  }
+  .puzzle-tools{
+    margin-top:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    font-size:.74rem;
+    color:var(--navy);
+    font-weight:bold;
+  }
+  .puzzle-tools button{
+    font-family:inherit;
+    font-size:.72rem;
+    font-weight:bold;
+    color:var(--navy);
+    background:var(--cream-d);
+    padding:4px 8px;
+    border:2px solid;
+    border-color:#fff var(--gold-d) var(--gold-d) #fff;
+    cursor:pointer;
+    font-variant:small-caps;
+  }
+  .puzzle-note{
+    margin-top:7px;
+    font-size:.72rem;
+    line-height:1.35;
+    color:#3a3520;
+  }
+
+  .date-gadget{
+    padding:10px;
+    text-align:center;
+    cursor:pointer;
+    user-select:none;
+  }
+  .date-card{
+    position:relative;
+    min-height:178px;
+    padding:18px 10px 12px;
+    background:linear-gradient(180deg,#fffaf0,#eadfbe);
+    border:2px solid;
+    border-color:#fff #b99b4a #b99b4a #fff;
+    box-shadow:0 4px 8px rgba(0,0,0,.22);
+    color:var(--navy-d);
+  }
+  .date-card::before{
+    content:"";
+    position:absolute;
+    left:10px;
+    right:10px;
+    top:7px;
+    height:7px;
+    border-radius:7px;
+    background:repeating-linear-gradient(90deg,#5574ad 0 9px,#dfe9ff 9px 13px);
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  .date-month{
+    margin-top:12px;
+    font-size:.9rem;
+    font-weight:bold;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--green);
+  }
+  .date-number{
+    font-size:4.2rem;
+    line-height:.98;
+    font-weight:bold;
+    color:var(--navy);
+    text-shadow:0 1px 0 #fff;
+  }
+  .date-weekday{
+    font-size:.88rem;
+    font-weight:bold;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--gold-d);
+  }
+  .date-hint{
+    margin-top:7px;
+    font-size:.66rem;
+    color:#6b5a2a;
+    font-style:italic;
+  }
+  .month-title{
+    margin-top:14px;
+    font-weight:bold;
+    color:var(--green);
+    font-size:.9rem;
+  }
+  .month-grid{
+    margin-top:8px;
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:2px;
+    font-size:.62rem;
+    color:var(--ink);
+  }
+  .month-grid span{
+    min-height:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:2px;
+  }
+  .month-grid .head{
+    font-weight:bold;
+    color:var(--navy);
+  }
+  .month-grid .today{
+    background:var(--gold);
+    color:var(--navy-d);
+    border:1px solid var(--gold-d);
+    font-weight:bold;
+  }
+  .origin-title{
+    margin-top:18px;
+    font-size:.95rem;
+    font-weight:bold;
+    letter-spacing:.08em;
+    color:var(--green);
+    text-transform:uppercase;
+  }
+  .origin-symbol{
+    font-size:2rem;
+    margin:4px 0;
+  }
+  .origin-text{
+    font-size:.78rem;
+    line-height:1.38;
+    color:#3a3520;
+    padding:0 4px;
+  }
+  .origin-old{
+    margin-top:7px;
+    font-size:.68rem;
+    color:var(--gold-d);
+    font-weight:bold;
+  }
+
+  body.us-mode .gadget{
+    background:linear-gradient(180deg,#efe2b7,#dfcf9b);
+  }
+  body.us-mode .date-card{
+    background:linear-gradient(180deg,#fff6d6,#e8d8a5);
+  }
+
 </style>
 </head>
 <body>
@@ -344,7 +536,7 @@ body.us-mode .bulletin{
       </div>
       <div class="welcome">
         <img class="dropcap" src="icon_alpha.png" alt="A">
-        <p> treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas, and then defend your choices. The interesting learning lives in the <b>grey areas</b>. Choose a chapter below and open an activity to begin. <a href="#sociology">Explore the subjects ▸</a></p>
+        <p>A treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas, and then defend your choices. The interesting learning lives in the <b>grey areas</b>. Choose a chapter below and open an activity to begin. <a href="#sociology">Explore the subjects ▸</a></p>
       </div>
 
       <!-- CHAPTER I -->
@@ -415,23 +607,21 @@ body.us-mode .bulletin{
 
     <!-- RIGHT SIDEBAR -->
     <aside class="sidebar right">
-      <div class="sbox spot">
-        <div class="sbox-bar">★ Featured Activity</div>
-        <div class="in">
-          <div class="feat">Featured activity:</div>
-          How Serious Is It? Rank deviant acts in a forced diamond and defend your order to the class.
-          <a href="diamond_ranking.html">Take a look ▸</a>
+      <div class="gadget puzzle-gadget">
+        <div class="gadget-bar">🧩 Puzzle Corner</div>
+        <div class="puzzle-wrap">
+          <div class="puzzle-board" id="puzzleBoard" aria-label="Sliding picture puzzle"></div>
+          <div class="puzzle-tools">
+            <span id="puzzleMoves">Moves: 0</span>
+            <button id="puzzleShuffle" type="button">Shuffle</button>
+          </div>
+          <div class="puzzle-note" id="puzzleNote">Picture file: <b>puzzle.jpg</b></div>
         </div>
       </div>
-      <div class="sbox links">
-        <div class="sbox-bar">Quick Links</div>
-        <div class="in">
-          <a href="sociologygame.html">▸ Deviant or Illegal?</a>
-          <a href="folkways.html">▸ Folkways or Mores?</a>
-          <a href="diamond_ranking.html">▸ How Serious Is It?</a>
-          <a href="fbi_corkboard.html">▸ FBI Corkboard</a>
-          <a href="ethos_pathos_logos.html">▸ Ethos, Pathos, Logos</a>
-        </div>
+
+      <div class="gadget date-gadget" id="dateGadget" role="button" tabindex="0" aria-label="EduQuest date gadget. Click to change view.">
+        <div class="date-card" id="dateCard"></div>
+        <div class="date-hint">click to turn the page</div>
       </div>
     </aside>
 
@@ -597,31 +787,68 @@ document.addEventListener('DOMContentLoaded', eqRender);
    ============================================================ */
 (function(){
   var BULLETINS = [
-"🌱 Planet Watch: Scientists continue identifying climate-resistant coral reefs that could help restore damaged reef ecosystems.",
-"🌱 Planet Watch: Rhino populations continue recovering through carefully managed conservation programmes across Africa.",
-"🌱 Planet Watch: Humpback whale populations continue returning to oceans where they were once rarely seen.",
-"🌱 Planet Watch: Sea turtle nesting numbers continue improving on many protected beaches around the world.",
-"🌱 Planet Watch: Beavers continue helping reduce flooding by restoring natural wetlands.",
-"🌱 Planet Watch: Forest restoration projects continue bringing native wildlife back to damaged habitats.",
-"🌱 Planet Watch: Pollinator gardens continue helping bees and butterflies return to towns and cities.",
-"🌱 Planet Watch: More rivers are being restored to their natural courses every year.",
-"🔭 Space Desk: Astronomers continue building the most detailed map ever assembled of the Milky Way.",
-"🔭 Space Desk: New planets orbiting distant stars continue to be discovered every month.",
-"🔭 Space Desk: Modern telescopes continue revealing galaxies formed billions of years ago.",
-"🔭 Space Desk: Our understanding of the universe continues expanding with every new observation.",
-"🔬 Science Update: Thousands of new species continue to be discovered every year.",
-"🔬 Science Update: Renewable energy continues supplying a larger share of electricity around the world.",
-"🔬 Science Update: Medical researchers continue developing treatments once thought impossible.",
-"🏺 Discovery Desk: Archaeologists continue uncovering ancient cities beneath forests, deserts and farmland.",
-"🏺 Discovery Desk: Ancient artwork continues providing clues about how people once lived.",
-"🌍 Around the World: Libraries continue evolving into community learning centres filled with technology and creativity.",
-"🌍 Around the World: UNESCO continues protecting remarkable places for future generations.",
-"💡 Innovation Watch: Robots continue assisting surgeons, scientists and emergency workers.",
-"💡 Innovation Watch: Engineers continue developing cleaner aircraft and more efficient transport.",
-"📚 Thinking Library: Every expert you admire once knew almost nothing about their subject.",
-"📚 Thinking Library: Curiosity has launched more discoveries than certainty ever has.",
-"📚 Thinking Library: Knowledge grows whenever people connect ideas from different subjects.",
-"📚 Thinking Library: Reading lets you borrow somebody else's lifetime of experience."
+    "🌱 Planet Watch: Across 71 countries and 100 territories, scientists have identified about 64,000 square miles of climate-resilient coral reef.",
+    "🌱 Planet Watch: In Mozambique, 61 white rhinos have been moved to Zinave National Park as part of a major wildlife restoration effort.",
+    "🌱 Planet Watch: In Zinave National Park, Mozambique, relocated rhinos have begun producing calves, turning reintroduction into recovery.",
+    "🌱 Planet Watch: In Ealing, west London, beavers at Paradise Fields are slowing Costons Brook with dams that help reduce local flooding.",
+    "🌱 Planet Watch: In Britain, beaver kits have appeared from Ealing to the Cairngorms as a species once extinct there continues its return.",
+    "🌱 Planet Watch: On Australia's east coast, humpback whales have rebounded from a few hundred survivors to tens of thousands after whaling ended.",
+    "🌱 Planet Watch: In Malawi's Liwonde National Park, cheetahs returned after decades away and the population has grown since reintroduction.",
+    "🌱 Planet Watch: In the Red Sea, scientists are studying heat-tolerant coral communities that may hold clues for reef survival.",
+    "🌱 Planet Watch: In Costa Rica, forest cover has recovered dramatically after decades of conservation, reforestation and protected-area work.",
+    "🌱 Planet Watch: In the Netherlands, wildlife bridges and green corridors help animals cross roads and reconnect fragmented habitats.",
+
+    "🔭 Space Desk: ESA's Euclid telescope has captured a visible-light mosaic of the Milky Way's centre showing more than 60 million stars.",
+    "🔭 Space Desk: NASA's Hubble mosaic of Andromeda maps hundreds of millions of stars in our nearest large galactic neighbour.",
+    "🔭 Space Desk: In the constellation Fornax, the Hubble Ultra Deep Field reveals thousands of galaxies in one tiny patch of sky.",
+    "🔭 Space Desk: The James Webb Space Telescope's first deep field in Volans showed thousands of distant galaxies behind SMACS 0723.",
+    "🔭 Space Desk: In Chile's Atacama Desert, the ALMA observatory studies cold gas and dust where stars and planets are born.",
+    "🔭 Space Desk: NASA's OSIRIS-REx returned grains from asteroid Bennu to Earth, giving scientists a direct sample from the early Solar System.",
+    "🔭 Space Desk: Japan's Hayabusa2 mission returned material from asteroid Ryugu, helping researchers study ancient building blocks of planets.",
+    "🔭 Space Desk: In Antarctica, meteorite hunters continue finding rocks from space preserved on blue ice fields.",
+
+    "🔬 Science Update: In Papua New Guinea's forests, researchers continue documenting frogs, insects and plants previously unknown to science.",
+    "🔬 Science Update: In the Amazon basin, scientists keep describing new species from one of Earth's richest living libraries.",
+    "🔬 Science Update: In the Galápagos Islands, conservationists use careful breeding and habitat protection to support giant tortoise recovery.",
+    "🔬 Science Update: In Iceland, geothermal power helps heat homes and produce electricity using energy from beneath the ground.",
+    "🔬 Science Update: In Denmark, offshore wind farms in the North Sea continue expanding clean electricity generation.",
+    "🔬 Science Update: In Kenya, geothermal plants in the Rift Valley provide a large share of the country's electricity.",
+    "🔬 Science Update: In Singapore, NEWater plants turn treated wastewater into clean water for industry and public supply.",
+    "🔬 Science Update: In Japan, earthquake engineers keep improving buildings that can flex and absorb shaking instead of collapsing.",
+
+    "🏺 Discovery Desk: At Saqqara in Egypt, archaeologists continue uncovering tombs, coffins and painted scenes from ancient Egyptian life.",
+    "🏺 Discovery Desk: Near Pompeii in Italy, new excavations continue revealing rooms, frescoes and everyday objects preserved by Vesuvius.",
+    "🏺 Discovery Desk: In Guatemala, lidar surveys have revealed hidden Maya roads, platforms and settlements beneath dense rainforest.",
+    "🏺 Discovery Desk: At Gobekli Tepe in Turkey, carved stone pillars continue reshaping ideas about early ritual and settlement.",
+    "🏺 Discovery Desk: In Cambodia, laser mapping around Angkor has revealed traces of a vast engineered urban landscape.",
+    "🏺 Discovery Desk: In the North Sea, archaeologists study Doggerland, the drowned landscape that once connected Britain to Europe.",
+    "🏺 Discovery Desk: In Peru, researchers continue identifying new Nazca geoglyphs across the desert using aerial and digital survey tools.",
+    "🏺 Discovery Desk: In Greece, the Antikythera shipwreck continues yielding clues about ancient technology, trade and travel.",
+
+    "🌍 World Desk: In Bhutan, protected forests cover much of the country and help shelter snow leopards, red pandas and black-necked cranes.",
+    "🌍 World Desk: In Rwanda's Volcanoes National Park, mountain gorilla conservation has helped one of the world's rarest apes increase in number.",
+    "🌍 World Desk: In Nepal, community forest groups have helped restore hillsides while protecting local wildlife habitat.",
+    "🌍 World Desk: In Palau, one of the world's largest marine sanctuaries protects ocean life across a vast Pacific area.",
+    "🌍 World Desk: In Belize, stronger reef protections help safeguard mangroves, seagrass and the Mesoamerican Barrier Reef.",
+    "🌍 World Desk: In New Zealand, predator-free island sanctuaries protect rare birds such as kakapo, takahe and saddlebacks.",
+    "🌍 World Desk: In Spain's Andalusia, Iberian lynx numbers have risen after years of breeding, release and habitat protection.",
+    "🌍 World Desk: In Mongolia, Przewalski's horses have returned to the steppe after once disappearing from the wild.",
+
+    "💡 Innovation Watch: In Switzerland, engineers are storing energy by lifting heavy blocks and releasing them later to generate power.",
+    "💡 Innovation Watch: In Morocco, the Noor solar complex near Ouarzazate turns desert sunlight into electricity.",
+    "💡 Innovation Watch: In Norway, electric ferries carry passengers through fjords with far less engine noise and local air pollution.",
+    "💡 Innovation Watch: In the Netherlands, floating farms and water-smart architecture test ways to live with rising seas.",
+    "💡 Innovation Watch: In India, solar canals generate electricity while reducing water evaporation from irrigation channels.",
+    "💡 Innovation Watch: In Australia, scientists are testing seagrass and seaweed restoration to support marine life and store carbon.",
+    "💡 Innovation Watch: In Japan, bullet trains continue showing how fast transport can move huge numbers of people efficiently.",
+    "💡 Innovation Watch: In Finland, deep geological storage is being developed to isolate nuclear waste far underground.",
+
+    "📚 Thinking Library: In Alexandria, scholars once tried to gather the world's knowledge into one great library beside the Mediterranean.",
+    "📚 Thinking Library: In Baghdad, the House of Wisdom helped preserve and translate mathematics, astronomy and philosophy across cultures.",
+    "📚 Thinking Library: In Kyoto, centuries-old temples show how architecture, memory and landscape can become one lesson.",
+    "📚 Thinking Library: In Athens, students still study arguments first shaped by philosophers more than two thousand years ago.",
+    "📚 Thinking Library: In Florence, Renaissance artists joined science, mathematics and imagination to change how people saw the world.",
+    "📚 Thinking Library: In Hiroshima, peace education turns a city's history into a lesson about memory, responsibility and hope."
   ];
 
   var track = document.getElementById('bulletinTrack');
@@ -684,5 +911,163 @@ btn.addEventListener('click',()=>{
 });
 })();
 </script>
+
+<script>
+/* ============================================================
+   EDUQUEST RIGHT SIDEBAR GADGETS
+   Puzzle Corner uses puzzle.jpg in the same folder as index.html.
+   The Date Desk cycles through: big date, month grid, day-name origin.
+   ============================================================ */
+(function(){
+  /* ---------- Sliding Puzzle ---------- */
+  var board = document.getElementById('puzzleBoard');
+  var movesEl = document.getElementById('puzzleMoves');
+  var shuffleBtn = document.getElementById('puzzleShuffle');
+  if(board && movesEl && shuffleBtn){
+    var size = 3;
+    var tiles = [];
+    var moves = 0;
+
+    function solvedTiles(){
+      var arr = [];
+      for(var i=0;i<size*size;i++) arr.push(i);
+      return arr;
+    }
+
+    function isAdjacent(a,b){
+      var ax = a % size, ay = Math.floor(a / size);
+      var bx = b % size, by = Math.floor(b / size);
+      return Math.abs(ax-bx) + Math.abs(ay-by) === 1;
+    }
+
+    function renderPuzzle(){
+      board.innerHTML = '';
+      for(var pos=0; pos<tiles.length; pos++){
+        var val = tiles[pos];
+        var tile = document.createElement('button');
+        tile.type = 'button';
+        tile.className = 'puzzle-tile' + (val === size*size-1 ? ' empty' : '');
+        tile.setAttribute('aria-label', val === size*size-1 ? 'empty puzzle space' : 'puzzle tile');
+        if(val !== size*size-1){
+          var x = val % size;
+          var y = Math.floor(val / size);
+          tile.style.backgroundPosition = (x * 50) + '% ' + (y * 50) + '%';
+        }
+        (function(p){
+          tile.addEventListener('click',function(){
+            var empty = tiles.indexOf(size*size-1);
+            if(isAdjacent(p, empty)){
+              var temp = tiles[p];
+              tiles[p] = tiles[empty];
+              tiles[empty] = temp;
+              moves++;
+              movesEl.textContent = 'Moves: ' + moves;
+              renderPuzzle();
+              if(tiles.join(',') === solvedTiles().join(',')){
+                document.getElementById('puzzleNote').innerHTML = 'Solved! Replace <b>puzzle.jpg</b> any time for a new picture.';
+              }
+            }
+          });
+        })(pos);
+        board.appendChild(tile);
+      }
+    }
+
+    function shufflePuzzle(){
+      tiles = solvedTiles();
+      moves = 0;
+      movesEl.textContent = 'Moves: 0';
+      document.getElementById('puzzleNote').innerHTML = 'Picture file: <b>puzzle.jpg</b>';
+
+      var empty = size*size-1;
+      for(var step=0; step<120; step++){
+        var options = [];
+        for(var p=0;p<tiles.length;p++){
+          if(isAdjacent(p, empty)) options.push(p);
+        }
+        var pick = options[Math.floor(Math.random()*options.length)];
+        var temp = tiles[pick];
+        tiles[pick] = tiles[empty];
+        tiles[empty] = temp;
+        empty = pick;
+      }
+      renderPuzzle();
+    }
+
+    shuffleBtn.addEventListener('click', shufflePuzzle);
+    shufflePuzzle();
+  }
+
+  /* ---------- Date Gadget ---------- */
+  var dateGadget = document.getElementById('dateGadget');
+  var dateCard = document.getElementById('dateCard');
+  if(dateGadget && dateCard){
+    var view = 0;
+    var now = new Date();
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var dayOrigins = [
+      {symbol:'☀️', old:'Old English: Sunnandæg', text:'Sunday is the Sun’s day. Its name comes from Old English Sunnandæg, following an older Roman tradition of naming days after heavenly bodies.'},
+      {symbol:'🌙', old:'Old English: Mōnandæg', text:'Monday is the Moon’s day. Its name comes from Old English Mōnandæg, meaning the day of the Moon.'},
+      {symbol:'⚔️', old:'Old English: Tīwesdæg', text:'Tuesday is Tiw’s day. Tiw, or Týr, was a Germanic and Norse god associated with law, courage and war.'},
+      {symbol:'🧙', old:'Old English: Wōdnesdæg', text:'Wednesday is Woden’s day. Woden is the Old English name for Odin, a god linked with wisdom, poetry and wandering.'},
+      {symbol:'🔨', old:'Old English: Þūnresdæg', text:'Thursday is Thor’s day. It comes from Old English Þūnresdæg, the day of the thunder god.'},
+      {symbol:'🌸', old:'Old English: Frīgedæg', text:'Friday is Frigg’s day. The name comes from Old English Frīgedæg, linked to the goddess Frigg and later often associated with Freyja.'},
+      {symbol:'🪐', old:'Latin: dies Saturni', text:'Saturday is Saturn’s day. It is the English weekday that still keeps the Roman god Saturn’s name most directly.'}
+    ];
+
+    function makeBigDate(){
+      return '<div class="date-month">' + months[now.getMonth()] + '</div>' +
+             '<div class="date-number">' + now.getDate() + '</div>' +
+             '<div class="date-weekday">' + days[now.getDay()] + '</div>';
+    }
+
+    function makeMonthGrid(){
+      var year = now.getFullYear();
+      var month = now.getMonth();
+      var first = new Date(year, month, 1);
+      var last = new Date(year, month + 1, 0);
+      var start = first.getDay(); /* Sunday based */
+      var labels = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+      var html = '<div class="month-title">' + months[month] + ' ' + year + '</div><div class="month-grid">';
+      for(var h=0; h<labels.length; h++) html += '<span class="head">' + labels[h] + '</span>';
+      for(var b=0; b<start; b++) html += '<span></span>';
+      for(var d=1; d<=last.getDate(); d++){
+        html += '<span class="' + (d === now.getDate() ? 'today' : '') + '">' + d + '</span>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function makeOrigin(){
+      var origin = dayOrigins[now.getDay()];
+      return '<div class="origin-title">' + days[now.getDay()] + '</div>' +
+             '<div class="origin-symbol">' + origin.symbol + '</div>' +
+             '<div class="origin-text">' + origin.text + '</div>' +
+             '<div class="origin-old">' + origin.old + '</div>';
+    }
+
+    function renderDate(){
+      dateCard.innerHTML = view === 0 ? makeBigDate() : view === 1 ? makeMonthGrid() : makeOrigin();
+    }
+
+    function nextView(){
+      view = (view + 1) % 3;
+      renderDate();
+    }
+
+    dateGadget.addEventListener('click', nextView);
+    dateGadget.addEventListener('keydown', function(ev){
+      if(ev.key === 'Enter' || ev.key === ' '){
+        ev.preventDefault();
+        nextView();
+      }
+    });
+
+    renderDate();
+  }
+})();
+</script>
+
 </body>
 </html>
