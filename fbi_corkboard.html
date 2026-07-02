@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FBI Corkboard - Build the Sociological Case</title>
+<style>
+  /* ============================================================
+     FBI CORKBOARD - EduQuest activity
+     EDIT CASES in the <script> block near the bottom.
+     Each case has: id, title, subtitle, theory, focus, evidence cards.
+     Optional Google Sheet recording: paste your web app URL in SHEET_URL.
+     ============================================================ */
+  :root{
+    --ink:#241a10;
+    --paper:#f5ead0;
+    --paper2:#fff7df;
+    --cork:#b9793c;
+    --cork2:#9f622e;
+    --cork3:#d69b5f;
+    --string:#b92828;
+    --string2:#e0c463;
+    --green:#245f39;
+    --navy:#1b2f7a;
+    --gold:#d8a93a;
+    --gold-d:#9c7415;
+    --red:#8f2424;
+    --muted:#6f6049;
+    --shadow:rgba(35,22,10,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--ink);
+    background:#101b39;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 2px, transparent 2px 5px),
+      radial-gradient(circle at 20% 0%, #273b7e 0, #111d40 42%, #0b1226 100%);
+    min-height:100vh;
+    padding:clamp(10px,2vw,26px);
+  }
+  .wrap{
+    max-width:1220px;
+    margin:0 auto;
+    background:var(--paper);
+    border:3px solid var(--gold-d);
+    box-shadow:0 0 0 2px #15245a, 0 18px 45px rgba(0,0,0,.55);
+  }
+  header{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.6), transparent 54%),
+      linear-gradient(180deg,#b9c6ed 0,#7787cf 54%,#4a5bae 100%);
+    border-bottom:4px solid var(--gold);
+    padding:18px clamp(16px,3vw,32px) 20px;
+  }
+  header:after{
+    content:"";
+    position:absolute;
+    inset:0 0 0 auto;
+    width:42%;
+    opacity:.45;
+    background:
+      linear-gradient(180deg,transparent 28%,rgba(255,255,255,.58)),
+      repeating-linear-gradient(90deg,transparent 0 28px,rgba(255,255,255,.55) 28px 32px,transparent 32px 40px);
+    pointer-events:none;
+  }
+  .eyebrow{
+    position:relative;z-index:2;
+    font-size:.76rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:#fff7c7;
+    font-weight:bold;
+    text-shadow:0 1px 2px rgba(0,0,0,.35);
+  }
+  h1{
+    position:relative;z-index:2;
+    margin-top:8px;
+    font-size:clamp(2rem,5vw,4rem);
+    line-height:.96;
+    color:#fff7d8;
+    text-shadow:3px 3px 0 #13235e, 0 5px 14px rgba(0,0,0,.35);
+    letter-spacing:.01em;
+  }
+  .lede{
+    position:relative;z-index:2;
+    max-width:78ch;
+    margin-top:13px;
+    font-size:.98rem;
+    color:#101b39;
+    background:rgba(255,247,216,.78);
+    border:2px solid rgba(156,116,21,.72);
+    padding:9px 12px;
+    line-height:1.45;
+  }
+  .gate{
+    margin:22px;
+    background:var(--paper2);
+    border:3px solid var(--ink);
+    box-shadow:6px 6px 0 rgba(0,0,0,.25);
+    padding:22px;
+  }
+  .gate h2{font-size:1.25rem;margin-bottom:6px;color:var(--navy);}
+  .gate p{font-size:.9rem;color:var(--muted);margin-bottom:14px;}
+  .gate-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .gate input{
+    font-size:1rem;
+    padding:11px 13px;
+    border:2px solid var(--ink);
+    background:#fff;
+    width:min(380px,100%);
+  }
+  button{
+    font-family:Georgia,'Times New Roman',serif;
+    font-weight:bold;
+    font-size:.92rem;
+    letter-spacing:.04em;
+    padding:11px 18px;
+    border:2px solid var(--ink);
+    background:linear-gradient(180deg,var(--gold),var(--gold-d));
+    color:#191206;
+    cursor:pointer;
+    box-shadow:3px 3px 0 rgba(0,0,0,.25);
+    font-variant:small-caps;
+  }
+  button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,.25);}
+  button:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.25);}
+  button.ghost{background:var(--paper2);color:var(--navy);}
+  button.red{background:linear-gradient(180deg,#d04b42,#8f2424);color:#fff7df;}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+  .err{display:none;color:var(--red);font-weight:bold;margin-top:10px;font-size:.88rem;}
+  .activity{display:none;padding:18px;}
+  body.started .activity{display:block;}
+  body.started .gate{display:none;}
+
+  .toolbar{
+    display:grid;
+    grid-template-columns:1.2fr 1fr auto;
+    gap:12px;
+    align-items:end;
+    background:#efe1bd;
+    border:2px solid #b99b5f;
+    padding:12px;
+    margin-bottom:14px;
+  }
+  @media(max-width:880px){.toolbar{grid-template-columns:1fr;}}
+  .field label{
+    display:block;
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.13em;
+    color:var(--muted);
+    font-weight:bold;
+    margin-bottom:4px;
+  }
+  select{
+    width:100%;
+    padding:10px;
+    border:2px solid var(--ink);
+    background:#fff7df;
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:.95rem;
+  }
+  .case-strip{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    border:2px solid var(--ink);
+    background:#fff7df;
+    margin-bottom:14px;
+  }
+  @media(max-width:780px){.case-strip{grid-template-columns:1fr;}}
+  .case-box{padding:10px 12px;border-right:1px dotted #987f55;}
+  .case-box:last-child{border-right:none;}
+  .case-k{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:bold;}
+  .case-v{font-size:1.02rem;color:var(--navy);font-weight:bold;margin-top:2px;}
+
+  .workarea{display:grid;grid-template-columns:280px 1fr;gap:16px;}
+  @media(max-width:900px){.workarea{grid-template-columns:1fr;}}
+  .tray{
+    background:#efe1bd;
+    border:3px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(0,0,0,.22);
+    padding:12px;
+    min-height:420px;
+  }
+  .tray-title{
+    color:var(--navy);
+    font-weight:bold;
+    font-variant:small-caps;
+    letter-spacing:.08em;
+    padding-bottom:8px;
+    border-bottom:2px solid #b99b5f;
+    margin-bottom:10px;
+  }
+  .tray-note{font-size:.8rem;color:var(--muted);line-height:1.35;margin-bottom:10px;}
+  .card-pile{display:flex;flex-direction:column;gap:9px;}
+  .card{
+    position:relative;
+    background:#fff7df;
+    border:2px solid #3b2a16;
+    box-shadow:3px 3px 0 rgba(0,0,0,.25);
+    padding:10px 12px 10px 24px;
+    cursor:grab;
+    user-select:none;
+    touch-action:none;
+    font-size:.88rem;
+    line-height:1.25;
+    max-width:230px;
+  }
+  .card:before{
+    content:"";
+    position:absolute;left:8px;top:10px;
+    width:9px;height:9px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,#fff,#c52b2b 50%,#651313 100%);
+    box-shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+  .card.dragging{opacity:.55;transform:scale(1.03);}
+  .card.used{background:#fff1c4;}
+  .card.selected{outline:4px solid var(--gold);outline-offset:2px;}
+  .card.correct{outline:3px solid #2f8f2f;outline-offset:2px;}
+  .card.wrong{outline:3px solid #a92626;outline-offset:2px;}
+  .card .tag{display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:bold;margin-bottom:3px;}
+  .card .why{display:none;font-size:.76rem;color:#3a2d1b;margin-top:8px;padding-top:7px;border-top:1px dotted #b99b5f;}
+  body.revealed .card .why{display:block;}
+  .board-shell{
+    position:relative;
+    border:7px solid #5d3719;
+    background:#5d3719;
+    box-shadow:8px 8px 0 rgba(0,0,0,.22);
+  }
+  .board{
+    position:relative;
+    min-height:610px;
+    overflow:hidden;
+    background-color:var(--cork);
+    background-image:
+      radial-gradient(circle at 12% 18%,rgba(255,255,255,.10) 0 2px,transparent 3px),
+      radial-gradient(circle at 70% 48%,rgba(0,0,0,.09) 0 2px,transparent 3px),
+      radial-gradient(circle at 30% 70%,rgba(255,255,255,.08) 0 1px,transparent 2px),
+      linear-gradient(45deg,rgba(255,255,255,.06) 25%,transparent 25% 50%,rgba(0,0,0,.035) 50% 75%,transparent 75%);
+    background-size:42px 42px,55px 55px,32px 32px,18px 18px;
+    padding:16px;
+  }
+  .board.over{box-shadow:inset 0 0 0 5px rgba(216,169,58,.75);}
+  .svg-lines{
+    position:absolute;
+    left:0;top:0;width:100%;height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+  .svg-lines line{
+    stroke:var(--string);
+    stroke-width:4;
+    stroke-linecap:round;
+    filter:drop-shadow(1px 2px 1px rgba(0,0,0,.35));
+  }
+  .svg-lines line.secondary{stroke:var(--string2);stroke-width:3;}
+  .case-file{
+    position:absolute;
+    left:50%;top:32px;
+    transform:translateX(-50%) rotate(-1.2deg);
+    z-index:3;
+    width:min(360px,72%);
+    background:#fff7df;
+    border:2px solid #2f2418;
+    box-shadow:5px 5px 0 rgba(0,0,0,.25);
+    padding:14px 16px;
+    text-align:center;
+  }
+  .case-file .stamp{
+    display:inline-block;
+    color:#9b1e1e;
+    border:3px double #9b1e1e;
+    padding:2px 8px;
+    font-size:.72rem;
+    letter-spacing:.18em;
+    transform:rotate(-3deg);
+    font-weight:bold;
+  }
+  .case-file h2{font-size:1.35rem;margin-top:8px;color:var(--navy);line-height:1.05;}
+  .case-file p{font-size:.82rem;color:var(--muted);line-height:1.35;margin-top:6px;}
+  .board .card{
+    position:absolute;
+    z-index:4;
+    transform:rotate(var(--rot,0deg));
+  }
+  .board .card:hover{z-index:5;}
+  .board-help{
+    position:absolute;
+    left:14px;bottom:12px;right:14px;
+    z-index:2;
+    background:rgba(255,247,223,.76);
+    border:2px solid rgba(59,42,22,.65);
+    padding:9px 11px;
+    font-size:.8rem;
+    color:#3c2b15;
+  }
+  .board-help b{color:var(--navy);}
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    border-top:3px solid var(--ink);
+    margin-top:18px;
+    padding-top:14px;
+  }
+  .score{margin-left:auto;font-weight:bold;color:var(--navy);}
+  .status{font-size:.86rem;color:var(--muted);min-height:1.4em;margin-top:10px;}
+  .report{
+    display:none;
+    margin-top:16px;
+    background:#fff7df;
+    border:3px solid var(--ink);
+    box-shadow:5px 5px 0 rgba(0,0,0,.22);
+    padding:14px;
+  }
+  body.started .report{display:block;}
+  .report h2{font-size:1.15rem;color:var(--navy);margin-bottom:8px;}
+  .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:780px){.report-grid{grid-template-columns:1fr;}}
+  .report label{display:block;font-size:.73rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:bold;margin-bottom:5px;}
+  textarea,input.report-input{
+    width:100%;
+    border:2px solid var(--ink);
+    background:#fff;
+    padding:10px;
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:.94rem;
+  }
+  textarea{min-height:95px;resize:vertical;}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);margin-top:9px;}
+  .legend span:before{content:"";display:inline-block;width:22px;height:4px;margin-right:5px;vertical-align:middle;background:var(--string);}
+  .legend span:nth-child(2):before{background:var(--string2);}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sociology · Deviance &amp; Social Norms</div>
+    <h1>FBI Corkboard</h1>
+    <p class="lede">Build a sociological case file. Choose a deviant behaviour, collect the strongest evidence, connect the clues with string, and write a short detective report explaining the behaviour through a theory.</p>
+  </header>
+
+  <div class="gate">
+    <h2>Enter your name to open the case file</h2>
+    <p>Your name and results can be recorded for your teacher. Use the name your teacher knows you by.</p>
+    <div class="gate-row">
+      <input id="nameInput" type="text" placeholder="First and last name" autocomplete="name">
+      <button id="startBtn">Open Case File</button>
+    </div>
+    <div class="err" id="nameErr">Please enter your name first.</div>
+  </div>
+
+  <div class="activity">
+    <div class="toolbar">
+      <div class="field">
+        <label for="caseSelect">Choose case</label>
+        <select id="caseSelect"></select>
+      </div>
+      <div class="field">
+        <label for="theorySelect">Choose theory lens</label>
+        <select id="theorySelect"></select>
+      </div>
+      <button id="loadBtn" class="ghost">Load Board</button>
+    </div>
+
+    <div class="case-strip">
+      <div class="case-box"><div class="case-k">Case file</div><div class="case-v" id="caseTitle">-</div></div>
+      <div class="case-box"><div class="case-k">Theory lens</div><div class="case-v" id="caseTheory">-</div></div>
+      <div class="case-box"><div class="case-k">Task</div><div class="case-v">Evidence + Connections + Report</div></div>
+    </div>
+
+    <div class="workarea">
+      <aside class="tray">
+        <div class="tray-title">Evidence Tray</div>
+        <p class="tray-note">Drag useful evidence cards onto the corkboard. Some cards are strong evidence for this theory. Some are distractors from another theory.</p>
+        <div class="card-pile" id="cardPile"></div>
+      </aside>
+
+      <section class="board-shell">
+        <div class="board" id="board">
+          <svg class="svg-lines" id="lines"></svg>
+          <div class="case-file">
+            <span class="stamp">CASE FILE</span>
+            <h2 id="boardCase">Choose a case</h2>
+            <p id="boardFocus">Drag evidence cards here, then click two cards to connect them with string.</p>
+          </div>
+          <div class="board-help"><b>How to use:</b> drag cards onto the board. Click one card, then another, to connect them. Use red string for strong links. Use the string button to swap red and gold.</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="controls">
+      <button id="stringBtn">String: Red</button>
+      <button id="undoBtn" class="ghost">Undo Last String</button>
+      <button id="submitBtn" class="red">Submit &amp; Reveal</button>
+      <button id="resetBtn" class="ghost">Reset Board</button>
+      <span class="score" id="score"></span>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="legend"><span>Strong causal link</span><span>Secondary or supporting link</span></div>
+
+    <div class="report">
+      <h2>Detective's Report</h2>
+      <div class="report-grid">
+        <div>
+          <label for="strongest">Strongest evidence card</label>
+          <input class="report-input" id="strongest" placeholder="Example: weak attachment to family">
+        </div>
+        <div>
+          <label for="connection">Most important connection</label>
+          <input class="report-input" id="connection" placeholder="Example: weak attachment leads to less conformity">
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <label for="summary">My sociological explanation</label>
+        <textarea id="summary" placeholder="Use the theory to explain why the behaviour happens, how society reacts, or what the behaviour does for society."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EDIT CASES HERE.
+   good:true cards are strong matches for that theory lens.
+   good:false cards are useful distractors from another theory or weaker evidence.
+   ============================================================ */
+const CASES = [
+  {
+    id:'public-drunkenness-hirschi',
+    title:'Public Drunkenness',
+    subtitle:'Why might someone break public drinking norms?',
+    theory:'Hirschi - Social Control Theory',
+    focus:'Use attachment, commitment, involvement and belief to explain why conformity weakens.',
+    cards:[
+      {text:'Weak attachment to family',tag:'Attachment',good:true,why:'Hirschi argues that weak attachment to others can reduce the pressure to conform.'},
+      {text:'Low commitment to school or work',tag:'Commitment',good:true,why:'If someone has little to lose, deviance may feel less risky.'},
+      {text:'Few structured evening activities',tag:'Involvement',good:true,why:'Less involvement in conventional activities can leave more space for deviant behaviour.'},
+      {text:'Weak belief in shared rules',tag:'Belief',good:true,why:'If a person does not strongly believe in the rule, the rule has less control over them.'},
+      {text:'Peer group rewards the behaviour',tag:'Peers',good:true,why:'Peer approval can weaken conformity to wider social expectations.'},
+      {text:'Punishment shows society what is unacceptable',tag:'Functionalism',good:false,why:'This is more Durkheim than Hirschi. It explains what deviance does for society, not why social bonds weaken.'},
+      {text:'Police label the person as a troublemaker',tag:'Labelling',good:false,why:'This fits Becker more closely. It explains reaction and identity rather than social bonds.'},
+      {text:'The behaviour creates public debate',tag:'Functionalism',good:false,why:'This is closer to a functionalist idea about deviance clarifying norms or prompting change.'}
+    ]
+  },
+  {
+    id:'tattoos-becker',
+    title:'Tattoos and Piercings',
+    subtitle:'How can body modification become deviant?',
+    theory:'Becker - Labelling Theory',
+    focus:'Explain how social reaction can turn a behaviour into a deviant identity.',
+    cards:[
+      {text:'Visible tattoo or piercing',tag:'Behaviour',good:true,why:'The behaviour itself is not automatically deviant. The social reaction matters.'},
+      {text:'Teacher or employer judges the person',tag:'Reaction',good:true,why:'Labelling theory focuses on how others react and apply meaning.'},
+      {text:'The person is called rebellious or unprofessional',tag:'Label',good:true,why:'A label can attach a social identity to the person.'},
+      {text:'The label affects future opportunities',tag:'Consequence',good:true,why:'Labels can change how others treat the person, which can shape future behaviour.'},
+      {text:'The person accepts the outsider identity',tag:'Identity',good:true,why:'Becker is interested in how labels can contribute to a deviant identity.'},
+      {text:'Weak attachment to family',tag:'Attachment',good:false,why:'This is a Hirschi card. It might matter, but it is not the central labelling process.'},
+      {text:'Crime reinforces shared values',tag:'Functionalism',good:false,why:'That is Durkheim. Labelling theory is more focused on reaction, status and identity.'},
+      {text:'Busy people have less time for deviance',tag:'Involvement',good:false,why:'This belongs to Hirschi rather than Becker.'}
+    ]
+  },
+  {
+    id:'hoon-driving-durkheim',
+    title:'Hoon Driving',
+    subtitle:'What function can public reaction to hoon driving serve?',
+    theory:'Durkheim - Functionalism',
+    focus:'Explain how deviance can help society clarify norms, strengthen unity and encourage change.',
+    cards:[
+      {text:'Public outrage clarifies the norm',tag:'Boundary',good:true,why:'Durkheim argues deviance helps mark the boundary between acceptable and unacceptable behaviour.'},
+      {text:'Punishment reinforces shared values',tag:'Punishment',good:true,why:'A shared reaction to deviance can strengthen the collective conscience.'},
+      {text:'Community campaigns for safer roads',tag:'Social change',good:true,why:'Deviance can prompt discussion, reform and new rules.'},
+      {text:'The behaviour shows what society values',tag:'Values',good:true,why:'The reaction reveals that safety, order and responsibility matter to the community.'},
+      {text:'People feel united against dangerous driving',tag:'Solidarity',good:true,why:'A shared response to deviance can increase social unity.'},
+      {text:'The person has weak commitment to school',tag:'Commitment',good:false,why:'That is more Hirschi. It explains individual restraint, not the social function of deviance.'},
+      {text:'The driver is labelled an outsider',tag:'Labelling',good:false,why:'This fits Becker more strongly than Durkheim.'},
+      {text:'The driver has few organised activities',tag:'Involvement',good:false,why:'This is a Hirschi explanation rather than a functionalist one.'}
+    ]
+  },
+  {
+    id:'obesity-imagination',
+    title:'Obesity',
+    subtitle:'How can a private trouble become a public issue?',
+    theory:'Sociological Imagination',
+    focus:'Connect personal experience to historical, cultural and structural forces.',
+    cards:[
+      {text:'Personal health and daily habits',tag:'Personal',good:true,why:'The sociological imagination begins with personal trouble, but does not stop there.'},
+      {text:'Food prices and access',tag:'Structural',good:true,why:'Structures shape the choices that seem personal.'},
+      {text:'Advertising and body ideals',tag:'Cultural',good:true,why:'Culture shapes both eating patterns and judgement of bodies.'},
+      {text:'Work hours and time pressure',tag:'Structural',good:true,why:'Social organisation can affect diet, exercise and stress.'},
+      {text:'Historical change in food systems',tag:'Historical',good:true,why:'Private troubles can be linked to broader historical shifts.'},
+      {text:'Crime strengthens shared norms',tag:'Functionalism',good:false,why:'This is Durkheim and does not directly explain the public issue framework.'},
+      {text:'Weak attachment to family',tag:'Attachment',good:false,why:'This is Hirschi. It might apply to some deviance, but it is not the central framework here.'},
+      {text:'Police apply a deviant label',tag:'Labelling',good:false,why:'This is Becker. Labelling can matter, but the four-part imagination frame is broader.'}
+    ]
+  },
+  {
+    id:'easy-a-becker',
+    title:'Easy A - Reputation',
+    subtitle:'How does a rumour become a deviant identity?',
+    theory:'Becker - Labelling Theory',
+    focus:'Use labelling theory to explain reputation, reaction and secondary deviance.',
+    cards:[
+      {text:'A rumour spreads through the school',tag:'Reaction',good:true,why:'The social reaction gives the behaviour its deviant meaning.'},
+      {text:'Peers treat the character as an outsider',tag:'Outsider',good:true,why:'Becker calls attention to how groups create outsiders through labelling.'},
+      {text:'The label changes how people interpret later behaviour',tag:'Master status',good:true,why:'A label can become the main lens through which a person is seen.'},
+      {text:'The character performs the reputation back to others',tag:'Identity',good:true,why:'A person may respond to the label by acting into it or using it.'},
+      {text:'School norms around sexuality shape the reaction',tag:'Norms',good:true,why:'Labelling depends on the norms of the group doing the judging.'},
+      {text:'Punishment creates social unity',tag:'Functionalism',good:false,why:'This is a Durkheim style explanation, not the strongest Becker card.'},
+      {text:'Low involvement leads to deviance',tag:'Involvement',good:false,why:'This is Hirschi and does not explain reputation as well as labelling theory.'},
+      {text:'More laws reduce deviance',tag:'Law',good:false,why:'This is too simple and not the focus of symbolic interactionism or labelling.'}
+    ]
+  }
+];
+
+const SHEET_URL = "";
+
+let studentName='', currentCase=null, submitted=false;
+let dragged=null, touchEl=null, ghost=null;
+let selectedCard=null, links=[], stringMode='strong';
+let cardCounter=0;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function byId(id){return document.getElementById(id);}
+
+function initSelectors(){
+  const caseSel=byId('caseSelect'), theorySel=byId('theorySelect');
+  const titles=[...new Set(CASES.map(c=>c.title))];
+  const theories=[...new Set(CASES.map(c=>c.theory))];
+  caseSel.innerHTML=titles.map(t=>`<option value="${escapeAttr(t)}">${t}</option>`).join('');
+  theorySel.innerHTML=theories.map(t=>`<option value="${escapeAttr(t)}">${t}</option>`).join('');
+  const first=CASES[0];
+  caseSel.value=first.title;theorySel.value=first.theory;
+}
+function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function findCase(){
+  const title=byId('caseSelect').value, theory=byId('theorySelect').value;
+  return CASES.find(c=>c.title===title && c.theory===theory) || CASES.find(c=>c.title===title) || CASES[0];
+}
+
+function makeCard(card,idx){
+  const el=document.createElement('div');
+  el.className='card';
+  el.draggable=true;
+  el.dataset.good=card.good?'1':'0';
+  el.dataset.idx=idx;
+  el.dataset.cardId='card-'+(++cardCounter);
+  el.style.setProperty('--rot',(Math.random()*4-2).toFixed(1)+'deg');
+  el.innerHTML=`<span class="tag">${card.tag}</span>${card.text}<div class="why">${card.why}</div>`;
+  el.addEventListener('dragstart',e=>{if(submitted)return;dragged=el;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  el.addEventListener('dragend',()=>el.classList.remove('dragging'));
+  el.addEventListener('click',()=>selectForLink(el));
+  el.addEventListener('touchstart',touchStart,{passive:false});
+  return el;
+}
+
+function loadBoard(){
+  currentCase=findCase();
+  submitted=false;selectedCard=null;links=[];cardCounter=0;
+  document.body.classList.remove('revealed');
+  byId('score').textContent='';byId('status').textContent='';byId('submitBtn').disabled=false;
+  byId('strongest').value='';byId('connection').value='';byId('summary').value='';
+  byId('caseTitle').textContent=currentCase.title;
+  byId('caseTheory').textContent=currentCase.theory;
+  byId('boardCase').textContent=currentCase.title;
+  byId('boardFocus').textContent=currentCase.focus;
+  byId('lines').innerHTML='';
+  byId('cardPile').innerHTML='';
+  byId('board').querySelectorAll('.card').forEach(c=>c.remove());
+  shuffle(currentCase.cards.map((c,i)=>({c,i}))).forEach(({c,i})=>byId('cardPile').appendChild(makeCard(c,i)));
+}
+
+function placeOnBoard(card,x,y){
+  const board=byId('board');
+  const rect=board.getBoundingClientRect();
+  if(!x&&!y){
+    const count=board.querySelectorAll('.card').length;
+    x=40+(count%4)*145;
+    y=170+Math.floor(count/4)*92;
+  }else{
+    x=x-rect.left-55;y=y-rect.top-24;
+  }
+  x=Math.max(14,Math.min(x,rect.width-170));
+  y=Math.max(120,Math.min(y,rect.height-90));
+  board.appendChild(card);
+  card.classList.add('used');
+  card.style.left=x+'px';card.style.top=y+'px';
+  redrawLines();
+}
+
+function attachDrops(){
+  const board=byId('board'), pile=byId('cardPile');
+  board.addEventListener('dragover',e=>{if(submitted)return;e.preventDefault();board.classList.add('over');});
+  board.addEventListener('dragleave',()=>board.classList.remove('over'));
+  board.addEventListener('drop',e=>{
+    e.preventDefault();board.classList.remove('over');
+    if(!dragged||submitted)return;
+    placeOnBoard(dragged,e.clientX,e.clientY);
+  });
+  pile.addEventListener('dragover',e=>{if(submitted)return;e.preventDefault();});
+  pile.addEventListener('drop',e=>{
+    e.preventDefault();if(!dragged||submitted)return;
+    pile.appendChild(dragged);dragged.classList.remove('used','selected');dragged.style.left='';dragged.style.top='';
+    links=links.filter(l=>l.a!==dragged.dataset.cardId && l.b!==dragged.dataset.cardId);
+    selectedCard=null;redrawLines();
+  });
+}
+
+function selectForLink(card){
+  if(submitted || !card.closest('#board')) return;
+  if(!selectedCard){selectedCard=card;card.classList.add('selected');return;}
+  if(selectedCard===card){card.classList.remove('selected');selectedCard=null;return;}
+  links.push({a:selectedCard.dataset.cardId,b:card.dataset.cardId,type:stringMode});
+  selectedCard.classList.remove('selected');selectedCard=null;redrawLines();
+}
+function redrawLines(){
+  const svg=byId('lines'), board=byId('board');svg.innerHTML='';
+  const br=board.getBoundingClientRect();
+  links.forEach(l=>{
+    const a=document.querySelector(`[data-card-id="${l.a}"]`), b=document.querySelector(`[data-card-id="${l.b}"]`);
+    if(!a||!b||!a.closest('#board')||!b.closest('#board'))return;
+    const ar=a.getBoundingClientRect(), bt=b.getBoundingClientRect();
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',ar.left+ar.width/2-br.left);line.setAttribute('y1',ar.top+ar.height/2-br.top);
+    line.setAttribute('x2',bt.left+bt.width/2-br.left);line.setAttribute('y2',bt.top+bt.height/2-br.top);
+    if(l.type==='support')line.classList.add('secondary');
+    svg.appendChild(line);
+  });
+}
+window.addEventListener('resize',redrawLines);
+
+function touchStart(e){
+  if(submitted)return;
+  touchEl=e.currentTarget;const tch=e.touches[0];
+  ghost=touchEl.cloneNode(true);
+  Object.assign(ghost.style,{position:'fixed',pointerEvents:'none',opacity:'0.85',zIndex:'9999',width:touchEl.offsetWidth+'px'});
+  document.body.appendChild(ghost);moveGhost(tch);touchEl.classList.add('dragging');
+  document.addEventListener('touchmove',touchMove,{passive:false});
+  document.addEventListener('touchend',touchEnd);
+  e.preventDefault();
+}
+function moveGhost(tch){if(ghost){ghost.style.left=(tch.clientX-ghost.offsetWidth/2)+'px';ghost.style.top=(tch.clientY-24)+'px';}}
+function touchMove(e){moveGhost(e.touches[0]);e.preventDefault();}
+function touchEnd(e){
+  const tch=e.changedTouches[0];const el=document.elementFromPoint(tch.clientX,tch.clientY);
+  const board=el&&el.closest('#board');const pile=el&&el.closest('#cardPile');
+  if(board){placeOnBoard(touchEl,tch.clientX,tch.clientY);}
+  else if(pile){byId('cardPile').appendChild(touchEl);touchEl.classList.remove('used','selected');touchEl.style.left='';touchEl.style.top='';}
+  if(ghost){ghost.remove();ghost=null;}if(touchEl)touchEl.classList.remove('dragging');
+  touchEl=null;document.removeEventListener('touchmove',touchMove);document.removeEventListener('touchend',touchEnd);
+}
+
+function submit(){
+  if(submitted)return;
+  const boardCards=[...byId('board').querySelectorAll('.card')];
+  if(boardCards.length<4){byId('status').textContent='Place at least 4 evidence cards on the board before submitting.';return;}
+  if(links.length<3){byId('status').textContent='Make at least 3 string connections before submitting.';return;}
+  const summary=byId('summary').value.trim();
+  if(summary.length<40){byId('status').textContent='Write a short sociological explanation in the Detective Report before submitting.';return;}
+  let good=0;
+  boardCards.forEach(c=>{const right=c.dataset.good==='1';c.classList.add(right?'correct':'wrong');if(right)good++;});
+  submitted=true;document.body.classList.add('revealed');byId('submitBtn').disabled=true;
+  const evidenceScore=good+'/'+boardCards.length;
+  const linkScore=links.length;
+  byId('score').textContent=`Evidence: ${evidenceScore} strong · Strings: ${linkScore}`;
+  recordResult(good,boardCards.length,links.length,summary);
+}
+function recordResult(good,total,linkCount,summary){
+  const status=byId('status');
+  if(!SHEET_URL){status.textContent='Case revealed. Strong evidence is outlined in green. Distractor evidence is outlined in red. (Not recorded - no sheet connected.)';return;}
+  status.textContent='Saving your case file...';
+  const placed=[...byId('board').querySelectorAll('.card')].map(c=>c.innerText.split('\n')[1]||c.textContent.trim());
+  const payload={name:studentName,case:currentCase.title,theory:currentCase.theory,strongEvidence:good,totalPlaced:total,strings:linkCount,placed,report:summary,when:new Date().toISOString()};
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
+    .then(()=>{status.textContent='Case file saved. Review the evidence notes on each card.';})
+    .catch(()=>{status.textContent='Could not save automatically. Please tell your teacher your result.';});
+}
+
+byId('startBtn').addEventListener('click',()=>{
+  const v=byId('nameInput').value.trim();
+  if(v.length<2){byId('nameErr').style.display='block';return;}
+  studentName=v;document.body.classList.add('started');loadBoard();
+});
+byId('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')byId('startBtn').click();});
+byId('loadBtn').addEventListener('click',loadBoard);
+byId('resetBtn').addEventListener('click',loadBoard);
+byId('undoBtn').addEventListener('click',()=>{links.pop();redrawLines();});
+byId('submitBtn').addEventListener('click',submit);
+byId('stringBtn').addEventListener('click',()=>{
+  stringMode=stringMode==='strong'?'support':'strong';
+  byId('stringBtn').textContent=stringMode==='strong'?'String: Red':'String: Gold';
+});
+byId('caseSelect').addEventListener('change',()=>{
+  const match=CASES.find(c=>c.title===byId('caseSelect').value);
+  if(match)byId('theorySelect').value=match.theory;
+});
+
+initSelectors();attachDrops();
+</script>
+</body>
+</html>

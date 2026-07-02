@@ -6,7 +6,6 @@
 <title>EduQuest, Thinking Library</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
      THE THINKERY. "EduQuest '96" Utopian Scholastic style
@@ -181,9 +180,53 @@
   /* Toggle changes ONE thing for now: the typeface swaps to a low-res
      multimedia bitmap face. Everything else (layout, colour) is unchanged.
      Pile more retro changes into this block later if desired. */
-  body.us-mode, body.us-mode *{
-    font-family:'DotGothic16','Courier New',monospace !important;
-  }
+  body.us-mode h2,
+body.us-mode h3,
+body.us-mode .chapter-bar,
+body.us-mode .menu-title,
+body.us-mode .sbox-bar,
+body.us-mode .widget-title{
+    font-family:"Book Antiqua","Palatino Linotype",Palatino,serif !important;
+}
+
+body.us-mode,
+body.us-mode p,
+body.us-mode a,
+body.us-mode span,
+body.us-mode button,
+body.us-mode .entry,
+body.us-mode .menu,
+body.us-mode .welcome-bar,
+body.us-mode .bulletin{
+    font-family:"Trebuchet MS",Tahoma,Arial,sans-serif !important;
+}
+
+/* --- Extra Scholastic Mode effects --- */
+body.us-mode{
+  filter:sepia(.06) saturate(.92);
+}
+body.us-mode .page{
+  box-shadow:0 0 0 2px #6d5717,0 12px 40px rgba(0,0,0,.65);
+}
+body.us-mode .open,
+body.us-mode .w-act,
+body.us-mode .us-toggle{
+  background:#e8d9a7 !important;
+  border-color:#fff #8c6d1c #8c6d1c #fff !important;
+  box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #9c7415;
+}
+body.us-mode .entry:hover{
+  background:#f8f0cf;
+}
+body.us-mode img{
+  filter:saturate(.82) contrast(.95);
+}
+body.us-mode .chapter-bar{
+  letter-spacing:.18em;
+}
+body.us-mode .bulletin{
+  background:linear-gradient(90deg,#efe2b7,#e3d3a2);
+}
 
   /* ---------- EduQuest World Bulletin: right-to-left GeoCities pan ---------- */
   .bulletin{
@@ -251,7 +294,7 @@
 <div class="page">
 
   <div class="virtue">
-    <div class="m">Knowledge <span>◇</span> Virtue <span>◇</span> Progress</div>
+    <div class="m">Made by teachers <span>◇</span> for teachers</div>
     <div class="d">A Resource for Thinking Classrooms
       <button id="usToggle" class="us-toggle" type="button" aria-pressed="false">✦ Scholastic Mode</button>
     </div>
@@ -262,7 +305,7 @@
   </div>
 
   <div class="bulletin" aria-label="EduQuest World Bulletin">
-    <div class="bulletin-label">★ World Bulletin ★</div>
+    <div class="bulletin-label">★ EduQuest World Bulletin ★</div>
     <div class="bulletin-window" aria-live="polite" aria-atomic="true">
       <div class="bulletin-track" id="bulletinTrack"></div>
     </div>
@@ -339,6 +382,16 @@
           <span class="open">Open ▸</span>
         </a>
 
+        <a class="entry" href="fbi_corkboard.html">
+          <img class="ic" src="icon_corkboard.png" alt="">
+          <span class="tx">
+            <h3>FBI Corkboard</h3>
+            <p>Connect clues, evidence, suspects and sociological concepts across an investigation board. Every connection should be supported by evidence.</p>
+            <span class="skill">Thinking skill: synthesising evidence &amp; building explanations</span>
+          </span>
+          <span class="open">Open ▸</span>
+        </a>
+
       </div>
 
       <!-- CHAPTER II -->
@@ -365,7 +418,7 @@
       <div class="sbox spot">
         <div class="sbox-bar">★ Featured Activity</div>
         <div class="in">
-          <div class="feat">New this week:</div>
+          <div class="feat">Featured activity:</div>
           How Serious Is It? Rank deviant acts in a forced diamond and defend your order to the class.
           <a href="diamond_ranking.html">Take a look ▸</a>
         </div>
@@ -376,6 +429,7 @@
           <a href="sociologygame.html">▸ Deviant or Illegal?</a>
           <a href="folkways.html">▸ Folkways or Mores?</a>
           <a href="diamond_ranking.html">▸ How Serious Is It?</a>
+          <a href="fbi_corkboard.html">▸ FBI Corkboard</a>
           <a href="ethos_pathos_logos.html">▸ Ethos, Pathos, Logos</a>
         </div>
       </div>
@@ -543,26 +597,31 @@ document.addEventListener('DOMContentLoaded', eqRender);
    ============================================================ */
 (function(){
   var BULLETINS = [
-    /* planet watch */
-    "🌱 Planet Watch: Forests can recover when people protect them. Nature is more resilient than it first appears.",
-    "🐋 Planet Watch: Whale populations have made remarkable recoveries in parts of the world.",
-    "☀️ Planet Watch: Solar and wind power are becoming ordinary parts of everyday life.",
-    "🦋 Planet Watch: Small habitats, gardens and wetlands can help insects, birds and local wildlife return.",
-    "🌊 Planet Watch: Rivers become cleaner when communities decide they are worth saving.",
-
-    /* sociology desk */
-    "🏛 Sociology Desk: Society is not just around us. It teaches us what feels normal.",
-    "👥 Sociology Desk: A folkway is a small rule until someone breaks it.",
-    "⚖️ Sociology Desk: Some things are illegal but not widely seen as deviant. Some things are deviant but not illegal.",
-    "🔍 Sociology Desk: The sociological imagination means seeing private troubles as public issues.",
-    "🌏 Sociology Desk: Norms change across cultures, places and historical moments.",
-
-    /* thinking library */
-    "📚 Thinking Library: Every expert began as a beginner with one good question.",
-    "💡 Thinking Library: Classification is thinking with sharper edges.",
-    "🧭 Thinking Library: A good question is a map. A better question is a compass.",
-    "⭐ Thinking Library: Welcome, explorers. Every subject contains a hidden doorway.",
-    "✒️ Thinking Library: Words are tools. Use them carefully."
+"🌱 Planet Watch: Scientists continue identifying climate-resistant coral reefs that could help restore damaged reef ecosystems.",
+"🌱 Planet Watch: Rhino populations continue recovering through carefully managed conservation programmes across Africa.",
+"🌱 Planet Watch: Humpback whale populations continue returning to oceans where they were once rarely seen.",
+"🌱 Planet Watch: Sea turtle nesting numbers continue improving on many protected beaches around the world.",
+"🌱 Planet Watch: Beavers continue helping reduce flooding by restoring natural wetlands.",
+"🌱 Planet Watch: Forest restoration projects continue bringing native wildlife back to damaged habitats.",
+"🌱 Planet Watch: Pollinator gardens continue helping bees and butterflies return to towns and cities.",
+"🌱 Planet Watch: More rivers are being restored to their natural courses every year.",
+"🔭 Space Desk: Astronomers continue building the most detailed map ever assembled of the Milky Way.",
+"🔭 Space Desk: New planets orbiting distant stars continue to be discovered every month.",
+"🔭 Space Desk: Modern telescopes continue revealing galaxies formed billions of years ago.",
+"🔭 Space Desk: Our understanding of the universe continues expanding with every new observation.",
+"🔬 Science Update: Thousands of new species continue to be discovered every year.",
+"🔬 Science Update: Renewable energy continues supplying a larger share of electricity around the world.",
+"🔬 Science Update: Medical researchers continue developing treatments once thought impossible.",
+"🏺 Discovery Desk: Archaeologists continue uncovering ancient cities beneath forests, deserts and farmland.",
+"🏺 Discovery Desk: Ancient artwork continues providing clues about how people once lived.",
+"🌍 Around the World: Libraries continue evolving into community learning centres filled with technology and creativity.",
+"🌍 Around the World: UNESCO continues protecting remarkable places for future generations.",
+"💡 Innovation Watch: Robots continue assisting surgeons, scientists and emergency workers.",
+"💡 Innovation Watch: Engineers continue developing cleaner aircraft and more efficient transport.",
+"📚 Thinking Library: Every expert you admire once knew almost nothing about their subject.",
+"📚 Thinking Library: Curiosity has launched more discoveries than certainty ever has.",
+"📚 Thinking Library: Knowledge grows whenever people connect ideas from different subjects.",
+"📚 Thinking Library: Reading lets you borrow somebody else's lifetime of experience."
   ];
 
   var track = document.getElementById('bulletinTrack');
@@ -608,5 +667,22 @@ document.addEventListener('DOMContentLoaded', eqRender);
 })();
 </script>
 
+<script>
+(function(){
+const btn=document.getElementById('usToggle');
+if(!btn)return;
+const banner=document.createElement('div');
+banner.id='scholasticBanner';
+banner.style.cssText='position:fixed;left:50%;top:24px;transform:translateX(-50%);background:#1b2f7a;color:#f3ead0;border:3px solid #d8a93a;padding:12px 24px;font-family:"Trebuchet MS",Tahoma,Arial,sans-serif;font-size:14px;letter-spacing:.08em;z-index:9999;opacity:0;transition:opacity .35s;pointer-events:none;';
+banner.textContent='📀 SCHOLASTIC MODE ENABLED';
+document.body.appendChild(banner);
+btn.addEventListener('click',()=>{
+ if(document.body.classList.contains('us-mode')){
+   banner.style.opacity='1';
+   setTimeout(()=>banner.style.opacity='0',1400);
+ }
+});
+})();
+</script>
 </body>
 </html>
