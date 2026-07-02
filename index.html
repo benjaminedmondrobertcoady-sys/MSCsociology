@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EduQuest, Thinking Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
      THE THINKERY. "EduQuest '96" Utopian Scholastic style
@@ -26,6 +29,11 @@
     --rule:#b9a878;
     --sky1:#bcd6f0;
     --sky2:#dcebf8;
+    /* Encarta-hybrid structural cools: threshold + periphery only */
+    --teal:#2c7d84;
+    --teal-d:#1b565c;
+    --violet:#5852a8;
+    --violet-d:#3b3676;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
@@ -43,7 +51,7 @@
 
   /* ---------- top virtue strip ---------- */
   .virtue{
-    background:linear-gradient(90deg,var(--navy-d),var(--navy));color:var(--gold);
+    background:linear-gradient(90deg,var(--violet-d),var(--navy));color:var(--gold);
     font-size:0.78rem;letter-spacing:.08em;padding:5px 14px;display:flex;justify-content:space-between;align-items:center;
     border-bottom:2px solid var(--gold-d);
   }
@@ -53,7 +61,9 @@
   /* ---------- masthead ---------- */
   .masthead{
     position:relative;overflow:hidden;
-    background:linear-gradient(180deg,var(--sky2) 0%,var(--sky1) 70%,#cfe0d6 100%);
+    background:
+      radial-gradient(ellipse 58% 82% at 50% 44%, rgba(255,255,255,.60), rgba(255,255,255,0) 62%),
+      linear-gradient(180deg,#a6b7ea 0%, #8091d6 46%, #616fbd 100%);
     border-bottom:4px solid var(--gold);
     padding:clamp(10px,1.6vw,16px) clamp(16px,3vw,30px);
     display:flex;align-items:center;gap:20px;min-height:auto;
@@ -145,8 +155,8 @@
   /* right sidebar boxes */
   .sbox{margin-bottom:16px;border:2px solid var(--rule);background:var(--cream);}
   .sbox-bar{padding:5px 10px;color:#fff;font-variant:small-caps;font-weight:bold;letter-spacing:.06em;font-size:0.85rem;}
-  .sbox.spot .sbox-bar{background:linear-gradient(90deg,var(--green),#1c5230);}
-  .sbox.links .sbox-bar{background:linear-gradient(90deg,var(--navy),var(--navy-d));}
+  .sbox.spot .sbox-bar{background:linear-gradient(90deg,var(--teal),var(--teal-d));}
+  .sbox.links .sbox-bar{background:linear-gradient(90deg,var(--violet),var(--violet-d));}
   .sbox.hist .sbox-bar{background:linear-gradient(90deg,var(--gold-d),#7a5500);}
   .sbox .in{padding:10px;font-size:0.82rem;line-height:1.45;}
   .sbox .in a{color:var(--navy);font-weight:bold;text-decoration:none;display:block;padding:3px 0;}
@@ -159,6 +169,21 @@
     padding:10px;font-size:0.78rem;border-top:3px solid var(--gold);}
   footer .links{color:#fff;}
   footer .links span{color:var(--gold);}
+
+  /* ---------- Utopian Scholastic Mode toggle ---------- */
+  .us-toggle{margin-left:12px;font-family:inherit;font-style:normal;font-size:0.7rem;
+    font-variant:small-caps;letter-spacing:.05em;color:var(--gold);
+    background:rgba(0,0,0,.28);border:1px solid var(--gold-d);border-radius:2px;
+    padding:2px 9px;cursor:pointer;vertical-align:middle;}
+  .us-toggle:hover{background:var(--gold);color:var(--navy-d);}
+  .us-toggle[aria-pressed="true"]{background:var(--gold);color:var(--navy-d);}
+
+  /* Toggle changes ONE thing for now: the typeface swaps to a low-res
+     multimedia bitmap face. Everything else (layout, colour) is unchanged.
+     Pile more retro changes into this block later if desired. */
+  body.us-mode, body.us-mode *{
+    font-family:'DotGothic16','Courier New',monospace !important;
+  }
 </style>
 </head>
 <body>
@@ -166,7 +191,9 @@
 
   <div class="virtue">
     <div class="m">Knowledge <span>◇</span> Virtue <span>◇</span> Progress</div>
-    <div class="d">A Resource for Thinking Classrooms</div>
+    <div class="d">A Resource for Thinking Classrooms
+      <button id="usToggle" class="us-toggle" type="button" aria-pressed="false">✦ Scholastic Mode</button>
+    </div>
   </div>
 
   <div class="masthead">
@@ -415,5 +442,28 @@ document.addEventListener('DOMContentLoaded', eqMasthead);
 document.addEventListener('DOMContentLoaded', eqRender);
 </script>
 
+
+<script>
+(function(){
+  var KEY='eq_us_mode', body=document.body;
+  function label(on){ return on ? '✦ Scholastic Mode: On' : '✦ Scholastic Mode'; }
+  function apply(on){
+    if(on){ body.classList.add('us-mode'); } else { body.classList.remove('us-mode'); }
+    var btn=document.getElementById('usToggle');
+    if(btn){ btn.setAttribute('aria-pressed', on?'true':'false'); btn.textContent=label(on); }
+  }
+  var saved=false;
+  try{ saved = localStorage.getItem(KEY)==='1'; }catch(e){}
+  apply(saved);
+  var btn=document.getElementById('usToggle');
+  if(btn){
+    btn.addEventListener('click',function(){
+      var on=!body.classList.contains('us-mode');
+      apply(on);
+      try{ localStorage.setItem(KEY, on?'1':'0'); }catch(e){}
+    });
+  }
+})();
+</script>
 </body>
 </html>
