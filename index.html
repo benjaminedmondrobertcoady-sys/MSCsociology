@@ -143,6 +143,10 @@
   .entry+.entry{border-top:1px dotted var(--rule);}
   .entry:hover{background:#fff7e0;border-color:#fff var(--rule) var(--rule) #fff;}
   .entry img.ic{width:56px;height:56px;flex:none;object-fit:contain;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));}
+  .entry img.ic-ontherun{
+    width:112px;
+    height:112px;
+  }
   .entry .tx h3{font-size:1.1rem;color:var(--navy);font-weight:bold;margin-bottom:2px;}
   .entry .tx p{font-size:0.82rem;line-height:1.4;color:#3a3520;}
   .entry .tx .skill{font-size:0.72rem;color:var(--green);font-style:italic;display:inline-block;margin-top:3px;}
@@ -533,7 +537,6 @@ body.us-mode .bulletin{
       <div class="welcome-bar">
         <span class="col">&#9612;</span>
         <h2>Welcome to EduQuest!</h2>
-        <span class="sub">Your gateway to better thinking.</span>
       </div>
       <div class="welcome">
         <img class="dropcap" src="icon_alpha.png" alt="A">
@@ -576,7 +579,7 @@ body.us-mode .bulletin{
         </a>
 
         <a class="entry" href="fbi_corkboard.html">
-          <img class="ic" src="icon_corkboard.png" alt="">
+          <img class="ic" src="icon_corkboard.png" alt="" onerror="this.onerror=null;this.src='icon_globe.png';">
           <span class="tx">
             <h3>FBI Corkboard</h3>
             <p>Connect clues, evidence, suspects and sociological concepts across an investigation board. Every connection should be supported by evidence.</p>
@@ -611,7 +614,7 @@ body.us-mode .bulletin{
       <div class="entries">
 
         <a class="entry" href="On the Run - Preposition Game.html">
-          <img class="ic" src="icon_signpost.png" alt="" onerror="this.onerror=null;this.src='icon_globe.png';">
+          <img class="ic ic-ontherun" src="icon_signpost.png" alt="" onerror="this.onerror=null;this.src='icon_globe.png';">
           <span class="tx">
             <h3>On the Run</h3>
             <p>Chase the Book Thief across the town map and choose the right preposition for every move: along the street, over the bridge, around the fountain. Five correct and he escapes; three wrong and the police catch him.</p>
@@ -633,7 +636,6 @@ body.us-mode .bulletin{
             <span id="puzzleMoves">Moves: 0</span>
             <button id="puzzleShuffle" type="button">Shuffle</button>
           </div>
-          <div class="puzzle-note" id="puzzleNote">Picture file: <b>puzzle.jpg</b></div>
         </div>
       </div>
 
@@ -982,7 +984,7 @@ btn.addEventListener('click',()=>{
               movesEl.textContent = 'Moves: ' + moves;
               renderPuzzle();
               if(tiles.join(',') === solvedTiles().join(',')){
-                document.getElementById('puzzleNote').innerHTML = 'Solved! Replace <b>puzzle.jpg</b> any time for a new picture.';
+                if(document.getElementById('puzzleNote')) document.getElementById('puzzleNote').innerHTML = 'Solved!';
               }
             }
           });
@@ -995,7 +997,7 @@ btn.addEventListener('click',()=>{
       tiles = solvedTiles();
       moves = 0;
       movesEl.textContent = 'Moves: 0';
-      document.getElementById('puzzleNote').innerHTML = 'Picture file: <b>puzzle.jpg</b>';
+      if(document.getElementById('puzzleNote')) document.getElementById('puzzleNote').innerHTML = '';
 
       var empty = size*size-1;
       for(var step=0; step<120; step++){
