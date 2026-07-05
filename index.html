@@ -143,10 +143,7 @@
   .entry+.entry{border-top:1px dotted var(--rule);}
   .entry:hover{background:#fff7e0;border-color:#fff var(--rule) var(--rule) #fff;}
   .entry img.ic{width:56px;height:56px;flex:none;object-fit:contain;filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));}
-  .entry img.ic-ontherun{
-    width:112px;
-    height:112px;
-  }
+  .entry img.ic-ontherun{width:112px;height:112px;}
   .entry .tx h3{font-size:1.1rem;color:var(--navy);font-weight:bold;margin-bottom:2px;}
   .entry .tx p{font-size:0.82rem;line-height:1.4;color:#3a3520;}
   .entry .tx .skill{font-size:0.72rem;color:var(--green);font-style:italic;display:inline-block;margin-top:3px;}
@@ -537,6 +534,7 @@ body.us-mode .bulletin{
       <div class="welcome-bar">
         <span class="col">&#9612;</span>
         <h2>Welcome to EduQuest!</h2>
+        <span class="sub">Your gateway to better thinking.</span>
       </div>
       <div class="welcome">
         <img class="dropcap" src="icon_alpha.png" alt="A">
@@ -579,7 +577,7 @@ body.us-mode .bulletin{
         </a>
 
         <a class="entry" href="fbi_corkboard.html">
-          <img class="ic" src="icon_corkboard.png" alt="" onerror="this.onerror=null;this.src='icon_globe.png';">
+          <img class="ic" src="icon_corkboard.png" alt="">
           <span class="tx">
             <h3>FBI Corkboard</h3>
             <p>Connect clues, evidence, suspects and sociological concepts across an investigation board. Every connection should be supported by evidence.</p>
@@ -605,17 +603,18 @@ body.us-mode .bulletin{
           </span>
           <span class="open">Open &#9656;</span>
         </a>
-        
-<a class="entry" href="TheMergerMahjong.html">
-  <img class="ic" src="icon_film.png" alt="">
-  <span class="tx">
-    <h3>The Merger Mahjong</h3>
-    <p>Match characters, props and film concepts using Mahjong-inspired gameplay. Every successful match is followed by a short retrieval challenge, helping you learn the characters and cinematic language of <i>The Merger</i>.</p>
-    <span class="skill">Thinking skill: retrieval practice &amp; character recognition</span>
-    <span class="rec">🎬 Film Studies</span>
-  </span>
-  <span class="open">Open &#9656;</span>
-</a>
+
+        <a class="entry" href="cinemahjong.html">
+          <img class="ic" src="icon_film.png" alt="" onerror="this.onerror=null;this.src='icon_computer.png';">
+          <span class="tx">
+            <h3>CineMahjong</h3>
+            <p>Match each film-technique frame to its name in a Mahjong-style pile: close-ups, camera angles, establishing shots and more. No typing, just tap a picture tile, then the title card that names it. Clear the pile and learn the cinematic language of <i>The Merger</i>.</p>
+            <span class="skill">Thinking skill: retrieval practice &amp; cinematic terminology</span>
+            <span class="rec">&#127916; Film Studies</span>
+          </span>
+          <span class="open">Open &#9656;</span>
+        </a>
+
       </div>
 
       <!-- CHAPTER III -->
@@ -646,6 +645,7 @@ body.us-mode .bulletin{
             <span id="puzzleMoves">Moves: 0</span>
             <button id="puzzleShuffle" type="button">Shuffle</button>
           </div>
+          <div class="puzzle-note" id="puzzleNote">Picture file: <b>puzzle.jpg</b></div>
         </div>
       </div>
 
@@ -994,7 +994,7 @@ btn.addEventListener('click',()=>{
               movesEl.textContent = 'Moves: ' + moves;
               renderPuzzle();
               if(tiles.join(',') === solvedTiles().join(',')){
-                if(document.getElementById('puzzleNote')) document.getElementById('puzzleNote').innerHTML = 'Solved!';
+                document.getElementById('puzzleNote').innerHTML = 'Solved! Replace <b>puzzle.jpg</b> any time for a new picture.';
               }
             }
           });
@@ -1007,7 +1007,7 @@ btn.addEventListener('click',()=>{
       tiles = solvedTiles();
       moves = 0;
       movesEl.textContent = 'Moves: 0';
-      if(document.getElementById('puzzleNote')) document.getElementById('puzzleNote').innerHTML = '';
+      document.getElementById('puzzleNote').innerHTML = 'Picture file: <b>puzzle.jpg</b>';
 
       var empty = size*size-1;
       for(var step=0; step<120; step++){
