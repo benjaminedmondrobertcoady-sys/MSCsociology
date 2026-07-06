@@ -152,6 +152,35 @@
     background:var(--cream-d);padding:7px 13px;border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;font-variant:small-caps;letter-spacing:.05em;}
   .entry:hover .open{background:var(--gold);}
 
+  /* ---------- Editor's Choice feature card ---------- */
+  .editors-choice{
+    border:3px solid var(--gold-d);
+    background:linear-gradient(180deg,#fff8df,var(--cream));
+    box-shadow:inset 0 0 0 2px #fff,0 3px 9px rgba(0,0,0,.16);
+    margin-bottom:22px;
+  }
+  .editors-choice .chapter-bar{
+    background:linear-gradient(90deg,var(--gold-d),#7a5500);
+    border-bottom:2px solid var(--gold);
+  }
+  .entry.feature{
+    background:linear-gradient(90deg,#fff7df,#f3ead0);
+  }
+  .entry.feature img.ic{
+    width:86px;
+    height:86px;
+  }
+  .entry .tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    margin-top:6px;
+  }
+  .entry .tags .rec{
+    margin-top:0;
+  }
+
+
   /* right sidebar boxes */
   .sbox{margin-bottom:16px;border:2px solid var(--rule);background:var(--cream);}
   .sbox-bar{padding:5px 10px;color:#fff;font-variant:small-caps;font-weight:bold;letter-spacing:.06em;font-size:0.85rem;}
@@ -513,6 +542,7 @@ body.us-mode .bulletin{
         <a href="#"><span class="b">&#127963;&#65039;</span> Home</a>
         <a href="#sociology"><span class="b">&#128214;</span> Sociology</a>
         <a href="#english"><span class="b">&#9998;&#65039;</span> English</a>
+        <a href="#integrated"><span class="b">&#128506;&#65039;</span> Integrated Curriculum</a>
         <a href="#eal"><span class="b">&#128483;&#65039;</span> EAL / EFL</a>
       </div>
 
@@ -540,6 +570,31 @@ body.us-mode .bulletin{
         <img class="dropcap" src="icon_alpha.png" alt="A">
         <p>A treasury of interactive thinking activities for the classroom. Each one asks you to sort, classify, rank or connect ideas, and then defend your choices. The interesting learning lives in the <b>grey areas</b>. Choose a chapter below and open an activity to begin. <a href="#sociology">Explore the subjects &#9656;</a></p>
       </div>
+
+      <!-- EDITOR'S CHOICE -->
+      <div id="integrated"></div>
+      <section class="editors-choice" aria-label="Editor's Choice">
+        <div class="chapter-bar"><span class="num">&#9733;</span> Editor's Choice <span class="right">Integrated Curriculum</span></div>
+        <div class="entries">
+          <a class="entry feature" href="trade_routes.html">
+            <img class="ic" src="icon_globe.png" alt="" onerror="this.onerror=null;this.src='icon_compass.png';">
+            <span class="tx">
+              <h3>Trade Routes</h3>
+              <p>Trace the journey of everyday products across the globe. Balance profit, ethics, carbon emissions and logistics while discovering how modern supply chains really work.</p>
+              <span class="skill">Thinking skill: systems thinking, trade-offs &amp; evidence-based decision making</span>
+              <span class="tags">
+                <span class="rec">&#128200; Economics</span>
+                <span class="rec">&#127760; Global Studies</span>
+                <span class="rec">&#128188; Business Studies</span>
+                <span class="rec">&#128101; Sociology</span>
+                <span class="rec">&#10135; General Mathematics</span>
+                <span class="rec">&#9878;&#65039; Ethics</span>
+              </span>
+            </span>
+            <span class="open">Open &#9656;</span>
+          </a>
+        </div>
+      </section>
 
       <!-- CHAPTER I -->
       <div id="sociology"></div>
