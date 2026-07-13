@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduQuest Code Check | Teacher Tool</title>
+<style>
+  :root{
+    --parchment:#F3E9CF; --parchment-deep:#EBDDB8; --cream:#FAF4E4;
+    --navy:#1F3A5F; --navy-ink:#16283F; --gold:#C9A227; --gold-deep:#A8841B;
+    --green:#3E6B4F; --red:#A63A32; --peri:#5B6ABF; --peri-deep:#3E4A96; --violet:#6C4FA1;
+    --ui:"Trebuchet MS","Segoe UI",Verdana,sans-serif;
+    --prose:Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--ui); background:var(--peri-deep); color:var(--navy-ink); min-height:100vh; padding:18px;}
+  .wrap{max-width:1080px; margin:0 auto; background:var(--parchment); border-radius:8px; overflow:hidden;
+    box-shadow:0 14px 40px rgba(0,0,0,.3); border:1px solid rgba(31,58,95,.3);}
+  header{padding:14px 20px; background:linear-gradient(105deg,var(--peri-deep),var(--peri) 55%,var(--violet));
+    color:#F2EFFF; border-bottom:3px solid var(--gold);}
+  header h1{font-size:19px; letter-spacing:.04em;}
+  header h1 .eq{opacity:.75; font-weight:400; font-size:12px; letter-spacing:.18em; text-transform:uppercase; margin-right:10px;}
+  header p{font-size:12.5px; font-family:var(--prose); font-style:italic; opacity:.9; margin-top:2px;}
+
+  .body{padding:18px 20px 22px;}
+  .lead{font-family:var(--prose); font-size:14px; line-height:1.55; margin-bottom:14px; max-width:74ch;}
+  .lead b{color:var(--navy);}
+
+  .cols{display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;}
+  .col-in{flex:1 1 300px; min-width:280px;}
+  .col-out{flex:2 1 520px; min-width:340px;}
+
+  label{display:block; font-size:10px; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+    color:var(--gold-deep); margin-bottom:5px;}
+  textarea{width:100%; height:260px; padding:10px 12px; border:2px solid var(--navy); border-radius:6px;
+    background:var(--cream); font-family:var(--prose); font-size:14px; line-height:1.6; resize:vertical; outline:none;}
+  textarea:focus{box-shadow:0 0 0 3px rgba(201,162,39,.4);}
+
+  .single{margin-top:12px; padding:11px 12px; background:var(--cream); border:1.5px solid rgba(31,58,95,.4); border-radius:6px;}
+  .single input{width:100%; padding:8px 10px; border:1.5px solid var(--navy); border-radius:5px;
+    background:#FFF; font-family:var(--prose); font-size:14px; outline:none;}
+  .single .res{margin-top:8px; font-family:var(--prose); font-size:13px; line-height:1.5;}
+  .single .res b{font-size:16px; color:var(--navy); letter-spacing:.05em;}
+
+  table{width:100%; border-collapse:collapse; background:var(--cream); border:2px solid var(--navy); border-radius:6px; overflow:hidden;}
+  th{background:var(--navy); color:var(--cream); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    padding:8px 9px; text-align:left; font-weight:700;}
+  th:first-child{width:24%;}
+  td{padding:7px 9px; border-top:1px dotted rgba(31,58,95,.28); font-family:var(--prose); font-size:13.5px;}
+  td.name{font-weight:700; color:var(--navy);}
+  td.code{letter-spacing:.05em;}
+  tr:nth-child(even) td{background:rgba(31,58,95,.035);}
+  .empty{padding:22px; text-align:center; font-family:var(--prose); font-style:italic; opacity:.6;}
+
+  .actions{margin-top:12px; display:flex; gap:9px; flex-wrap:wrap;}
+  .btn{font-family:var(--ui); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:700;
+    padding:9px 15px; border-radius:5px; cursor:pointer; border:1.5px solid var(--navy); background:var(--navy); color:var(--cream);}
+  .btn:hover{filter:brightness(1.15);}
+  .btn.ghost{background:none; color:var(--navy);}
+  .note{margin-top:14px; padding:10px 12px; background:#FBF3DA; border-left:4px solid var(--gold);
+    border-radius:0 5px 5px 0; font-family:var(--prose); font-size:13px; line-height:1.55;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="eq">EduQuest</span>Code Check</h1>
+    <p>Order Restored: verifying who actually finished each case.</p>
+  </header>
+
+  <div class="body">
+    <p class="lead">
+      Each student enters their name before starting. When they complete a case, the activity gives them a
+      <b>completion code</b> built from that name. Paste your class list below and this tool shows you what every
+      student's code <b>should</b> be for each of the four cases. A code that does not match is not a code.
+      Nothing is stored anywhere: this runs entirely in your browser.
+    </p>
+
+    <div class="cols">
+      <div class="col-in">
+        <label for="names">Class list, one name per line</label>
+        <textarea id="names" spellcheck="false" placeholder="Hannah Ferrier&#10;Jayden Rowe&#10;Mia Tran&#10;..."></textarea>
+
+        <div class="single">
+          <label for="one">Check a single code</label>
+          <input id="one" type="text" spellcheck="false" placeholder="Name, then the code they gave you">
+          <div class="res" id="oneRes"></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="go" type="button">Generate</button>
+          <button class="btn ghost" id="copy" type="button">Copy table</button>
+        </div>
+      </div>
+
+      <div class="col-out">
+        <label>Expected codes</label>
+        <div id="out"><div class="empty">Paste a class list and press Generate.</div></div>
+        <div class="note">
+          Names are matched loosely: capitals, spaces, hyphens and apostrophes are all ignored, so
+          <em>hannah ferrier</em>, <em>Hannah&nbsp;Ferrier</em> and <em>HANNAH FERRIER</em> all give the same code.
+          But a nickname will not. If a student's code does not match, ask what they typed before you accuse them of anything.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* This must stay IDENTICAL to the code in order-restored.html */
+const CODE_WORDS = [
+  'AXOLOTL','TOUCAN','JAGUAR','SALAMANDER','PANGOLIN','OKAPI','NARWHAL','TAPIR',
+  'QUOKKA','CASSOWARY','MANATEE','LEMUR','IBEX','CARACAL','MARGAY','KAKAPO',
+  'ORYX','SERVAL','BONGO','ECHIDNA','NUMBAT','POTOROO','BILBY','DUGONG',
+  'CIVET','FOSSA','AYE-AYE','SIFAKA','GERENUK','SAIGA','MARKHOR','TAKIN',
+  'BINTURONG','COATI','KINKAJOU','OLINGO','TAYRA','JAGUARUNDI','ONCILLA','KODKOD',
+  'DHOLE','MANED-WOLF','BUSH-DOG','RATEL','ZORILLA','GRISON','LINSANG','GENET'
+];
+const CODE_SALT = 'eduquest-order-restored-2026';
+const CASES = [
+  {key:'tenaciousd', name:'The Candle'},
+  {key:'kyrgios',    name:'The Red Cap'},
+  {key:'coldplay',   name:'The Kiss Cam'},
+  {key:'maebashi',   name:'The Mayor'}
+];
+
+function codeHash(str){
+  let h = 0x811c9dc5;
+  for(let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h >>> 0;
+}
+function normaliseName(n){ return (n||'').toLowerCase().replace(/[^a-z]/g,''); }
+function makeCode(name, caseKey){
+  const clean = normaliseName(name);
+  if(!clean) return null;
+  const h = codeHash(CODE_SALT + '|' + clean + '|' + caseKey);
+  return CODE_WORDS[h % CODE_WORDS.length] + '-' + (((h >>> 8) % 90) + 10);
+}
+
+function generate(){
+  const names = document.getElementById('names').value
+    .split('\n').map(s=>s.trim()).filter(Boolean);
+  const out = document.getElementById('out');
+  if(!names.length){
+    out.innerHTML = '<div class="empty">Paste a class list and press Generate.</div>';
+    return;
+  }
+  out.innerHTML =
+    '<table><thead><tr><th>Student</th>' +
+    CASES.map(c=>`<th>${c.name}</th>`).join('') +
+    '</tr></thead><tbody>' +
+    names.map(n=>
+      `<tr><td class="name">${n}</td>` +
+      CASES.map(c=>`<td class="code">${makeCode(n, c.key)}</td>`).join('') +
+      '</tr>'
+    ).join('') +
+    '</tbody></table>';
+}
+
+document.getElementById('go').addEventListener('click', generate);
+document.getElementById('names').addEventListener('input', generate);
+
+document.getElementById('copy').addEventListener('click', ()=>{
+  const names = document.getElementById('names').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!names.length) return;
+  const rows = [['Student', ...CASES.map(c=>c.name)].join('\t')];
+  names.forEach(n=> rows.push([n, ...CASES.map(c=>makeCode(n,c.key))].join('\t')));
+  navigator.clipboard.writeText(rows.join('\n')).then(()=>{
+    const b=document.getElementById('copy'); const t=b.textContent;
+    b.textContent='Copied'; setTimeout(()=>b.textContent=t, 1200);
+  }).catch(()=>{});
+});
+
+/* single check: paste "Hannah Ferrier AXOLOTL-42" and it tells you which case it is, or that it is fake */
+document.getElementById('one').addEventListener('input', e=>{
+  const raw = e.target.value.trim();
+  const res = document.getElementById('oneRes');
+  const m = raw.match(/^(.*?)[\s,]+([A-Za-z-]+-\d{2})\s*$/);
+  if(!m){ res.innerHTML = ''; return; }
+  const [, name, given] = m;
+  const hit = CASES.find(c => makeCode(name, c.key) === given.toUpperCase());
+  if(hit){
+    res.innerHTML = `<span style="color:var(--green)">&#10003; Valid.</span> <b>${name.trim()}</b> completed <b>${hit.name}</b>.`;
+  } else {
+    const all = CASES.map(c=>`${c.name}: ${makeCode(name, c.key)}`).join('<br>');
+    res.innerHTML = `<span style="color:var(--red)">&#10007; That code is not theirs.</span><br><span style="font-size:12px;opacity:.85">Expected for that name:<br>${all}</span>`;
+  }
+});
+</script>
+</body>
+</html>
