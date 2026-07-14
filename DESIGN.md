@@ -104,7 +104,7 @@ These came out of long argument and should not be quietly reversed.
 
 ## 5. Activities
 
-### Order Restored (`order-restored.html`) — COMPLETE
+### Order Restored (`order-restored.html`): COMPLETE
 Durkheim's four functions of deviance, using the department's exact vocabulary: **Affirmation**
 (socialisation), **Clarification** (punishment), **Unification** (consensus), **Change**.
 
@@ -126,14 +126,14 @@ Durkheim's four functions of deviance, using the department's exact vocabulary: 
   Web Audio API, not `new Audio()`: the latter is blocked in sandboxed iframes.
 - **Completion codes** (see §6).
 
-### Trade Routes (`trade_routes.html`) — LIVE
+### Trade Routes (`trade_routes.html`): LIVE
 Supply chains, ethics, carbon, cost. Every route trades one against another; there is no free lunch.
 
 - **Hover a component in the manifest and its sources pulse on the map** while everything else dims.
   (Hannah's suggestion. She could not find where the lithium was.)
 - Two more cases (EV, t-shirt) exist as pure data and are not yet wired in.
 
-### CineMahjong (`cinemahjong.html`) — REBUILT
+### CineMahjong (`cinemahjong.html`): REBUILT
 Reading the language of film. Rebuilt from scratch as vanilla single-file; the previous version was
 a bundled-framework outsider that could not be edited.
 
@@ -145,13 +145,13 @@ final exam as the first lesson, all shots at once, and she had no chance to lear
 - **C.3 Key Concepts** (establishing, over-the-shoulder, mise en scène). Standalone, not cumulative:
   ten at once is a wall.
 - **C.4 The Full Deck** (all ten, no poster).
-- **C.5 What a Shot Does** — match the shot to its **effect**, not its name. This is the analytical
+- **C.5 What a Shot Does**: match the shot to its **effect**, not its name. This is the analytical
   turn, and the reason the activity is VCE rather than a memory game.
 
 Each level opens with Ben's illustrated poster as the worked example. Tiles are **SVG pictograms**,
 so the whole file is 657KB (of which 469KB is the three posters).
 
-### Writer's Workshop (`writers-workshop.html`) — O.1 and O.2 BUILT
+### Writer's Workshop (`writers-workshop.html`): O.1 and O.2 BUILT
 Six Traits as a navigable architecture for VCE English writing.
 
 **Traits:** I (Ideas) · O (Organisation) · V (Voice) · WC (Word Choice) · SF (Sentence Fluency) · C (Conventions)
@@ -280,71 +280,217 @@ teachers. A leftover developer note under the puzzle ("Picture file: puzzle.jpg"
 
 ---
 
-## 8. Next up: Durkheim in Time (`Normative or Deviant?`)
+## 8. Durkheim in Time (`Normative or Deviant?`)
 
-The time-travel companion to Order Restored. Teaches **relative deviance**: the same behaviour read
-completely differently depending on time and place. Reuses the Trade Routes interface (a world map plus
-a timeline), because both activities are fundamentally about locating relationships on a map.
+The relative deviance activity. Specced, argued over at length, and **not yet correctly built**.
+Two attempts have failed. Read section 8.1 before writing a line of code, because both failures
+were failures of taste, not of engineering, and they are easy to repeat.
 
-**The spine, and the thing that makes it work:** *the person is a constant; the reaction is the variable.*
-The map is not a place to search, it is an **instrument you probe**. The student holds a character whose
-behaviour never changes, drops them into a place and time, and the world *reacts*. Deviance is not in the
-act. It is in the reaction. So the reaction is what the game returns.
+### 8.1 What has already failed, and why
 
-**A probe returns a position on the sanctions ladder** (department vocabulary):
-*Celebrated → Unremarkable → Eccentric, gossiped about → Informally sanctioned, shunned →
-Formally sanctioned, charged → Lethal.*
+**Attempt one (Claude, July 2026): the filing cabinet.** A world map plus a timeline. The student
+set a year, clicked a place, received a paragraph of testimony, and dragged that paragraph onto a
+six rung "sanctions ladder" (celebrated, unremarkable, eccentric, shunned, charged, lethal). Do that
+six times and a gate opens.
 
-Sally in Devon 1580: the village calls her when a child is sick. Devon 1640: a neighbour has mentioned her
-to the curate. Devon 1662: the magistrate has opened an inquiry. Same woman, same herbs. The Carmen
-Sandiego clue escalation falls out of this for free.
+It was technically sound, it validated cleanly, and it was **tedious**. The verdict, and it was the
+right one: not intuitive, not fun.
 
-**The loop:** Survey (probe the space-time map) → Locate the danger window (you cannot extract her without
-finding it) → Extract → **Relocate, and be judged on the destination**. The destination is a *second*
-probe: Sally into 1692 Massachusetts is worse; Sally into 2026 Melbourne is fine. **The present is not
-automatically safe.** What matters is the norm-set, not the date. Two judgements per case, a real fail
-state at each end.
+The diagnosis is worth keeping, because it generalises:
 
-**Rejected:** "just place Sally somewhere safe" (drag her from a menu to a safe spot). If safety is the
-objective, students *avoid* the very historical context we need them to inhabit.
+- **It was a classification task, not a search.** "Here is a thing, what is it, file it" is a form.
+  "Where and when does this happen, go and find it" is a hunt. That difference is most of the gap
+  between tedious and fun.
+- **Nothing happened to Sally while you played.** She sat still while the student did paperwork
+  about her. The emotional engine of the concept never actually ran.
+- **The player lived in panels.** Click, panel, read, panel. Trade Routes works because you are on
+  the map almost constantly.
+- **The prose was showing off.** Literary, period, mannered. Too highfalutin for Year 11, and the
+  same instinct that produced the ladder and the notebook in the first place.
+- **The sanctions ladder is dead.** So is the field notebook. So is that voice. Do not revive them.
 
-**The reveal:** at case close, lay the character over a heat map of history: green where celebrated, red
-where killed, the whole spread at once. *She never changed. Only the reaction did.*
+**Attempt two (ChatGPT).** Six emoji tokens (tattoos, bowing, duelling, witchcraft, handshake,
+ritual cannibalism), dragged onto abstract map regions, with a Check button. It abandoned the
+characters entirely and went back to classifying practices, which is the model everyone already
+agreed was worse. It also shipped the cannibalism case, which is excluded (see below).
 
-**The cases:**
+**But it contained one genuinely important idea**, and it is the one to keep: the Carmen Sandiego
+hot and cold loop. *"Geographically close, but chronologically way off."* Narrowing on two axes at
+once is the pleasure. Its flaw was that a Check button makes clicking free, so the loop degrades
+into guess and check. In Carmen you have to go somewhere and talk to someone, and that costs you.
 
-- **Sally the herbalist** — the flagship. The full sanctions ladder in one life.
-- **The Jaywalker** — the best case on the list. "Jaywalker" was a slur **manufactured by the American
-  auto industry** to shift blame for pedestrian deaths from drivers onto walkers. The norm did not drift;
-  it was *sold to him*. This is **moral entrepreneurship**, a term already in the Order Restored glossary.
-- **Haruki, face tattoos** — proves **place** matters as much as time. Irezumi was a *punishment* in Edo
-  Japan; tā moko is sacred in Māori culture; and 2026 Tokyo still bars him from the onsen. Kills the false
-  lesson that the present is automatically safe.
-- **The smoker in the hospital ward** — the Whig-history antidote. 1965: doctors advertised cigarettes,
-  nobody blinks. 2026: formally sanctioned. **Safe window behind him.** At least one case MUST travel
-  backwards, or the game teaches "the past was ignorant, we are enlightened", which is not what relative
-  deviance says. Norms *vary*; they do not necessarily *improve*.
-- **The blood drinker** — historically solid and genuinely shocking. Roman epileptics drank gladiator
-  blood; corpse medicine was respectable in early modern Europe; **Charles II drank preparations made from
-  human skull.** 1670 London: prescribed by a physician. 2026: a deviant subculture.
-- **The alchemist** — status collapse. Newton was one. England criminalised it in 1404 over coin-clipping.
-  Celebrated → criminal → respectable → quackery.
-- **The headmaster with the cane** — **the case that must not resolve.** A rescue mechanic would ask the
-  student to relocate him somewhere he is *permitted to beat children*. That is an intolerable game rule.
-  But it is a magnificent final case: the student searches for a safe destination and realises they do not
-  want to find one. **This is the limit of relativism**: norms vary, but that does not make all norm-sets
-  equal. Build it as the case that refuses to resolve, and let the class argue.
+### 8.2 The spine (Ben's design, and the one to build)
 
-**Deliberately excluded from the build:**
+The activity is a **rescue**, not an exercise. It is Carmen Sandiego with a time machine, and the
+sociology is carried entirely by the mechanic, not by the vocabulary. **No sociology word needs to
+be spoken anywhere in it.**
 
-- **The cannibal.** Only works as mortuary cannibalism (the Fore, the Wari', Herodotus's Callatiae). It is
-  legitimate anthropology, and the pedagogical yield is no higher than the jaywalker's. Keep for discussion;
-  do not ship it.
-- **The throuple.** Sociologically legitimate (monogamy is a norm, not a natural law) but: the reaction is
-  to an *identity*, not a visible act; polygamy is legal in ~50 countries and illegal in Australia, so the
-  game would be telling Year 11s that Australian marriage law is parochial rather than moral; and a rescue
-  mechanic embeds a *verdict*. In a regional school culture already braced against, this is a stick not
-  worth handing anyone. **Arranged marriage** carries most of the same payload with far less heat.
+**The loop:**
+
+1. **The wanted poster.** Durkheim hands you a target. Sally, herbalist. Two clues only: a place and
+   a time. The clues are not hard, and they are not meant to be. They are a reason to travel.
+2. **Travel.** Wind the slider to the year, choose the place on the map. The map is not a workspace,
+   it is a departure board. **This is the key difference from Trade Routes.** In Trade Routes you
+   think *on* the map. Here the map is a verb: it is the thing you leave from.
+3. **The scene.** The map screen gives way to a Carmen style exterior: a place, in a year, with two
+   or three locals standing in it. Click a local and they say something ordinary. A mother says her
+   Timmy was sick and Sally, who lives out past the mill, made him well. A neighbour says you look a
+   bit strange yourself, a bit like that herb woman. **The clues are warm and plain, not riddles.**
+   They point. They also quietly show that she is loved here and hunted here at the same time, which
+   is the sociologically interesting fact and costs the student nothing to grasp.
+4. **The rescue.** Follow the clues, find her, get her aboard the ship. In the nick of time.
+5. **The Chrono Times.** A newspaper of **classified advertisements**, and this is the heart of the
+   activity. Jobs, university courses, apprenticeships, scholarships, calls for volunteers. **Each ad
+   carries a place and a year.** You read the ads, work out which one wants what she has, wind the
+   slider to the year in the ad, and take her to it.
+6. **The ending.** Her life plays out from where you put her.
+
+### 8.3 Why the classifieds are the right answer
+
+An open world map is an impossible ask: infinite options is the same as no options, and the student
+has nowhere to think. The classifieds close the space and give them something to reason *about*.
+
+And a job advertisement **is a society saying out loud what it wants.** Not a norm to be inferred:
+a norm printed in a box with a phone number. That is as close to free as sociological content gets.
+
+The slider is used **twice, and it means opposite things.** Once to hunt, going to the place where
+she was condemned. Once to deliver, going to the place where she is wanted. Same instrument, same
+person in the hold, and the only thing that changed between the two trips is which society is
+looking at her. That is the entire thesis, enacted.
+
+### 8.4 The Whig history problem, solved
+
+The rescue is **not to safety, and not to the present.** It is to a place that needs precisely the
+thing she was hunted for.
+
+- **Sally** was nearly hanged for knowing which leaf brings a fever down. Mildura is short of nurses.
+- **Leroy** was caned for using his left hand. A tennis academy would pay for that hand.
+- **Jacob** was fined for walking across a road. A city needs an urban planner who thinks streets
+  belong to people on foot.
+- **Clara** photographs strangers on the street, which our own privacy norms find intrusive. **She
+  travels backwards**, to Paris in the early sixties, where a magazine would hire her on the spot.
+
+Clara is the proof that this is not Whig history. The direction of travel is not "forward equals
+enlightened". It is simply that different societies want different things. Some rescues go forward,
+some go back.
+
+**The guardrail.** This must not slide into "your difference is secretly a superpower". That is a
+school assembly, and students can smell it. The value must stay **contingent**: Leroy is not gifted,
+he just has a left hand, and that hand is beaten in one classroom and worth a fortune on a court,
+and *nothing about Leroy changed between those two facts*. The value was never in him. It was in
+what that society happened to need. Which means **placements must be genuinely losable**: put him
+somewhere with no use for a left hander and he is shunned all over again, and the game should say so
+plainly. Otherwise every ending is a hug.
+
+**Not one correct destination.** Many ads can work. The rule the student is learning is: *does this
+community actually need what she does?* Two students can get different endings and both be right.
+Include ads that are traps: an asylum wanting an attendant to manage difficult women would employ
+Sally, and it would be a horrible place for her.
+
+### 8.5 The ship, and the cast as friends
+
+She joins the crew. She is aboard when you go looking for the next one, and she can help, because
+she knows what it feels like to be looked at that way.
+
+Eventually the ship has Sally, and Leroy, and Jacob, and Clara aboard, every one of them a monster
+in one place and unremarkable in another, and not one of them ever changed. **That is relative
+deviance sitting around a table having dinner.** Nobody has to say it.
+
+But the crew is a **staging post, not an ending.** They have to be placed. Staying aboard forever
+would rob the activity of the second half of the spectrum, which is the part where a society *wants*
+them.
+
+Characters recur across EduQuest, as the tortoise and Durkheim already do. Sally should turn up
+elsewhere. Students should think "oh, it's Sally again".
+
+### 8.6 The test that sorts the cast: capacity, not style
+
+A character only works if their deviant trait is a **capacity a society could use**, because
+otherwise the rescue cannot land and the loop cannot close.
+
+**Works:** Sally (knowledge), Leroy (a hand), Clara (an eye), Jacob (a way of moving through cities).
+**Does not work:** the man who wears shoes indoors, the boy with the backwards cap, the bearded
+banker. These are style violations. They can be deviant, but no society anywhere has a shortage of
+men who wear shoes inside, so there is nowhere to take them. **They are furniture. Cut them.**
+
+Haruki (irezumi) is a maybe and needs art. He carries the "place matters as much as time" load:
+irezumi was a punishment in Edo Japan, ta moko is sacred in Maori culture, and 2026 Tokyo still bars
+him from the onsen.
+
+### 8.7 The art, which is the real constraint
+
+Scenes mean backdrops and locals. Estimate **three locations per case** (where you land, a wrong
+turn, and where she is), each with a backdrop and two or three figures to click. That is roughly
+nine figures a case, and it cannot be dodged by reusing three archetypes across cultures.
+
+The cast portraits are already done and cleaned (transparent PNGs, about 15KB each, 440px tall):
+`cast/sally.png`, `jacob.png`, `leroy.png`, `clara.png`, plus `kai.png`, `liam.png`, `ahmed.png`
+(the three that are being cut).
+
+### 8.8 What to steal from Carmen Sandiego
+
+Beyond the hot and cold loop:
+
+- **The ACME console is an object, not a nav bar.** Rubber buttons, a handset cord, a little LCD.
+  This is exactly the **dimensionality** that section 3 identifies as the missing ingredient in the
+  Encarta look. Durkheim's time machine should be a machine, with a physical panel.
+- **The yellow legal pad**, handwritten, with ticks. It is not a progress bar. It is a list of
+  **leads not yet followed**, and ticking one off feels like detective work rather than task
+  completion. This is the "open panels on the right" that Ben wants.
+- **Every location is a picture.** You are somewhere.
+- **A running clock**, and consequences delivered by a person, not by a scoreboard.
+
+### 8.9 The Encarta reward screen
+
+Do not use a popup. After a rescue lands, a **full page article** should open: illustration, margin
+notes, a map, a timeline. Old Encarta articles felt *precious*, like something unlocked. Students
+should want to stay and read it. Discovery is the reward, not a mark.
+
+### 8.10 Panels: what actually earns its place
+
+Ben's ruling. Every panel occupies essential real estate and most of them do not earn it.
+
+**Essential:** the timeline slider (bottom), the map (centre).
+**Dead:** the sanctions ladder, the field notebook, the dossier panel, the phase HUD.
+
+### 8.11 Cases, and what stays out
+
+The case notes from the earlier spec still hold as *content*, even though the mechanic has changed.
+Sally the herbalist is the flagship. Jacob the jaywalker is the best case on the list, because
+"jaywalker" was a slur **manufactured by the American auto industry** to shift blame for pedestrian
+deaths from drivers onto walkers: the norm did not drift, it was *sold to him*. That is moral
+entrepreneurship, a term already in the Order Restored glossary.
+
+Historical material worth keeping from the failed build, because it is accurate and it does real
+pedagogical work:
+
+- **The Scotland trap.** In 1600 Devon is only gossiping about Sally. In that same year Edinburgh is
+  running the North Berwick trials with the King personally attending the examinations, and Scotland
+  executed witches at roughly five times the English rate. A student who reasons "get her out of
+  England" kills her.
+- **Bologna.** The Roman Inquisition preferred penance to fire. Italy tried a great many and burned
+  very few. Between them, Scotland and Bologna destroy the pattern match that "the 1600s equals
+  death", which is the false lesson lurking in this activity.
+- **The smoker in the hospital ward.** At least one case must travel *backwards* in time, or the game
+  teaches "the past was ignorant, we are enlightened". Clara now carries this load.
+
+**Excluded from the build:** the cannibal (works only as mortuary cannibalism; legitimate
+anthropology, no more pedagogical yield than the jaywalker; keep for discussion, do not ship). The
+throuple (the reaction is to an identity rather than a visible act, and a rescue mechanic would embed
+a verdict; arranged marriage carries most of the payload with far less heat). **The headmaster with
+the cane** stays specced but unresolvable: a rescue mechanic would ask a student to relocate him
+somewhere he is permitted to beat children, which is an intolerable game rule. It is a magnificent
+final case precisely because the student searches for a safe destination and realises they do not
+want to find one. **That is the limit of relativism**: norms vary, and that does not make all norm
+sets equal.
+
+### 8.12 Open questions
+
+- Where exactly is the thinking? The classifieds are the answer, but the ads have to be written so
+  that reading them *is* the reasoning, and elimination does not solve the puzzle.
+- Does Sally get a say in her destination? Possibly she asks a question about the place before she
+  will board.
+- How many locals per scene, and does a wrong location cost anything?
 
 ---
 
