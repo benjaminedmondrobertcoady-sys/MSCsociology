@@ -42,6 +42,9 @@
   .trait img{width:52px;height:52px;object-fit:contain;}
   .trait .tname{font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);font-weight:700;text-align:center;line-height:1.1;}
   .trait.active{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);background:#FFF;}
+  .trait.link{cursor:pointer;}
+  .trait.link:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);}
+  .trait.link:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
   .trait.soon{opacity:.42;filter:grayscale(.7);}
   .trait.soon .tsoon{font-size:8.5px;font-style:italic;font-family:var(--prose);opacity:.8;}
 
@@ -90,6 +93,7 @@
     width:76px;height:76px;padding:5px 4px 4px;border-radius:6px;
     background:linear-gradient(180deg,#FBF6E8,var(--parchment-deep));border:1.5px solid var(--navy);box-shadow:0 2px 0 rgba(31,58,95,.25);
     transition:transform .1s ease,box-shadow .1s ease,background .15s ease;}
+  .tool-tile.hidden{display:none;}
   /* tiles whose frame and label are part of the artwork need no chrome of their own */
   .tool-tile.img{padding:0;border:none;background:none;box-shadow:none;width:76px;height:76px;}
   .tool-tile.img img{width:100%;height:100%;object-fit:contain;
@@ -291,6 +295,7 @@
   .tech .tn{display:block;font-size:13.5px;font-weight:700;color:var(--navy);}
   .tech .tb{display:block;font-family:var(--prose);font-size:12px;font-style:italic;opacity:.8;margin-top:2px;line-height:1.35;}
   .tech .tw{display:inline-block;margin-top:4px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);}
+  .tech .tg{display:inline-block;margin-top:4px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-deep);}
   .tech .tdet{display:none;margin-top:8px;padding-top:8px;border-top:1px dotted rgba(31,58,95,.3);}
   .tech.on .tdet{display:block;}
   .tech .thow{font-family:var(--prose);font-size:12.5px;line-height:1.45;color:var(--navy-ink);}
@@ -309,6 +314,83 @@
   .hookslot textarea::placeholder{font-family:var(--prose);font-size:15px;font-style:italic;color:rgba(31,58,95,.45);}
   body.scholastic .hookslot textarea{font-family:"DotGothic16",monospace !important;font-size:15px;line-height:30px;}
   .wc{position:absolute;right:9px;bottom:3px;font-family:var(--ui);font-size:10px;color:var(--navy);opacity:.55;}
+
+  /* ---- O.3 background ---- */
+  .bgslot{position:relative;margin-bottom:8px;border:2px dashed var(--c-background);border-radius:6px;background:rgba(255,255,255,.55);
+    padding:6px 10px 4px;transition:border-color .15s ease,background .15s ease;}
+  .bgslot.filled{border-style:solid;background:rgba(255,255,255,.8);}
+  .bgslot .hklabel{font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c-background);}
+  .bgslot textarea{width:100%;border:none;background:transparent;outline:none;resize:none;overflow:hidden;
+    font-family:"Caveat","Segoe Script",cursive;font-size:22px;line-height:30px;font-weight:600;color:#22384F;padding:2px 0 0;}
+  .bgslot textarea::placeholder{font-family:var(--prose);font-size:14px;font-style:italic;color:rgba(31,58,95,.45);}
+  body.scholastic .bgslot textarea{font-family:"DotGothic16",monospace !important;font-size:14px;line-height:26px;}
+
+  /* ---- O.4 contention ---- */
+  .contslot{position:relative;margin-bottom:8px;border:2px dashed var(--c-contention);border-radius:6px;background:rgba(255,255,255,.55);
+    padding:6px 10px 4px;transition:border-color .15s ease,background .15s ease;}
+  .contslot.filled{border-style:solid;background:rgba(255,255,255,.8);}
+  .contslot .hklabel{font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c-contention);}
+  .contslot textarea{width:100%;border:none;background:transparent;outline:none;resize:none;overflow:hidden;
+    font-family:"Caveat","Segoe Script",cursive;font-size:22px;line-height:30px;font-weight:600;color:#22384F;padding:2px 0 0;}
+  .contslot textarea::placeholder{font-family:var(--prose);font-size:14px;font-style:italic;color:rgba(31,58,95,.45);}
+  body.scholastic .contslot textarea{font-family:"DotGothic16",monospace !important;font-size:14px;line-height:26px;}
+
+  /* ---- O.5 preview ---- */
+  .prevslot{position:relative;margin-bottom:8px;border:2px dashed var(--c-preview);border-radius:6px;background:rgba(255,255,255,.55);
+    padding:6px 10px 4px;transition:border-color .15s ease,background .15s ease;}
+  .prevslot.filled{border-style:solid;background:rgba(255,255,255,.8);}
+  .prevslot .hklabel{font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c-preview);}
+  .prevslot textarea{width:100%;border:none;background:transparent;outline:none;resize:none;overflow:hidden;
+    font-family:"Caveat","Segoe Script",cursive;font-size:22px;line-height:30px;font-weight:600;color:#22384F;padding:2px 0 0;}
+  .prevslot textarea::placeholder{font-family:var(--prose);font-size:14px;font-style:italic;color:rgba(31,58,95,.45);}
+  body.scholastic .prevslot textarea{font-family:"DotGothic16",monospace !important;font-size:14px;line-height:26px;}
+
+  /* ---- O.6 relevance and redundancy ---- */
+  .judgepara{font-family:"Caveat","Segoe Script",cursive;font-size:24px;line-height:34px;font-weight:600;color:#22384F;
+    padding:2px 4px;}
+  body.scholastic .judgepara{font-family:"DotGothic16",monospace !important;font-size:15px;line-height:30px;}
+  .jsent{cursor:pointer;padding:0 2px;border-radius:3px;transition:background .12s ease,color .12s ease;}
+  .jsent:hover{background:rgba(31,58,95,.1);}
+  .jsent.struck{text-decoration:line-through;text-decoration-thickness:2px;color:rgba(34,56,79,.45);}
+  .jsent.correct{background:rgba(62,107,79,.16);}
+  .jsent.wrong{background:rgba(166,58,50,.16);}
+  .jnotes{margin-top:10px;padding-top:8px;border-top:1px dotted rgba(31,58,95,.3);}
+  .jnote-item{display:flex;gap:8px;align-items:baseline;margin-bottom:6px;font-family:var(--prose);font-size:12.5px;color:var(--navy-ink);}
+  .jnote-item .jn-snip{flex:0 0 auto;font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);white-space:nowrap;}
+  .jtally{font-family:var(--ui);font-size:11px;color:var(--navy);opacity:.7;margin-bottom:6px;}
+
+  /* ---- O.7 the whole paragraph ---- */
+  .o7-question{margin-bottom:8px;padding:9px 12px;background:rgba(201,162,39,.16);border:1.5px solid var(--gold);border-radius:6px;}
+  .o7-question b{display:block;font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:3px;}
+  .o7-question span{font-family:var(--prose);font-size:15px;font-style:italic;color:var(--navy-ink);line-height:1.4;}
+  .o7-write{height:100%;}
+  .o7-write textarea{width:100%;height:100%;min-height:220px;border:none;background:transparent;outline:none;resize:none;
+    font-family:"Caveat","Segoe Script",cursive;font-size:22px;line-height:30px;font-weight:600;color:#22384F;padding:0;}
+  .o7-write textarea::placeholder{font-family:var(--prose);font-size:14px;font-style:italic;color:rgba(31,58,95,.45);}
+  body.scholastic .o7-write textarea{font-family:"DotGothic16",monospace !important;font-size:14px;line-height:26px;}
+  .o7-checklist{margin-top:2px;}
+  .o7-checklist .cli{display:flex;gap:8px;align-items:baseline;padding:7px 9px;margin-bottom:6px;border-radius:6px;
+    background:#FFF;border:1.5px solid rgba(31,58,95,.25);}
+  .o7-checklist .cli b{flex:0 0 auto;font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+  .o7-checklist .cli span{font-family:var(--prose);font-size:12.5px;color:var(--navy-ink);}
+
+
+  .source{flex:1 1 auto;overflow-y:auto;padding:10px 12px;min-height:0;font-family:var(--prose);font-size:13.5px;line-height:1.68;color:var(--navy-ink);}
+  .source .art-title{font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:6px;}
+  .source p{margin-bottom:9px;}
+  .fact{cursor:pointer;border-radius:2px;padding:0 1px;transition:background .15s ease,box-shadow .15s ease;}
+  .fact:hover{background:rgba(176,122,30,.18);}
+  .fact.gathered{background:rgba(176,122,30,.32);box-shadow:0 0 0 1px var(--c-background);}
+
+  .gatheredwrap{flex:0 0 auto;border-top:2px solid var(--gold);background:var(--parchment-deep);padding:8px 12px;min-height:34px;}
+  .gatheredwrap .th{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy);opacity:.75;margin-bottom:6px;}
+  .gatheredwrap .empty-note{font-family:var(--prose);font-size:12px;font-style:italic;color:var(--navy);opacity:.55;}
+  .chip{display:inline-flex;align-items:center;gap:5px;margin:0 5px 5px 0;padding:3px 5px 3px 9px;background:#FFF;
+    border:1px solid var(--c-background);border-radius:12px;font-family:var(--ui);font-size:10.5px;color:var(--navy-ink);cursor:pointer;}
+  .chip:hover{background:rgba(176,122,30,.15);}
+  .chip .x{opacity:.55;font-size:12px;line-height:1;}
+
+  .compare.bg .cm{border-left-color:var(--c-background);}
 
   .compare{margin-top:9px;padding:10px 12px;background:var(--parchment);border:1.5px solid var(--gold-deep);border-radius:6px;}
   .compare h4{font-family:var(--ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:6px;}
@@ -339,7 +421,7 @@
     <div class="trait active"><img src="data:image/png;base64,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" alt="Organisation"><span class="tname">Organ.</span></div>
     <div class="trait soon"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAA/1BMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD64ociAAAAQHRSTlMA/C3Pr05wkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAomYuLgAAAXxJREFUeNrt2UtuwzAMBUBZH/v+N24LFE1rSQ66E4WZrb0I80hacVICAAAAAAAAAAAAAAAAAICgrmOg5J/ruXRX64p15GPo9VnL4GpesZL6/0SuRZvrfCijv+HM645Jfts5r9jWHvhbJmd/x9LTMfic06/9XHhfPezgNrth9UDeR/K9BdZ/LNbnSPIsqdUXVxnXGeGkcjxGsvaD8GkDl5ijPogkD67FOAXXeSRt+pwMdk4pkQLpzuvlXmKJUkibRVLDPETG415CjvroR2+OdV58G8kRrbP6n+f59+hEeqHSRpGUeJ3V9dZXJPmIdDyZvYYorw2QUvBIjkAH3/mB63M0QnbW9L1juM7qe+sIdfB92MBRA5lEUgIWcu3RWZNxTxGVPTprOO4tZCFpk84a/O9TgxaSNums/sAVtY77Br7CFnLbwDluIW2PzrqN+xm5kGuTQH5HUmIXUncY9b8bOKU9Islpj0paii+3MycAAAAAAAAAAAAAAAAAANjOB9MSBag7bJpzAAAAAElFTkSuQmCC" alt="Voice"><span class="tname">Voice</span><span class="tsoon">soon</span></div>
     <div class="trait soon"><img src="data:image/png;base64,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" alt="Word Choice"><span class="tname">Word Ch.</span><span class="tsoon">soon</span></div>
-    <div class="trait soon"><img src="data:image/png;base64,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" alt="Sentence Fluency"><span class="tname">Sent. Fl.</span><span class="tsoon">soon</span></div>
+    <div class="trait" data-href="writers-workshop-sentence-fluency.html"><img src="data:image/png;base64,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" alt="Sentence Fluency"><span class="tname">Sent. Fl.</span></div>
     <div class="trait soon"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAA/1BMVEUAAAAAAAAXFxcXFxcnJycoKCgkJCQlJSYnKCgnKCgkIyQnJycbHBwzMzMcHBwZGRkZGRkzMzMZGRkzMzMdHR01NTUfIB8xMjIfHyAfICAgHyAgHyAxMTENDQ0fHyAeHiAfICAfICAgHyAhIR8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC3TI8zAAAAQHRSTlMA/gj5Lk0Tzo9v8q3RTi6Yr5BqbE8xErAR7SboGZ4m4jXTzMoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8SUUwAABMlJREFUeNrtnWd36ygQhsPQQbLlluwtu3fL//+PGx/nprgIZDMjwZn3a+LyiCkwA/jpicVisVgsFovFYrFYLBaLxWKxWCwWi8VqWmBAfe99lDL8t/YaIOclB1jKtz9Kqb131gYpxSd1XpnRrwm6k7LTC6BQ3n756heScvDqFgzY0z/5ucdCJyjeaay/MjKgf79amjkNSrs8it8s+vlsMO3HX/1sTu3CFIo3lvhhY6BePv8pzmVR4k7Jk788n9tkgKow3mzMxYvRlECP0QkEUXv7R5ypGwQL41WUpmWiEC2AIA4HJQhgDgchiJKiCRCNzSEUiVk5gS6SmTwBh3AEHOtJma0b3Oao9Z+dXBbIFI5hBV9m+qttLo1bEIfcXgs9xi0DJNs/hv2tCLrKmWZa7LibORhuLA/APm1fHS7HKm8w/k6lM9jKWUEgx1PlPuutEr72DypIjnGH3JXEahh9HDCzg3QTVkQrOQ9IjmENpRaYmCAZA+KmfvzNaRsmSIcy09Pki3aVDFdQMqT3aCC2VLjKI7FzDcivP8qmWTQnsSh2ddtPsEASAyIfW5ruyEDgGybHteeEBKKxSwWeBgQsesljS1JHUQQVj/OK34p8llUo4sOAXxByJB2As8eF0EYcr49GJANGALFULRmPC2IoPOTShss3dj1hkbZDbOyOh6zCeevThxXPiOM5pLQB9BJtRDxtH+M9RDramFV+RvRmXR2ti2Cs4457jH744k/IzFE0B4SpryIMvqjazd+zLKO4pL0veOmwHpBxFwlQDUgviNMIlg6jIN/qAdGtmJZrBWTbCsjQiLPDeHdH/qwFxEjRRkJUzYCIRnxkl+hT/dVGPqxoPeITILEWkNTu3moyYljYqYK7ldx+oloB6RsxrdkP2uUqeerIVgKS3FRai7fvRSPevkuCVJLbe9GIk5hk/K1kAgxdK7blWrEtLxoJwMktmUJs6nCS9K7lStw9nUkqmThmDAna6gqKul/GTnKcaQo4GYaCb53OiTgR+K2kVjCUZJzKRUiKvvxwZ9hW+cD10QWwQOjuxTcObFE8cEN+tvbLfGJN6e5lJypf50WhXBzMuS+kYM3xLAeXA8k7RulxxqPoI8o6f1jITS5PXZWMiJkHhR//yCvn4IoGRJUFIuyDHg/KIi93IPN6oIcS4zWM4o2LzCER8v6TVspSTEgh5JLc98HQW6L5aOZB9leS3XTzMj7QrRDyr94IaqJrjFz5htHam3BpRX4cfqUI5BWaCSTSmyyKTZil+zLlYhd5+zLG99yXDCD/YhUDtpOudvkRnb5xUSaY3s1aZ5pEcvoyMvr+Mw3Adx/zrnnBLDNNJznR2I1Wr+p9tNkX7+C2J9eCSi/IBbuBiMNiF2LBknAQ1PhJSEgK49Dhc9D0itFJJFnPGzd2ydUTmZRtg+OIsq7ert5dZag2Xp3rufw9oG6mhqRxRe/QtDNu0TG+GIrV8/aHC90mPTfGac3q7YPjEvRCuvVgdLybRVq9qH0gRk93fRmiOyxwN4uZNCzSabPY/R+m32T+UERUS99XdPwRkaRXuCp2dYI5aO+jtSFIefl7A3HBFnWTCH4eVL97ieEkGzfKPLFYLBaLxWKxWCwWi8VisVgsFovFYrFYbel/gbgxe221nnQAAAAASUVORK5CYII=" alt="Conventions"><span class="tname">Conv.</span><span class="tsoon">soon</span></div>
   </aside>
 
@@ -427,6 +509,158 @@
           <div class="topics">
             <div class="th">Topic Library</div>
             <div class="tgrid" id="tgrid2"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="o2 hidden" id="o3Pane">
+        <div class="o2-left">
+          <div class="buildhead">
+            <h3>Introductory Paragraph</h3>
+            <span class="hint">The rest is written for you. The background is yours, drawn from the article.</span>
+          </div>
+          <div class="build o2-paper" id="o3Paper"></div>
+          <div class="buildfoot">
+            <div class="fb" id="o3fb"></div>
+            <button class="btn ghost" id="o3Clear" type="button">Clear</button>
+            <button class="btn" id="o3Submit" type="button">Submit for feedback</button>
+          </div>
+        </div>
+
+        <div class="o2-right">
+          <div class="libhead">
+            <h3>Source Article</h3>
+            <div class="sub" id="o3Prompt"></div>
+            <div class="libwarn">Click a sentence to gather it. Your background sentence must draw on at least two, in your own words, not theirs.</div>
+          </div>
+          <div class="source" id="sourceArticle"></div>
+          <div class="gatheredwrap">
+            <div class="th">Gathered</div>
+            <div id="gathered"></div>
+          </div>
+          <div class="topics">
+            <div class="th">Topic Library</div>
+            <div class="tgrid" id="tgrid3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="o2 hidden" id="o4Pane">
+        <div class="o2-left">
+          <div class="buildhead">
+            <h3>Introductory Paragraph</h3>
+            <span class="hint">The rest is written for you. The contention is yours: your position, arguable.</span>
+          </div>
+          <div class="build o2-paper" id="o4Paper"></div>
+          <div class="buildfoot">
+            <div class="fb" id="o4fb"></div>
+            <button class="btn ghost" id="o4Clear" type="button">Clear</button>
+            <button class="btn" id="o4Submit" type="button">Submit for feedback</button>
+          </div>
+        </div>
+
+        <div class="o2-right">
+          <div class="libhead">
+            <h3>What a Contention Is Not</h3>
+            <div class="sub" id="o4Prompt"></div>
+            <div class="libwarn">A contention is a position a reasonable reader could reject. Four things get mistaken for one.</div>
+          </div>
+          <div class="techlist" id="claimList"></div>
+          <div class="topics">
+            <div class="th">Topic Library</div>
+            <div class="tgrid" id="tgrid4"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="o2 hidden" id="o5Pane">
+        <div class="o2-left">
+          <div class="buildhead">
+            <h3>Introductory Paragraph</h3>
+            <span class="hint">The rest is written for you. The preview is yours: a map, not an argument.</span>
+          </div>
+          <div class="build o2-paper" id="o5Paper"></div>
+          <div class="buildfoot">
+            <div class="fb" id="o5fb"></div>
+            <button class="btn ghost" id="o5Clear" type="button">Clear</button>
+            <button class="btn" id="o5Submit" type="button">Submit for feedback</button>
+          </div>
+        </div>
+
+        <div class="o2-right">
+          <div class="libhead">
+            <h3>What a Preview Is Not</h3>
+            <div class="sub" id="o5Prompt"></div>
+            <div class="libwarn">A preview names the arguments to come, in order. It does not yet argue them.</div>
+          </div>
+          <div class="techlist" id="previewList"></div>
+          <div class="topics">
+            <div class="th">Topic Library</div>
+            <div class="tgrid" id="tgrid5"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="o2 hidden" id="o6Pane">
+        <div class="o2-left">
+          <div class="buildhead">
+            <h3>Introductory Paragraph</h3>
+            <span class="hint">A full paragraph. Not every sentence in it earns its place.</span>
+          </div>
+          <div class="jtally" id="o6Tally"></div>
+          <div class="build o2-paper" id="o6Paper"></div>
+          <div class="buildfoot">
+            <div class="fb" id="o6fb"></div>
+            <button class="btn ghost" id="o6Clear" type="button">Clear</button>
+            <button class="btn" id="o6Submit" type="button">Submit for feedback</button>
+          </div>
+        </div>
+
+        <div class="o2-right">
+          <div class="libhead">
+            <h3>What Earns Its Place</h3>
+            <div class="sub" id="o6Prompt"></div>
+            <div class="libwarn">Click a sentence to cross it out, the way you would on paper. Markers ignore a line drawn through a sentence.</div>
+          </div>
+          <div class="compare" style="padding:2px 2px 6px;">
+            <div class="cm"><span>Keep</span>Does a job (hook, background, contention, or preview) that no other sentence here already does.</div>
+            <div class="cm"><span>Redundant</span>Does a job another sentence has already done. Two sentences, one job: cut the weaker one.</div>
+            <div class="cm"><span>Irrelevant</span>Does no job for this contention at all, however true or interesting it might be.</div>
+          </div>
+          <div class="topics">
+            <div class="th">Topic Library</div>
+            <div class="tgrid" id="tgrid6"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="o2 hidden" id="o7Pane">
+        <div class="o2-left">
+          <div class="buildhead">
+            <h3>Introductory Paragraph</h3>
+            <span class="hint">No given sentences this time. Write the whole introduction yourself.</span>
+          </div>
+          <div class="o7-question"><b>Your essay question</b><span id="o7QuestionText"></span></div>
+          <div class="build o2-paper o7-write" id="o7Paper">
+            <textarea id="o7Input" placeholder="Write your whole introduction: hook, background, contention, preview. Nothing is given this time."></textarea>
+          </div>
+          <div class="buildfoot">
+            <div class="fb" id="o7fb"></div>
+            <button class="btn ghost" id="o7Clear" type="button">Clear</button>
+            <button class="btn" id="o7Submit" type="button">Submit for feedback</button>
+          </div>
+        </div>
+
+        <div class="o2-right">
+          <div class="libhead">
+            <h3>What an Introduction Does</h3>
+            <div class="sub" id="o7Prompt"></div>
+            <div class="libwarn">No models this time. Four jobs, in this order, is all the map you get.</div>
+          </div>
+          <div class="o7-checklist" id="o7Checklist"></div>
+          <div class="topics">
+            <div class="th">Topic Library</div>
+            <div class="tgrid" id="tgrid7"></div>
           </div>
         </div>
       </div>
@@ -758,15 +992,264 @@ const TOPICS = {
   }
 };
 
+/* ---------- O.3: background ---------- */
+/* A short source article per topic. Facts are clickable and carry their own
+   grading keywords; connective prose is not clickable and does no grading work. */
+const ARTICLES = {
+  socialmedia: {
+    title:'Five months on: what the ban actually did',
+    paras:[
+      [
+        {t:'txt', text:'The rule sounded simple. '},
+        {t:'fact', id:'sm-f1', keys:['december 2025','first country','under-16'],
+         text:'The ban took effect in December 2025, making Australia the first country to legally exclude under-16s from platforms including Instagram, TikTok and Snapchat.'},
+        {t:'txt', text:' '},
+        {t:'fact', id:'sm-f2', keys:['50 million','fine','esafety'],
+         text:'Platforms that failed to take reasonable steps to enforce it faced fines of up to $50 million from the eSafety Commissioner.'},
+        {t:'txt', text:' The government framed it as a straightforward child-safety measure, and for a while, that framing held.'}
+      ],
+      [
+        {t:'txt', text:'Then the numbers came in. '},
+        {t:'fact', id:'sm-f3', keys:['seven in ten','still logging in','falsified'],
+         text:'By May 2026, eSafety\u2019s own review found seven in ten affected teenagers were still logging in, mostly through parental accounts or falsified birthdates.'},
+        {t:'txt', text:' '},
+        {t:'fact', id:'sm-f4', keys:['cyberbullying','no decline'],
+         text:'Cyberbullying reports to the Commissioner showed no measurable decline over the same period.'},
+        {t:'txt', text:' None of this surprised the researchers who had studied similar laws elsewhere. '},
+        {t:'fact', id:'sm-f5', keys:['university of sydney','displacement','unregulated'],
+         text:'Youth mental health researchers at the University of Sydney had warned before the ban that displacement onto unregulated apps was the likely outcome.'},
+        {t:'txt', text:' '},
+        {t:'fact', id:'sm-f6', keys:['uk','us states','struck down','abandoned'],
+         text:'Similar age-verification laws attempted in the UK and several US states were abandoned or struck down in court between 2019 and 2024.'}
+      ]
+    ]
+  },
+
+  gastax: {
+    title:'What Australia gives away, and what Norway keeps',
+    paras:[
+      [
+        {t:'txt', text:'On paper, Australia should be one of the richest gas nations on earth. '},
+        {t:'fact', id:'ga-f1', keys:['second-largest','80 million tonnes','lng'],
+         text:'It is the world\u2019s second-largest exporter of liquefied natural gas, shipping roughly 80 million tonnes in 2025.'},
+        {t:'txt', text:' Yet very little of that value ever reaches the federal budget. '},
+        {t:'fact', id:'ga-f2', keys:['petroleum resource rent tax','half','no royalty'],
+         text:'Under the current Petroleum Resource Rent Tax, more than half of gas export revenue leaves the country without paying any royalty at all.'}
+      ],
+      [
+        {t:'txt', text:'A fix has been proposed before. '},
+        {t:'fact', id:'ga-f3', keys:['actu','25 per cent','30 billion'],
+         text:'The Australian Council of Trade Unions has put forward a flat 25 per cent export levy, projected to raise $30 billion over a decade.'},
+        {t:'txt', text:' The comparison campaigners reach for is Norway. '},
+        {t:'fact', id:'ga-f4', keys:['norway','78 per cent','two trillion'],
+         text:'Norway taxes petroleum profits at around 78 per cent and has built a sovereign wealth fund worth close to two trillion dollars.'},
+        {t:'txt', text:' Industry disagrees. '},
+        {t:'fact', id:'ga-f5', keys:['appea','deter investment','east coast'],
+         text:'The industry group APPEA argues a new levy would deter the investment needed for the East Coast\u2019s next LNG projects.'},
+        {t:'txt', text:' It has made a version of this argument before, and won. '},
+        {t:'fact', id:'ga-f6', keys:['minerals resource rent tax','repealed 2014','two years'],
+         text:'A similar proposal, the Minerals Resource Rent Tax, was repealed in 2014 after intense lobbying and just two years in operation.'}
+      ]
+    ]
+  },
+
+  aiactor: {
+    title:'The actor who was never born',
+    paras:[
+      [
+        {t:'fact', id:'ai-f1', keys:['tilly norwood','particle6','2025'],
+         text:'Tilly Norwood, an entirely AI-generated performer, was introduced by the production company Particle6 in mid-2025.'},
+        {t:'txt', text:' It was not a novelty act for long. '},
+        {t:'fact', id:'ai-f2', keys:['misaligned','human writers','directors'],
+         text:'Particle6 announced a feature film, Misaligned, built around the character, with human writers, directors and editors attached.'},
+        {t:'txt', text:' '},
+        {t:'fact', id:'ai-f3', keys:['talent agencies','represent','signed'],
+         text:'Talent agencies reported inbound interest in representing Norwood within weeks of her introduction, though none has yet signed her.'}
+      ],
+      [
+        {t:'txt', text:'The reaction from the profession was immediate. '},
+        {t:'fact', id:'ai-f4', keys:['sag-aftra','threat','consent'],
+         text:'SAG-AFTRA, the US actors\u2019 union, issued a statement calling synthetic performers a threat to performers\u2019 livelihoods and consent.'},
+        {t:'txt', text:' The public reaction was harder to read. '},
+        {t:'fact', id:'ai-f5', keys:['instagram','100,000 followers','uncanny'],
+         text:'Norwood\u2019s Instagram account passed 100,000 followers within a month, most of them commenting on the uncanny quality of her face.'},
+        {t:'txt', text:' For its part, the company insists nothing sinister is intended. '},
+        {t:'fact', id:'ai-f6', keys:['founder','creative work','not replace'],
+         text:'Particle6\u2019s founder has stated publicly that Norwood is a creative work, not an attempt to replace any specific human performer.'}
+      ]
+    ]
+  },
+
+  boomers: {
+    title:'The arithmetic that finally moved',
+    paras:[
+      [
+        {t:'txt', text:'One budget line made the shift visible. '},
+        {t:'fact', id:'bo-f1', keys:['budget','subsidy','over 65','1999'],
+         text:'In this year\u2019s budget, the federal government withdrew the private health insurance subsidy for Australians over 65, ending a policy in place since 1999.'},
+        {t:'txt', text:' The reason is demographic as much as ideological. '},
+        {t:'fact', id:'bo-f2', keys:['25 to 45','outnumber','first time'],
+         text:'Voters aged 25 to 45 now outnumber voters aged 65 and over at the ballot box for the first time in the nation\u2019s history.'}
+      ],
+      [
+        {t:'txt', text:'The pressure has been building for years. '},
+        {t:'fact', id:'bo-f3', keys:['40 per cent','wages','corelogic'],
+         text:'Median house prices in capital cities have risen roughly 40 per cent faster than wages since 2015, according to CoreLogic data.'},
+        {t:'txt', text:' '},
+        {t:'fact', id:'bo-f4', keys:['superannuation','50 billion','over 60'],
+         text:'Superannuation tax concessions, worth an estimated $50 billion a year, still flow disproportionately to Australians over 60.'},
+        {t:'txt', text:' Some state governments have already started reallocating. '},
+        {t:'fact', id:'bo-f5', keys:['first-home-buyer','stamp duty','seniors'],
+         text:'Two state governments have introduced first-home-buyer schemes explicitly funded by reductions to seniors\u2019 stamp duty concessions.'},
+        {t:'txt', text:' Public opinion has followed the policy, not led it. '},
+        {t:'fact', id:'bo-f6', keys:['australia institute','means-testing','age pension'],
+         text:'Polling by the Australia Institute found for the first time that a majority of voters under 40 support means-testing the age pension.'}
+      ]
+    ]
+  }
+};
+
+const BG_TRAPS = [
+  {re:/\b(in today'?s? society|in this day and age|since the dawn of time|throughout history|since the beginning of time|in the world today|in modern society)\b/i,
+   msg:'That opening could orient a reader to any issue, in any year. Background has to be specific to this one: a date, a place, a number.'},
+  {re:/\b(this essay|in this essay|i (will|am going to) (argue|discuss|write|explain|show|talk)|this piece will)\b/i,
+   msg:'This announces an essay rather than orienting a reader. Background tells them what is happening, not what you are about to do about it.'},
+  {re:/\b(i (think|believe|feel)|in my opinion|personally,? i)\b/i,
+   msg:'Background is not the place for your opinion. That is the contention\u2019s job. Here you are simply telling the reader what is true.'},
+  {re:/\b(very important issue|important issue|hot topic|controversial (topic|issue)|many people (have|hold) different opinions|a lot of people)\b/i,
+   msg:'This is the sound of a writer warming up rather than reporting a fact. Cut it and start with the thing itself: what happened, when, to whom.'}
+];
+
+/* ---------- O.4: contention ---------- */
+const CLAIM_TYPES = [
+  {id:'fact', name:'The Fact', trap:true, tag:'Not a contention',
+   blurb:'True, but nobody could argue with it.',
+   how:'A fact states what is. A contention states what should be believed or done about it. If a reasonable, informed reader has no grounds to disagree, it belongs in your background, not here.',
+   model:'Australia\u2019s under-16 social media ban took effect in December 2025.'},
+  {id:'announce', name:'The Announcement', trap:true, tag:'Not a contention',
+   blurb:'Tells the reader what you are about to do, not what you believe.',
+   how:'Naming your essay is not taking a position in it. Cut the announcement and the position underneath it is usually still there, unstated. State it.',
+   model:'In this essay I will discuss whether the social media ban has worked.'},
+  {id:'hedge', name:'The Hedge', trap:true, tag:'Not a contention',
+   blurb:'Names both sides and commits to neither.',
+   how:'Balance belongs in your research, not your contention. A reader who finishes this sentence still does not know what you think. Pick a side and defend it.',
+   model:'There are many valid perspectives on the social media ban, and it depends how you look at it.'},
+  {id:'truism', name:'The Truism', trap:true, tag:'Not a contention',
+   blurb:'So general it could not be otherwise.',
+   how:'A claim so safe that disagreeing with it would be strange is not arguable, it is just true. Sharpen it until someone could reasonably push back.',
+   model:'Everyone has a right to their own opinion about the social media ban.'},
+  {id:'arguable', name:'The Arguable Claim', trap:false, tag:'Your target',
+   blurb:'A position a reasonable reader could reject, and a reason they should not.',
+   how:'Say what you believe, plainly, and give the reader the beginning of a reason. It should be specific enough that the opposite position is also sayable in one sentence.',
+   model:'The ban has failed on its own terms, and its failure has left young Australians less safe, not more.'}
+];
+
+const CONT_TRAPS = [
+  {re:/\b(in today'?s? society|in this day and age|since the dawn of time|throughout history|since the beginning of time|in the world today|in modern society)\b/i,
+   msg:'That opening could introduce a position on any issue, in any year. A contention has to take a stand on this issue specifically.'},
+  {re:/\b(this essay|in this essay|i (will|am going to) (argue|discuss|write|explain|show|talk)|this piece will)\b/i,
+   msg:'This announces an essay rather than taking a position in it. Your reader wants to know what you believe, not what you are about to do.'},
+  {re:/\b(both sides have (valid|good|some) points|there are pros and cons|it depends on (your|the) (perspective|point of view)|everyone has their own opinion|everyone is entitled to their (own )?opinion|some people think .* (while|whereas|but) others|many valid perspectives)\b/i,
+   msg:'This names both sides and commits to neither. A contention has to choose. Balance is for your research; a position is for your contention.'},
+  {re:/\b(very important issue|important issue|hot topic|controversial (topic|issue)|many people (have|hold) different opinions|a lot of people)\b/i,
+   msg:'This is a writer warming up, not taking a position. Say what you actually believe, plainly.'}
+];
+const STANCE_MARKERS = /\b(should|must|ought to|need(s)? to|has to|have to|cannot|can not|fails? to|failed to|is not|are not|isn'?t|aren'?t|deserves?|requires?|is (right|wrong|failing|working|justified)|refuses? to|because|the real (problem|issue)|the evidence shows)\b/i;
+
+/* ---------- O.5: preview ---------- */
+const PREVIEW_TYPES = [
+  {id:'placeholder', name:'The Placeholder', trap:true, tag:'Not a preview',
+   blurb:'Promises arguments are coming, without naming a single one.',
+   how:'A reader who finishes this sentence knows an essay is about to happen, and nothing else. Name the actual arguments. If you cannot yet, that is a sign to go back and find them.',
+   model:'There are many reasons for this, and I will go through them one by one below.'},
+  {id:'barelist', name:'The Bare List', trap:true, tag:'Not a preview',
+   blurb:'Firstly, secondly, thirdly, and nothing in between.',
+   how:'Sequence words are not content. "Firstly" tells the reader an order exists, not what fills it. Replace the counting with the actual ideas.',
+   model:'Firstly, secondly, and thirdly, I will discuss my main points in this essay.'},
+  {id:'disguise', name:'The Argument in Disguise', trap:true, tag:'Not a preview',
+   blurb:'Sneaks in the actual arguing before the essay has started.',
+   how:'A preview maps the arguments to come. It does not win them yet. If your sentence already sounds like a conclusion, you have skipped ahead of your own essay.',
+   model:'This clearly proves that the ban has failed and should be reversed immediately.'},
+  {id:'restate', name:'The Restated Contention', trap:true, tag:'Not a preview',
+   blurb:'Says the same thing as the contention, in slightly different words.',
+   how:'The contention states your position once. The preview\u2019s job is different: it breaks that position into the separate pieces of evidence that will support it. If your preview could replace your contention, it is not doing its own job.',
+   model:'The ban has failed, and this essay will show that it has failed.'},
+  {id:'mapped', name:'The Effective Preview', trap:false, tag:'Your target',
+   blurb:'Names three distinct arguments, in the order the essay will make them.',
+   how:'List the actual supporting ideas, specifically enough that a reader could predict your body paragraphs from this one sentence alone. Order matters: whatever comes first here should come first in the essay.',
+   model:'The evidence lies in the numbers, in the new risks the ban has created, and in the experts who warned of exactly this and were ignored.'}
+];
+
+const PREV_TRAPS = [
+  {re:/\b(i (will|am going to) (discuss|list|cover|talk about|go through|explain) (all |each |every )?(of )?(my |the )?(points|reasons|arguments)|there are (many|several|a number of|lots of) (reasons|points|arguments)|(one by one|one at a time)|in the (following|next|coming) (paragraphs|sections)|go through (all|each) of (them|my (points|reasons)))\b/i,
+   msg:'This promises that arguments exist without naming a single one. A reader should be able to predict your body paragraphs from this sentence. Right now they cannot.'},
+  {re:/\b(firstly|secondly|thirdly|lastly)\b.*\b(firstly|secondly|thirdly|lastly)\b/i,
+   msg:'Sequence words are not content. Replace the counting with the actual ideas each point contains.'},
+  {re:/\b(this (clearly |conclusively )?proves|which proves|clearly (shows|demonstrates)|conclusively (shows|proves)|beyond (doubt|question))\b/i,
+   msg:'This is already arguing the case, not mapping it. Save the proof for your body paragraphs. Here you are only naming what is coming.'},
+  {re:/\b(in today'?s? society|in this day and age|very important issue|important issue|hot topic)\b/i,
+   msg:'That opening could preview an essay on any issue. Name the specific arguments this essay is about to make.'}
+];
+/* a genuine preview maps more than one thing: require at least two commas
+   (an oxford-list shape) plus a joining "and", rather than a single vague clause */
+function looksLikeAMap(raw){
+  const commas = (raw.match(/,/g)||[]).length;
+  return commas >= 2 && /\band\b/i.test(raw);
+}
+
+/* ---------- O.6: relevance and redundancy ---------- */
+// one extra sentence per topic that does the same job as an existing given sentence, in looser words
+const REDUNDANT = {
+  socialmedia:{id:'sm-r1', text:'In the end, the ban simply has not worked the way it was supposed to.',
+    why:'This says the same thing as your contention, only more loosely. Keep the sharper version and cut this one.'},
+  gastax:{id:'ga-r1', text:'Put simply, Australia lets most of its gas leave the country for free.',
+    why:'This restates the royalty background sentence in looser language. One version earns its place, not both.'},
+  aiactor:{id:'ai-r1', text:'In other words, a computer program cannot really perform the way a person can.',
+    why:'This says the contention again, only plainer. Keep the sharper version and cut this one.'},
+  boomers:{id:'bo-r1', text:'Basically, Australian politics does not favour older voters the way it used to.',
+    why:'Another pass at the same claim, in flatter language. It does not add anything the contention has not already said.'}
+};
+
+// eight candidates per topic: the five that belong, two irrelevant tangents, one redundant restatement.
+// Hook stays first and preview stays last, matching a paragraph that is at least shaped correctly; the
+// three cut-worthy sentences sit at DIFFERENT positions per topic, so no fixed slot ever gives the answer away.
+const JUDGE_ORDER = {
+  socialmedia: ['hook','irr0','bg0','bg1','contention','redundant','irr1','preview'],
+  gastax:      ['hook','bg0','redundant','irr0','bg1','contention','irr1','preview'],
+  aiactor:     ['hook','bg0','irr0','bg1','contention','redundant','irr1','preview'],
+  boomers:     ['hook','irr0','bg0','irr1','bg1','contention','redundant','preview']
+};
+
+function buildJudgePool(k){
+  const S = TOPICS[k].sentences;
+  const hook = S.find(s=>s.role==='hook' && s.quality==='strong');
+  const bgs  = S.filter(s=>s.role==='background');
+  const cont = S.find(s=>s.role==='contention' && s.quality==='strong');
+  const prev = S.find(s=>s.role==='preview' && s.quality==='strong');
+  const irrelevant = S.filter(s=>s.role===null || s.role===undefined);
+  const red = REDUNDANT[k];
+  const byTag = {
+    hook:       {id:hook.id, part:'hook', keep:true, text:hook.text},
+    bg0:        {id:bgs[0].id, part:'background', keep:true, text:bgs[0].text},
+    bg1:        {id:bgs[1].id, part:'background', keep:true, text:bgs[1].text},
+    contention: {id:cont.id, part:'contention', keep:true, text:cont.text},
+    preview:    {id:prev.id, part:'preview', keep:true, text:prev.text},
+    irr0:       {id:irrelevant[0].id, part:'irrelevant', keep:false, text:irrelevant[0].text, why:irrelevant[0].why},
+    irr1:       {id:irrelevant[1].id, part:'irrelevant', keep:false, text:irrelevant[1].text, why:irrelevant[1].why},
+    redundant:  {id:red.id, part:'redundant', keep:false, text:red.text, why:red.why}
+  };
+  return JUDGE_ORDER[k].map(tag=>byTag[tag]);
+}
+
 /* ---------------- the Organisation ladder ---------------- */
 const LESSONS = [
   {id:'O.1', name:'The Introductory Paragraph', sub:'see the whole',             built:true},
   {id:'O.2', name:'Hooks',                      sub:'you write the hook',        built:true},
-  {id:'O.3', name:'Background',                 sub:'orienting your reader',     built:false},
-  {id:'O.4', name:'Contention',                 sub:'making an arguable claim',  built:false},
-  {id:'O.5', name:'Preview',                    sub:'mapping the essay',         built:false},
-  {id:'O.6', name:'Relevance and Redundancy',   sub:'what earns its place',      built:false},
-  {id:'O.7', name:'The Whole Paragraph',        sub:'unaided',                   built:false}
+  {id:'O.3', name:'Background',                 sub:'orienting your reader',     built:true},
+  {id:'O.4', name:'Contention',                 sub:'making an arguable claim',  built:true},
+  {id:'O.5', name:'Preview',                    sub:'mapping the essay',         built:true},
+  {id:'O.6', name:'Relevance and Redundancy',   sub:'what earns its place',      built:true},
+  {id:'O.7', name:'The Whole Paragraph',        sub:'unaided',                   built:true}
 ];
 let currentLesson = 0;
 let teacherMode = false;          // unlocks every rung, for demonstrating at the front of class
@@ -817,9 +1300,22 @@ const fbEl = document.getElementById('fb');
 
 function sentById(id){ return topic.sentences.find(s=>s.id===id); }
 
+// Fisher-Yates: the library must not display sentences in a fixed positional
+// pattern (hook, hook, background, background, contention...), or students
+// learn the slot instead of reading the sentence.
+function shuffled(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+let libOrder = shuffled(topic.sentences.map(s=>s.id));
+
 /* ---------------- render ---------------- */
 function renderLib(){
-  libEl.innerHTML = topic.sentences.map(s=>
+  libEl.innerHTML = libOrder.map(id=>sentById(id)).map(s=>
     `<div class="sent" draggable="true" data-id="${s.id}" data-from="lib">${s.text}</div>`
   ).join('');
   markUsed();
@@ -1026,6 +1522,7 @@ function switchTopic(k){
   if(k===topicKey) return;
   topicKey=k; topic=TOPICS[k];
   built=[]; clearMarks();
+  libOrder = shuffled(topic.sentences.map(s=>s.id));
   document.getElementById('libSub').textContent = topic.prompt;
   renderTopics(); renderLib(); renderBuild();
 }
@@ -1211,7 +1708,26 @@ const HINTS_BUILD = [
   {t:'That is everything I have got. I am fresh outta hints, compadre.', r:'miss'},
   {t:'Still stuck? Flag down your teacher. Helping students is their raison d\u2019\u00eatre.', r:'near'}
 ];
+const HINTS_O6 = [
+  {t:'Ernest Hemingway once said that the only kind of writing is rewriting. This lesson is that sentence made literal: cross out what does not earn its place.', r:'hint'},
+  {t:'A sentence can be true, well written, and still wrong for this paragraph. Ask what job it does here, not whether it is good writing.', r:'hint'},
+  {t:'Two sentences doing the same job is not double the strength. It is one sentence, said twice, and the reader notices.', r:'hint'},
+  {t:'Look for the sentence that says what your contention already said, only looser. That is the one to cross out.', r:'hint'},
+  {t:'That is everything I have got. I am fresh outta hints, compadre.', r:'miss'},
+  {t:'Still stuck? Flag down your teacher. Helping students is their raison d\u2019\u00eatre.', r:'near'}
+];
+const HINTS_O7 = [
+  {t:'Nothing is given this time, which means nothing is hiding the gaps in your plan either. Decide your four jobs before you write a single sentence.', r:'hint'},
+  {t:'You have done every one of these four moves separately already. This lesson only asks you to do them in the same breath.', r:'hint'},
+  {t:'If you get stuck, write the contention first. It is the one sentence everything else in the paragraph exists to serve.', r:'hint'},
+  {t:'Read your own paragraph as a stranger would meet it, top to bottom, before you submit. You will hear what is missing.', r:'hint'},
+  {t:'That is everything I have got. I am fresh outta hints, compadre.', r:'miss'},
+  {t:'Still stuck? Flag down your teacher. Helping students is their raison d\u2019\u00eatre.', r:'near'}
+];
 function hintSet(){
+  const id = LESSONS[currentLesson] ? LESSONS[currentLesson].id : null;
+  if(id === 'O.6') return HINTS_O6;
+  if(id === 'O.7') return HINTS_O7;
   return document.getElementById('modelPane').classList.contains('hidden') ? HINTS_BUILD : HINTS_MODEL;
 }
 let hintIdx = -1, hintCtx = null;
@@ -1219,7 +1735,8 @@ const hintBubble = document.getElementById('hintBubble');
 document.getElementById('hinter').addEventListener('click',()=>{
   sfx('toggle');
   const onModel = !document.getElementById('modelPane').classList.contains('hidden');
-  const ctx = onModel ? 'model' : 'build';
+  const id = LESSONS[currentLesson] ? LESSONS[currentLesson].id : null;
+  const ctx = onModel ? 'model' : (id || 'build');    // each lesson gets its own hint ladder
   if(ctx !== hintCtx){ hintIdx = -1; hintCtx = ctx; }     // the ladder belongs to the screen you are on
   const H = hintSet();
   if(hintBubble.classList.contains('show') && hintIdx >= H.length-1){
@@ -1397,12 +1914,48 @@ document.getElementById('o2Clear').addEventListener('click',()=>{
 
 /* ---------- routing between lessons ---------- */
 function showLesson(){
-  const isO2 = LESSONS[currentLesson].id === 'O.2';
+  const id = LESSONS[currentLesson].id;
+  const isO2 = id === 'O.2';
+  const isO3 = id === 'O.3';
+  const isO4 = id === 'O.4';
+  const isO5 = id === 'O.5';
+  const isO6 = id === 'O.6';
+  const isO7 = id === 'O.7';
+  const isO1 = !isO2 && !isO3 && !isO4 && !isO5 && !isO6 && !isO7;
   document.getElementById('o2Pane').classList.toggle('hidden', !isO2);
+  document.getElementById('o3Pane').classList.toggle('hidden', !isO3);
+  document.getElementById('o4Pane').classList.toggle('hidden', !isO4);
+  document.getElementById('o5Pane').classList.toggle('hidden', !isO5);
+  document.getElementById('o6Pane').classList.toggle('hidden', !isO6);
+  document.getElementById('o7Pane').classList.toggle('hidden', !isO7);
+  // the worked example (MODEL) only exists for O.1; the toggle button has nothing
+  // to show on any other lesson, and clicking it there was overlaying O.1's
+  // hidden panes on top of whichever oX pane was already showing.
+  document.getElementById('toolModel').classList.toggle('hidden', !isO1);
   if(isO2){
     document.getElementById('modelPane').classList.add('hidden');
     document.getElementById('workArea').classList.add('hidden');
     renderTech(); renderO2(); renderTopics2();
+  } else if(isO3){
+    document.getElementById('modelPane').classList.add('hidden');
+    document.getElementById('workArea').classList.add('hidden');
+    gatheredIds = new Set(); renderArticle(); renderO3(); renderTopics3();
+  } else if(isO4){
+    document.getElementById('modelPane').classList.add('hidden');
+    document.getElementById('workArea').classList.add('hidden');
+    renderClaims(); renderO4(); renderTopics4();
+  } else if(isO5){
+    document.getElementById('modelPane').classList.add('hidden');
+    document.getElementById('workArea').classList.add('hidden');
+    renderPreviewTypes(); renderO5(); renderTopics5();
+  } else if(isO6){
+    document.getElementById('modelPane').classList.add('hidden');
+    document.getElementById('workArea').classList.add('hidden');
+    judgeStruck=new Set(); judgeGraded=false; judgeInteracted=false; renderO6(); renderTopics6();
+  } else if(isO7){
+    document.getElementById('modelPane').classList.add('hidden');
+    document.getElementById('workArea').classList.add('hidden');
+    renderO7Checklist(); renderO7(); renderTopics7();
   } else {
     showModel();
   }
@@ -1419,6 +1972,650 @@ function renderTopics2(){
     hookText=''; clearO2(); renderTopics2(); renderO2();
   }));
 }
+
+/* ================= O.3: BACKGROUND ================= */
+let bgText = '';
+let gatheredIds = new Set();
+
+function allFacts(k){
+  return ARTICLES[k].paras.flat().filter(seg=>seg.t==='fact');
+}
+
+function renderArticle(){
+  const A = ARTICLES[topicKey];
+  const el = document.getElementById('sourceArticle');
+  el.innerHTML = '<div class="art-title">'+A.title+'</div>' +
+    A.paras.map(p=>'<p>'+p.map(seg=>{
+      if(seg.t==='fact'){
+        return `<span class="fact ${gatheredIds.has(seg.id)?'gathered':''}" data-id="${seg.id}">${seg.text}</span>`;
+      }
+      return seg.text;
+    }).join('')+'</p>').join('');
+  el.querySelectorAll('.fact').forEach(f=>f.addEventListener('click',()=>{
+    sfx('fluffy');
+    const id = f.dataset.id;
+    if(gatheredIds.has(id)) gatheredIds.delete(id); else gatheredIds.add(id);
+    renderArticle(); renderGathered();
+  }));
+}
+
+function renderGathered(){
+  const el = document.getElementById('gathered');
+  if(gatheredIds.size===0){
+    el.innerHTML = '<span class="empty-note">Nothing gathered yet. Click a sentence in the article.</span>';
+    return;
+  }
+  const facts = allFacts(topicKey);
+  el.innerHTML = [...gatheredIds].map(id=>{
+    const f = facts.find(x=>x.id===id);
+    const short = f.text.length>46 ? f.text.slice(0,46).trim()+'\u2026' : f.text;
+    return `<span class="chip" data-id="${id}">${short}<span class="x">&#10005;</span></span>`;
+  }).join('');
+  el.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    sfx('fluffy');
+    gatheredIds.delete(c.dataset.id);
+    renderArticle(); renderGathered();
+  }));
+}
+
+function renderO3(){
+  const T = O2[topicKey];
+  document.getElementById('o3Prompt').textContent = topic.prompt;
+  const paper = document.getElementById('o3Paper');
+  paper.classList.remove('empty');
+  paper.innerHTML =
+    `<div class="bgslot" id="bgSlot">
+       <div class="hklabel">Your background</div>
+       <textarea id="bgInput" rows="1" placeholder="Orient your reader: what is happening, when, and why it matters."></textarea>
+       <div class="wc" id="bgWc"></div>
+     </div>` +
+    T.given.filter(g=>g.role!=='background').map(g=>`<div class="sent given lit" data-p="${g.role}">${g.text}<span class="plabel">${PARTS[g.role].label}</span></div>`).join('');
+
+  const ta = document.getElementById('bgInput');
+  ta.value = bgText;
+  const grow = ()=>{ ta.style.height='auto'; ta.style.height = ta.scrollHeight+'px'; };
+  const count = ()=>{
+    const w = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+    document.getElementById('bgWc').textContent = w ? w+' words' : '';
+    document.getElementById('bgSlot').classList.toggle('filled', w>0);
+  };
+  ta.addEventListener('input',()=>{ bgText = ta.value; grow(); count(); clearO3(); });
+  grow(); count();
+  renderGathered();
+}
+function clearO3(){ const f=document.getElementById('o3fb'); f.textContent=''; f.className='fb'; }
+
+function gradeBackground(){
+  const T = O2[topicKey];
+  const raw = (document.getElementById('bgInput').value || '').trim();
+  const fb = document.getElementById('o3fb');
+  const words = raw ? raw.split(/\s+/).length : 0;
+  const problems = [];
+
+  if(words === 0){
+    fb.innerHTML = '<div class="fbhead">Nothing to read yet</div>Write your background sentence in the space above.';
+    fb.className='fb bad'; turtleReact('shrug'); return;
+  }
+
+  // 1. traps a machine can catch
+  BG_TRAPS.forEach(t=>{ if(t.re.test(raw)) problems.push(t.msg); });
+
+  // 2. is it about THIS topic?
+  const low = raw.toLowerCase();
+  if(!T.keywords.some(k=>low.includes(k))){
+    problems.push('Nothing here tells me which issue this is. Background has to name the specific issue, not gesture at a category of issue.');
+  }
+
+  // 3. copied straight from the article or from O.2's given background
+  const facts = allFacts(topicKey).map(f=>f.text.toLowerCase());
+  const givenBg = O2[topicKey].given.filter(g=>g.role==='background').map(g=>g.text.toLowerCase());
+  if(facts.concat(givenBg).some(g=>g.includes(low) && low.length>25)){
+    problems.push('That sentence is copied straight from the article. Background has to be compressed into your own words, or it is not analysis, it is transcription.');
+  }
+
+  // 4. length
+  if(words > 55) problems.push('At '+words+' words this is starting to summarise the whole article rather than orient the reader to it. Compress harder.');
+  if(words < 12) problems.push('Twelve words is not yet enough to orient a reader who knows nothing about this issue. What do they need to know first?');
+
+  // 5. synthesis: does the sentence actually draw on more than one fact?
+  const matched = new Set();
+  allFacts(topicKey).forEach(f=>{ if(f.keys.some(k=>low.includes(k))) matched.add(f.id); });
+  if(matched.size < 2){
+    problems.push('This reads like a single fact restated, not background. Go back to the article and pull in a second piece of information your reader also needs.');
+  }
+
+  if(problems.length === 0){
+    fb.innerHTML =
+      '<div class="fbhead">Nothing here is broken</div>' +
+      '<p>The machine can tell you that you have compressed rather than copied, and that you have drawn on more than one part of the article. It cannot tell you whether your background is <em>clear</em> to a reader who knows nothing about this issue yet. Only a reader can do that, so be one.</p>' +
+      '<div class="compare bg"><h4>How the given background did this job</h4>' +
+      O2[topicKey].given.filter(g=>g.role==='background').map(g=>`<div class="cm">${g.text}</div>`).join('') +
+      '<div class="selfcheck"><p>Now read yours beside those, and answer honestly:</p>' +
+      '<label><input type="checkbox"> Could a reader who has never heard of this issue follow my sentence?</label>' +
+      '<label><input type="checkbox"> Does it name something concrete: a date, a number, a named source?</label>' +
+      '<label><input type="checkbox"> Is it fact, not opinion? (Your opinion belongs in the contention, not here.)</label>' +
+      '</div></div>';
+    fb.className='fb good';
+    sfx('harp',0.7); turtleReact('good'); setDone('O.3');
+  } else {
+    const seen=new Set(); const list=[];
+    problems.forEach(p=>{ if(!seen.has(p)){ seen.add(p); list.push(p); } });
+    fb.innerHTML = '<div class="fbhead">Read it as your reader would meet it</div><ul>'+
+      list.map(p=>`<li>${p}</li>`).join('')+'</ul>'+
+      '<div style="margin-top:6px;font-style:italic;opacity:.8;">Rewrite the sentence. You do not need to start the lesson again.</div>';
+    fb.className='fb bad';
+    turtleReact(list.length<=1 ? 'near' : 'miss');
+  }
+}
+document.getElementById('o3Submit').addEventListener('click',gradeBackground);
+document.getElementById('o3Clear').addEventListener('click',()=>{
+  sfx('fluffy'); bgText=''; gatheredIds=new Set();
+  document.getElementById('bgInput').value=''; clearO3(); renderArticle(); renderO3();
+});
+
+function renderTopics3(){
+  document.getElementById('tgrid3').innerHTML = Object.keys(TOPICS).map(k=>{
+    const t=TOPICS[k];
+    return `<button class="topic ${k===topicKey?'active':''}" data-k="${k}" type="button">${t.name}<span class="tsub">${t.sub}</span></button>`;
+  }).join('');
+  document.querySelectorAll('#tgrid3 .topic').forEach(b=>b.addEventListener('click',()=>{
+    sfx('fluffy');
+    topicKey=b.dataset.k; topic=TOPICS[topicKey];
+    bgText=''; gatheredIds=new Set(); clearO3(); renderTopics3(); renderArticle(); renderO3();
+  }));
+}
+
+/* ================= O.4: CONTENTION ================= */
+let claimSeen = null;   // which claim-type card is expanded
+let contText = '';
+
+function renderClaims(){
+  document.getElementById('claimList').innerHTML = CLAIM_TYPES.map(t=>`
+    <button class="tech ${t.id===claimSeen?'on':''} ${t.trap?'trap':''}" data-t="${t.id}" type="button">
+      <span class="tn">${t.name}</span>
+      <span class="tb">${t.blurb}</span>
+      <span class="${t.trap?'tw':'tg'}">${t.tag}</span>
+      <span class="tdet">
+        <span class="thow">${t.how}</span>
+        <span class="tmodel"><b>How it sounds</b>${t.model}</span>
+      </span>
+    </button>`).join('');
+  document.querySelectorAll('#claimList .tech').forEach(b=>b.addEventListener('click',()=>{
+    sfx('fluffy');
+    claimSeen = (claimSeen===b.dataset.t) ? null : b.dataset.t;
+    turtleReact('read');
+    renderClaims();
+  }));
+}
+
+function renderO4(){
+  const T = O2[topicKey];
+  document.getElementById('o4Prompt').textContent = topic.prompt;
+  const paper = document.getElementById('o4Paper');
+  paper.classList.remove('empty');
+  paper.innerHTML =
+    `<div class="sent given lit" data-p="hook">${T.given.find(g=>g.role==='hook')?T.given.find(g=>g.role==='hook').text:TOPICS[topicKey].sentences.find(s=>s.role==='hook'&&s.quality==='strong').text}<span class="plabel">${PARTS.hook.label}</span></div>` +
+    T.given.filter(g=>g.role==='background').map(g=>`<div class="sent given lit" data-p="background">${g.text}<span class="plabel">${PARTS.background.label}</span></div>`).join('') +
+    `<div class="contslot" id="contSlot">
+       <div class="hklabel">Your contention</div>
+       <textarea id="contInput" rows="1" placeholder="State your position. A reader should be able to disagree with it."></textarea>
+       <div class="wc" id="contWc"></div>
+     </div>` +
+    T.given.filter(g=>g.role==='preview').map(g=>`<div class="sent given lit" data-p="preview">${g.text}<span class="plabel">${PARTS.preview.label}</span></div>`).join('');
+
+  const ta = document.getElementById('contInput');
+  ta.value = contText;
+  const grow = ()=>{ ta.style.height='auto'; ta.style.height = ta.scrollHeight+'px'; };
+  const count = ()=>{
+    const w = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+    document.getElementById('contWc').textContent = w ? w+' words' : '';
+    document.getElementById('contSlot').classList.toggle('filled', w>0);
+  };
+  ta.addEventListener('input',()=>{ contText = ta.value; grow(); count(); clearO4(); });
+  grow(); count();
+}
+function clearO4(){ const f=document.getElementById('o4fb'); f.textContent=''; f.className='fb'; }
+
+function gradeContention(){
+  const T = O2[topicKey];
+  const raw = (document.getElementById('contInput').value || '').trim();
+  const fb = document.getElementById('o4fb');
+  const words = raw ? raw.split(/\s+/).length : 0;
+  const problems = [];
+
+  if(words === 0){
+    fb.innerHTML = '<div class="fbhead">Nothing to read yet</div>Write your contention in the space above.';
+    fb.className='fb bad'; turtleReact('shrug'); return;
+  }
+
+  // 1. traps a machine can catch
+  CONT_TRAPS.forEach(t=>{ if(t.re.test(raw)) problems.push(t.msg); });
+
+  // 2. is it about THIS topic?
+  const low = raw.toLowerCase();
+  if(!T.keywords.some(k=>low.includes(k))){
+    problems.push('Nothing here tells me which issue this is a position on. A contention has to name the specific issue, not gesture at one.');
+  }
+
+  // 3. copied from a given example, a weak model, or a claim-type card
+  const strongCont = T.given.find(g=>g.role==='contention');
+  const weakCont = TOPICS[topicKey].sentences.find(s=>s.role==='contention' && s.quality==='weak');
+  const banked = [strongCont?strongCont.text:'', weakCont?weakCont.text:''].concat(CLAIM_TYPES.map(t=>t.model)).map(s=>s.toLowerCase()).filter(Boolean);
+  if(banked.some(g=>g.includes(low) && low.length>20)){
+    problems.push('That sentence is already on this page. Your contention has to be yours, in your own words, even if it lands in the same place.');
+  }
+
+  // 4. length
+  if(words > 40) problems.push('At '+words+' words this is starting to argue the case rather than state it. Say the position; save the reasoning for your body paragraphs.');
+  if(words < 8)  problems.push('Eight words is a fragment, not a position. What exactly do you want your reader to accept, and why?');
+
+  // 5. does it actually take a stance, or just describe?
+  if(!STANCE_MARKERS.test(low)){
+    problems.push('This reads like a description of the issue, not a position on it. What should the reader believe or do about it, and why?');
+  }
+
+  if(problems.length === 0){
+    fb.innerHTML =
+      '<div class="fbhead">Nothing here is broken</div>' +
+      '<p>The machine can tell you that you have avoided the four traps and taken a stance. It cannot tell you whether your position is <em>arguable</em>, meaning whether a reasonable, informed reader could actually push back on it. Only a reader can do that, so be one.</p>' +
+      '<div class="compare"><h4>How the given contention did this job</h4>' +
+      (strongCont ? `<div class="cm"><span>Given</span>${strongCont.text}</div>` : '') +
+      '<div class="selfcheck"><p>Now read yours beside it, and answer honestly:</p>' +
+      '<label><input type="checkbox"> Could a reasonable, informed reader disagree with this?</label>' +
+      '<label><input type="checkbox"> Does it commit to one side, not both?</label>' +
+      '<label><input type="checkbox"> Would a stranger know exactly what I want them to accept?</label>' +
+      '<label><input type="checkbox"> Is it about this issue, and no other?</label>' +
+      '</div></div>';
+    fb.className='fb good';
+    sfx('harp',0.7); turtleReact('good'); setDone('O.4');
+  } else {
+    const seen=new Set(); const list=[];
+    problems.forEach(p=>{ if(!seen.has(p)){ seen.add(p); list.push(p); } });
+    fb.innerHTML = '<div class="fbhead">Read it as your reader would meet it</div><ul>'+
+      list.map(p=>`<li>${p}</li>`).join('')+'</ul>'+
+      '<div style="margin-top:6px;font-style:italic;opacity:.8;">Rewrite the sentence. You do not need to start the lesson again.</div>';
+    fb.className='fb bad';
+    turtleReact(list.length<=1 ? 'near' : 'miss');
+  }
+}
+document.getElementById('o4Submit').addEventListener('click',gradeContention);
+document.getElementById('o4Clear').addEventListener('click',()=>{
+  sfx('fluffy'); contText=''; document.getElementById('contInput').value=''; clearO4(); renderO4();
+});
+
+function renderTopics4(){
+  document.getElementById('tgrid4').innerHTML = Object.keys(TOPICS).map(k=>{
+    const t=TOPICS[k];
+    return `<button class="topic ${k===topicKey?'active':''}" data-k="${k}" type="button">${t.name}<span class="tsub">${t.sub}</span></button>`;
+  }).join('');
+  document.querySelectorAll('#tgrid4 .topic').forEach(b=>b.addEventListener('click',()=>{
+    sfx('fluffy');
+    topicKey=b.dataset.k; topic=TOPICS[topicKey];
+    contText=''; clearO4(); renderTopics4(); renderO4();
+  }));
+}
+
+/* ================= O.5: PREVIEW ================= */
+let previewSeen = null;   // which preview-type card is expanded
+let prevText = '';
+
+function renderPreviewTypes(){
+  document.getElementById('previewList').innerHTML = PREVIEW_TYPES.map(t=>`
+    <button class="tech ${t.id===previewSeen?'on':''} ${t.trap?'trap':''}" data-t="${t.id}" type="button">
+      <span class="tn">${t.name}</span>
+      <span class="tb">${t.blurb}</span>
+      <span class="${t.trap?'tw':'tg'}">${t.tag}</span>
+      <span class="tdet">
+        <span class="thow">${t.how}</span>
+        <span class="tmodel"><b>How it sounds</b>${t.model}</span>
+      </span>
+    </button>`).join('');
+  document.querySelectorAll('#previewList .tech').forEach(b=>b.addEventListener('click',()=>{
+    sfx('fluffy');
+    previewSeen = (previewSeen===b.dataset.t) ? null : b.dataset.t;
+    turtleReact('read');
+    renderPreviewTypes();
+  }));
+}
+
+function renderO5(){
+  const T = O2[topicKey];
+  document.getElementById('o5Prompt').textContent = topic.prompt;
+  const paper = document.getElementById('o5Paper');
+  paper.classList.remove('empty');
+  const hookText5 = TOPICS[topicKey].sentences.find(s=>s.role==='hook' && s.quality==='strong').text;
+  paper.innerHTML =
+    `<div class="sent given lit" data-p="hook">${hookText5}<span class="plabel">${PARTS.hook.label}</span></div>` +
+    T.given.filter(g=>g.role==='background').map(g=>`<div class="sent given lit" data-p="background">${g.text}<span class="plabel">${PARTS.background.label}</span></div>`).join('') +
+    T.given.filter(g=>g.role==='contention').map(g=>`<div class="sent given lit" data-p="contention">${g.text}<span class="plabel">${PARTS.contention.label}</span></div>`).join('') +
+    `<div class="prevslot" id="prevSlot">
+       <div class="hklabel">Your preview</div>
+       <textarea id="prevInput" rows="1" placeholder="Map the arguments to come, in the order the essay will make them."></textarea>
+       <div class="wc" id="prevWc"></div>
+     </div>`;
+
+  const ta = document.getElementById('prevInput');
+  ta.value = prevText;
+  const grow = ()=>{ ta.style.height='auto'; ta.style.height = ta.scrollHeight+'px'; };
+  const count = ()=>{
+    const w = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+    document.getElementById('prevWc').textContent = w ? w+' words' : '';
+    document.getElementById('prevSlot').classList.toggle('filled', w>0);
+  };
+  ta.addEventListener('input',()=>{ prevText = ta.value; grow(); count(); clearO5(); });
+  grow(); count();
+}
+function clearO5(){ const f=document.getElementById('o5fb'); f.textContent=''; f.className='fb'; }
+
+function gradePreview(){
+  const T = O2[topicKey];
+  const raw = (document.getElementById('prevInput').value || '').trim();
+  const fb = document.getElementById('o5fb');
+  const words = raw ? raw.split(/\s+/).length : 0;
+  const problems = [];
+
+  if(words === 0){
+    fb.innerHTML = '<div class="fbhead">Nothing to read yet</div>Write your preview in the space above.';
+    fb.className='fb bad'; turtleReact('shrug'); return;
+  }
+
+  // 1. traps a machine can catch
+  PREV_TRAPS.forEach(t=>{ if(t.re.test(raw)) problems.push(t.msg); });
+
+  // 2. is it about THIS topic?
+  const low = raw.toLowerCase();
+  if(!T.keywords.some(k=>low.includes(k))){
+    problems.push('Nothing here tells me which issue this essay is about. A preview has to map this essay\u2019s arguments, not a generic one.');
+  }
+
+  // 3. copied from a given example, a weak model, or a preview-type card
+  const strongPrev = T.given.find(g=>g.role==='preview');
+  const weakPrev = TOPICS[topicKey].sentences.find(s=>s.role==='preview' && s.quality==='weak');
+  const banked = [strongPrev?strongPrev.text:'', weakPrev?weakPrev.text:''].concat(PREVIEW_TYPES.map(t=>t.model)).map(s=>s.toLowerCase()).filter(Boolean);
+  if(banked.some(g=>g.includes(low) && low.length>20)){
+    problems.push('That sentence is already on this page. Map your essay in your own words, even if you land on similar arguments.');
+  }
+
+  // 4. length
+  if(words > 55) problems.push('At '+words+' words this is starting to argue each point rather than name it. Compress until you are only mapping.');
+  if(words < 15) problems.push('Fifteen words is rarely enough room to name three distinct arguments. What are the separate pieces of evidence your essay will use?');
+
+  // 5. does it actually map more than one thing, or gesture at one?
+  if(!looksLikeAMap(raw)){
+    problems.push('This reads like one idea, not a map of several. A preview should let your reader predict at least two or three separate body paragraphs from this sentence alone.');
+  }
+
+  if(problems.length === 0){
+    fb.innerHTML =
+      '<div class="fbhead">Nothing here is broken</div>' +
+      '<p>The machine can tell you that you have avoided the traps and named more than one thing. It cannot tell you whether the order is <em>right</em>, meaning whether your body paragraphs will actually arrive in the sequence you have just promised. Only a reader, and your own plan, can check that.</p>' +
+      '<div class="compare"><h4>How the given preview did this job</h4>' +
+      (strongPrev ? `<div class="cm"><span>Given</span>${strongPrev.text}</div>` : '') +
+      '<div class="selfcheck"><p>Now read yours beside it, and answer honestly:</p>' +
+      '<label><input type="checkbox"> Could a reader predict my body paragraphs from this sentence alone?</label>' +
+      '<label><input type="checkbox"> Is the order here the order my essay will actually follow?</label>' +
+      '<label><input type="checkbox"> Have I named the arguments, rather than just promised that arguments exist?</label>' +
+      '<label><input type="checkbox"> Have I stopped short of arguing them yet?</label>' +
+      '</div></div>';
+    fb.className='fb good';
+    sfx('harp',0.7); turtleReact('good'); setDone('O.5');
+  } else {
+    const seen=new Set(); const list=[];
+    problems.forEach(p=>{ if(!seen.has(p)){ seen.add(p); list.push(p); } });
+    fb.innerHTML = '<div class="fbhead">Read it as your reader would meet it</div><ul>'+
+      list.map(p=>`<li>${p}</li>`).join('')+'</ul>'+
+      '<div style="margin-top:6px;font-style:italic;opacity:.8;">Rewrite the sentence. You do not need to start the lesson again.</div>';
+    fb.className='fb bad';
+    turtleReact(list.length<=1 ? 'near' : 'miss');
+  }
+}
+document.getElementById('o5Submit').addEventListener('click',gradePreview);
+document.getElementById('o5Clear').addEventListener('click',()=>{
+  sfx('fluffy'); prevText=''; document.getElementById('prevInput').value=''; clearO5(); renderO5();
+});
+
+function renderTopics5(){
+  document.getElementById('tgrid5').innerHTML = Object.keys(TOPICS).map(k=>{
+    const t=TOPICS[k];
+    return `<button class="topic ${k===topicKey?'active':''}" data-k="${k}" type="button">${t.name}<span class="tsub">${t.sub}</span></button>`;
+  }).join('');
+  document.querySelectorAll('#tgrid5 .topic').forEach(b=>b.addEventListener('click',()=>{
+    sfx('fluffy');
+    topicKey=b.dataset.k; topic=TOPICS[topicKey];
+    prevText=''; clearO5(); renderTopics5(); renderO5();
+  }));
+}
+
+/* ================= O.6: RELEVANCE AND REDUNDANCY ================= */
+let judgePool = [];
+let judgeStruck = new Set();   // ids the student has crossed out
+let judgeGraded = false;
+let judgeInteracted = false;
+
+function renderO6(){
+  document.getElementById('o6Prompt').textContent = topic.prompt;
+  judgePool = buildJudgePool(topicKey);
+  renderJudgeParagraph();
+  updateTally();
+}
+
+function renderJudgeParagraph(){
+  const wrap = document.getElementById('o6Paper');
+  wrap.classList.remove('empty');
+
+  const spans = judgePool.map(item=>{
+    const struck = judgeStruck.has(item.id);
+    let cls = 'jsent' + (struck ? ' struck' : '');
+    if(judgeGraded){
+      const correct = struck === !item.keep;
+      cls += correct ? ' correct' : ' wrong';
+    }
+    return `<span class="${cls}" data-id="${item.id}">${item.text}</span>`;
+  }).join(' ');
+  wrap.innerHTML = `<p class="judgepara">${spans}</p>`;
+
+  if(judgeGraded){
+    const wrong = judgePool.filter(item=>judgeStruck.has(item.id) !== !item.keep);
+    if(wrong.length){
+      wrap.innerHTML += '<div class="jnotes">' + wrong.map(item=>{
+        const tag = item.keep ? 'Should stay' : 'Should be cut';
+        const msg = item.keep
+          ? ('This does real work: it is your ' + (PARTS[item.part] ? PARTS[item.part].label.toLowerCase() : item.part) + '. It should stay.')
+          : item.why;
+        return `<div class="jnote-item"><span class="jn-snip">${tag}</span>${msg}</div>`;
+      }).join('') + '</div>';
+    }
+  }
+
+  wrap.querySelectorAll('.jsent').forEach(el=>el.addEventListener('click',()=>{
+    sfx('fluffy');
+    const id = el.dataset.id;
+    if(judgeStruck.has(id)) judgeStruck.delete(id); else judgeStruck.add(id);
+    judgeInteracted = true;
+    judgeGraded = false;
+    clearO6();
+    renderJudgeParagraph();
+    updateTally();
+  }));
+}
+
+function updateTally(){
+  document.getElementById('o6Tally').textContent = judgeStruck.size + ' of ' + judgePool.length + ' crossed out';
+}
+
+function clearO6(){ const f=document.getElementById('o6fb'); f.textContent=''; f.className='fb'; }
+
+function gradeJudge(){
+  const fb = document.getElementById('o6fb');
+  if(!judgeInteracted){
+    fb.innerHTML = '<div class="fbhead">Nothing crossed out yet</div>Read the paragraph above. Click any sentence that does not earn its place, the way you would draw a line through it on paper.';
+    fb.className='fb bad'; turtleReact('shrug'); return;
+  }
+  judgeGraded = true;
+  renderJudgeParagraph();
+
+  const correctCount = judgePool.filter(item=>judgeStruck.has(item.id) === !item.keep).length;
+  const total = judgePool.length;
+  document.getElementById('o6Tally').textContent = correctCount + ' of ' + total + ' correct';
+
+  if(correctCount === total){
+    fb.innerHTML =
+      '<div class="fbhead">Every sentence judged correctly</div>' +
+      '<p>You kept the five that each do one job, once, and cut the redundant restatement and both irrelevant tangents. That is the whole skill: not whether a sentence is well written or even true, but whether it earns its place in <em>this</em> paragraph.</p>';
+    fb.className='fb good';
+    sfx('harp',0.7); turtleReact('good'); setDone('O.6');
+  } else {
+    fb.innerHTML = '<div class="fbhead">'+correctCount+' of '+total+' correct</div>' +
+      'Check the notes below the paragraph for what you missed. Change your marks and submit again. You do not need to start over.';
+    fb.className='fb bad';
+    turtleReact(correctCount >= total-2 ? 'near' : 'miss');
+  }
+}
+document.getElementById('o6Submit').addEventListener('click',gradeJudge);
+document.getElementById('o6Clear').addEventListener('click',()=>{
+  sfx('fluffy'); judgeStruck=new Set(); judgeGraded=false; judgeInteracted=false; clearO6(); renderJudgeParagraph(); updateTally();
+});
+
+function renderTopics6(){
+  document.getElementById('tgrid6').innerHTML = Object.keys(TOPICS).map(k=>{
+    const t=TOPICS[k];
+    return `<button class="topic ${k===topicKey?'active':''}" data-k="${k}" type="button">${t.name}<span class="tsub">${t.sub}</span></button>`;
+  }).join('');
+  document.querySelectorAll('#tgrid6 .topic').forEach(b=>b.addEventListener('click',()=>{
+    sfx('fluffy');
+    topicKey=b.dataset.k; topic=TOPICS[topicKey];
+    judgeStruck=new Set(); judgeGraded=false; judgeInteracted=false; clearO6(); renderTopics6(); renderO6();
+  }));
+}
+
+/* ================= O.7: THE WHOLE PARAGRAPH, UNAIDED ================= */
+let o7Text = '';
+
+function renderO7Checklist(){
+  document.getElementById('o7Checklist').innerHTML = ['hook','background','contention','preview'].map(r=>
+    `<div class="cli"><b style="color:var(--c-${r})">${PARTS[r].label}</b><span>${PARTS[r].blurb}</span></div>`
+  ).join('');
+}
+
+function renderO7(){
+  document.getElementById('o7Prompt').textContent = topic.prompt;
+  document.getElementById('o7QuestionText').textContent = topic.prompt;
+  const ta = document.getElementById('o7Input');
+  ta.value = o7Text;
+  ta.addEventListener('input',()=>{ o7Text = ta.value; clearO7(); });
+}
+function clearO7(){ const f=document.getElementById('o7fb'); f.textContent=''; f.className='fb'; }
+
+function gradeO7(){
+  const T = O2[topicKey];
+  const raw = (document.getElementById('o7Input').value || '').trim();
+  const fb = document.getElementById('o7fb');
+  const words = raw ? raw.split(/\s+/).length : 0;
+  const problems = [];
+
+  if(words === 0){
+    fb.innerHTML = '<div class="fbhead">Nothing to read yet</div>Write your whole introduction in the space above: hook, background, contention, preview.';
+    fb.className='fb bad'; turtleReact('shrug'); return;
+  }
+
+  const low = raw.toLowerCase();
+
+  // 1. every mechanical trap the ladder has taught you to catch, all at once
+  const allTraps = BG_TRAPS.concat(CONT_TRAPS, PREV_TRAPS);
+  const seenMsgs = new Set();
+  allTraps.forEach(t=>{ if(t.re.test(raw) && !seenMsgs.has(t.msg)){ seenMsgs.add(t.msg); problems.push(t.msg); } });
+
+  // 2. is it about THIS topic?
+  if(!T.keywords.some(k=>low.includes(k))){
+    problems.push('Nothing here tells me which issue this introduction is about. Name it specifically, not generically.');
+  }
+
+  // 3. copied straight from something shown earlier in the ladder
+  const banked = []
+    .concat(TOPICS[topicKey].sentences.map(s=>s.text))
+    .concat(T.given.map(g=>g.text))
+    .concat(T.models.map(m=>m.text))
+    .concat(CLAIM_TYPES.map(c=>c.model))
+    .concat(PREVIEW_TYPES.map(p=>p.model))
+    .map(s=>s.toLowerCase());
+  if(banked.some(g=>g.length>25 && low.includes(g))){
+    problems.push('Part of this is lifted straight from something shown earlier in this workshop. Nothing here is given this time, it all has to be yours.');
+  }
+
+  // 4. length: a real introduction, not a sentence and not an essay
+  if(words < 70)  problems.push('At '+words+' words this is too short to do all four jobs properly. A hook, a background, a contention, and a preview each need room.');
+  if(words > 220) problems.push('At '+words+' words this is sprawling past an introduction into the essay itself. Compress it back down to what a reader needs before paragraph one begins.');
+
+  // 5. multiple sentences, not one long run-on
+  const sentenceCount = (raw.match(/[.!?]+(\s|$)/g) || []).length;
+  if(sentenceCount < 3){
+    problems.push('This reads like one or two long sentences carrying everything at once. Four jobs usually need more than one or two sentences to do them in.');
+  }
+
+  // 6. some kind of stance, somewhere
+  if(!STANCE_MARKERS.test(low)){
+    problems.push('I cannot find a position anywhere in this. Somewhere in here you need to tell the reader what you actually think, and give the beginning of a reason.');
+  }
+
+  if(problems.length === 0){
+    fb.innerHTML =
+      '<div class="fbhead">Nothing here is broken</div>' +
+      '<p>The machine can tell you that you have avoided the traps this ladder has taught you to avoid, named your issue, taken a position, and kept this to the length of an introduction rather than an essay. It cannot tell you whether the four jobs are done <em>well</em>, or in the right order. Only a reader can do that, so be one. Read it back and check:</p>' +
+      '<div class="selfcheck">' +
+      '<label><input type="checkbox"> Does the first sentence catch a reader who knows nothing about this issue?</label>' +
+      '<label><input type="checkbox"> Does the reader learn what the issue is before they learn what you think about it?</label>' +
+      '<label><input type="checkbox"> Could a reasonable person disagree with your position?</label>' +
+      '<label><input type="checkbox"> Does the last sentence map the arguments to come, in the order you will actually make them?</label>' +
+      '<label><input type="checkbox"> Is there a sentence here that does not earn its place?</label>' +
+      '</div>';
+    fb.className='fb good';
+    sfx('harp',0.7); turtleReact('good'); setDone('O.7');
+  } else {
+    const seen=new Set(); const list=[];
+    problems.forEach(p=>{ if(!seen.has(p)){ seen.add(p); list.push(p); } });
+    fb.innerHTML = '<div class="fbhead">Read it as your reader would meet it</div><ul>'+
+      list.map(p=>`<li>${p}</li>`).join('')+'</ul>'+
+      '<div style="margin-top:6px;font-style:italic;opacity:.8;">Rewrite what needs it. You do not need to start over.</div>';
+    fb.className='fb bad';
+    turtleReact(list.length<=1 ? 'near' : 'miss');
+  }
+}
+document.getElementById('o7Submit').addEventListener('click',gradeO7);
+document.getElementById('o7Clear').addEventListener('click',()=>{
+  sfx('fluffy'); o7Text=''; document.getElementById('o7Input').value=''; clearO7(); renderO7();
+});
+
+function renderTopics7(){
+  document.getElementById('tgrid7').innerHTML = Object.keys(TOPICS).map(k=>{
+    const t=TOPICS[k];
+    return `<button class="topic ${k===topicKey?'active':''}" data-k="${k}" type="button">${t.name}<span class="tsub">${t.sub}</span></button>`;
+  }).join('');
+  document.querySelectorAll('#tgrid7 .topic').forEach(b=>b.addEventListener('click',()=>{
+    sfx('fluffy');
+    topicKey=b.dataset.k; topic=TOPICS[topicKey];
+    o7Text=''; clearO7(); renderTopics7(); renderO7();
+  }));
+}
+
+/* ---------------- trait rail navigation ---------------- */
+/* NOTE: set data-href on each built trait to its workshop file. Sentence Fluency
+   points to writers-workshop-sentence-fluency.html; adjust the path to match your repo. */
+document.querySelectorAll('.trait').forEach(t=>{
+  const href = t.getAttribute('data-href');
+  const nm = t.querySelector('.tname') ? t.querySelector('.tname').textContent.trim() : 'that trait';
+  if(href){
+    t.classList.add('link');
+    t.setAttribute('role','link');
+    t.setAttribute('tabindex','0');
+    t.title = 'Go to ' + nm;
+    const go = ()=>{ sfx('fluffy'); window.location.href = href; };
+    t.addEventListener('click', go);
+    t.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); go(); } });
+  } else if(t.classList.contains('soon')){
+    t.setAttribute('tabindex','0');
+    t.addEventListener('click', ()=>{ sfx('fluffy'); turtleReact('near'); });
+  }
+});
 
 /* ---------------- boot ---------------- */
 document.getElementById('libSub').textContent = topic.prompt;
