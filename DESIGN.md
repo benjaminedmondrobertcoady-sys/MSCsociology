@@ -127,6 +127,7 @@ Durkheim's four functions of deviance, using the department's exact vocabulary: 
 - **Completion codes** (see §6).
 
 ### Trade Routes (`trade_routes.html`): LIVE
+_Menu note: no longer the featured/Editor's Choice activity. Reel Evidence took that slot; Trade Routes moved to a new "Integrated Curriculum" chapter at the foot of the menu, and the `#integrated` nav anchor moved with it._
 Supply chains, ethics, carbon, cost. Every route trades one against another; there is no free lunch.
 
 - **Hover a component in the manifest and its sources pulse on the map** while everything else dims.
@@ -212,6 +213,176 @@ He is **not a GIF**, which is the point: a GIF can only loop, he *responds*.
   compadre"* and *"Flag down your teacher. Helping students is their raison d'être."* The worked
   example is already annotated; substantive hints there would be redundancy, the sin the activity
   teaches against.
+
+---
+
+### Reel Evidence (`reel-evidence.html` + `-deep.html` + `-dive.html`): 0.1 LIVE, 0.2 and 0.3 BUILT (draft content)
+Film-as-text analysis for VCE English. Three levels that form a **runway** toward one destination:
+the MSC Unit 2 Outcome 1 analytical essay on _The Merger_ (dir. Mark Grentell). Second film for
+0.1 is _Lion_ (dir. Garth Davis).
+
+**The destination (why any of this exists).** A 60-minute analytical response: OTAC introduction
+(Overview, Title, Author, Contention), TEEL body paragraphs, 20 prepared quotes, choose one of two
+questions. The marking checklist names **"views and values" twice**. The single hardest, most-marked
+item on it is the second E of TEEL: not what happens, but how a technique **positions the audience**
+toward the film's views and values. Reel Evidence exists to manufacture that one component. Everything
+ladders to it.
+
+**Own sub-aesthetic.** Diverges from the house Georgia/parchment: palette navy `#1B2A4A`, mustard
+`#E0A430`, brick `#C1443C`, teal `#2E7F87`, cream `#F3E4C4`; fonts Trebuchet (display), **Bitter**
+(prose), Courier Prime (mono). 0.2 and 0.3 layer an **ocean-descent** palette on top (sunlit surface
+to black deep), because the descent is the pedagogy made visible.
+
+**The runway, level by level:**
+
+| | | does |
+|---|---|---|
+| **0.1** | The Frame (`reel-evidence.html`) | read one shot, build an analytical paragraph, fully scaffolded |
+| **0.2** | The Ladder to the Deep (`reel-evidence-deep.html`) | turn a surface reaction into positioning, then into views and values |
+| **0.3** | Own the Deep (`reel-evidence-dive.html`) | memorise the film's themes to automaticity so the Deep is not a cliff |
+
+---
+
+**0.1 The Frame: LIVE.** Read a single still, assemble a paragraph from moves: Shot Size, Angle,
+Mise-en-scene, Camera Technique (verb + effect clause), Your Reading. The sentence builds live. The
+**director is per-film** (a `director` field: Grentell for The Merger, Davis for Lion), wired into the
+live sentence and the reading prompt, so toggling films swaps the name.
+
+- **Mise-en-scene refactor (a real decision, do not reverse).** The mise step is a **shared category
+  set** (Setting, Lighting, Colour, Costume, Props, Composition) that shows a **prompting question**,
+  not a pre-written observation. Students must do the observing themselves; the earlier per-still
+  mise that named the staged detail was hand-holding and was removed. Recognition scaffold, not the
+  answer. (Side effect: 44 bespoke per-still mise entries evaporated into 6 shared lenses.)
+- **Stills:** The Merger (5), Lion (7). All 860px base64 JPEGs.
+- **MODEL button:** a worked-example overlay with **two toggleable examples**, matching WW's bar.
+  "Move by move" = _Rabbit-Proof Fence_ (dir. Noyce): the three moves built discretely. "As one
+  paragraph" = _High Ground_ (dir. Stephen Maxwell Johnson): the same moves woven into one flowing
+  paragraph, the higher bar. Both are **different films** from the analysed ones (isomorphic not
+  identical, per the worked-example rule) and each carries its own still so the language is anchored
+  to the frame. Written at Year 11 register using the scaffold's own verbs and effect clauses (an
+  earlier Shawshank draft was killed for being critic-register and for a factual angle error caught
+  only when Ben supplied the still). The High Ground paragraph is study-guide-sourced, flagged to
+  replace with Ben's own eventually.
+- **Guided walkthrough:** the Reel Evidence mascot (the "Telehead Deep Dive" robot) coach-mark travels
+  the four steps and **flips horizontally** to always point at its target.
+- **Splash entry:** full-screen mid-century poster, `object-fit: contain` (show the whole image, do
+  not crop). Walkthrough is deferred until the student clicks in.
+- 0.1's effect-clause picklist already gestures at audience effect, but treats it as a **slot to
+  fill**. 0.2 makes effect the **object of the skill**. That is the whole reason 0.2 exists.
+
+---
+
+**0.2 The Ladder to the Deep: BUILT, draft content.** Grew directly out of ~20 real barometer
+responses: every student produced technique + effect + mise, but only three reached interpretation.
+The gap was identical across the class, they name a technique and a **feeling** but cannot turn it
+into **audience positioning** or **theme**. Four recurring errors: description dressed as effect
+("to underscore Neil teaching Saeed"); "tension" as the ceiling; audience named but not positioned
+(attention, not alignment); mise asserted ("the lighting symbolises X") instead of read from a
+staged detail.
+
+**The ladder (three rungs of depth):**
+
+| rung | VCE-marked name | the question |
+|---|---|---|
+| Surface | **Response** | what does the shot make me feel? (the floor, where everyone stalls) |
+| Midwater | **Positioning** | whose side am I placed on, and who am I held away from? (the rung nobody reached unaided) |
+| The Deep | **Views & Values** | what is the film saying through this, and does it want me to agree? |
+
+- **Apex is Views & Values**, settled by the checklist, not "theme". `feel / align / mean` was Ben's
+  and my **internal mnemonic only**; the surface-facing words are Response / Positioning / Views &
+  Values. Do **not** teach students feel/align/mean, a private language does not transfer to a SAC.
+- **The chain sentence** (the A-grade move in one breath, the artifact the bench assembles):
+  _"By [technique], the director positions us to [response] toward [X] and away from [Y], revealing
+  the film's view that [theme]."_ This deliberately replaced a slicker frame that let students drop a
+  bare feeling into [response] and **skip the positioning rung**. Naming who we are positioned toward
+  **and away from** is the move; it must be unskippable.
+- **The bench:** a weak surface sentence in the student's own register is given; an **unskippable
+  midwater gate** (you cannot descend without naming "toward whom"; a nudge fires if you try); then a
+  **theme bank** at the Deep. The chain assembles. A reference-card overlay shows the ladder.
+- **Two principles that govern the whole build:**
+  1. **The scaffold makes the hard move unskippable, not optional.** A good scaffold refuses to let
+     you fake the climb. The midwater gate is the enforcement.
+  2. **The scaffold self-deletes across stills** (picklist, then free-text blank, then a bare prompt,
+     then gone). Success is when the scaffold has deleted itself: a student still needing the picklist
+     on the last still has not finished. The reward is earned for reaching the Deep **without** the
+     frame, never for filling it in.
+
+---
+
+**0.3 Own the Deep: BUILT, draft content. The anglerfish dive game.** The **knowledge floor** the
+whole ladder stands on. 0.2's Deep rung is a cliff unless the themes are already **in memory**:
+recognition (picking from a bank) is not recall (producing cold in the exam). So the theme scaffold
+must delete itself **into memory**, not merely lose its picklist. This is a knowledge rung, not a
+skill rung: positioning can be performed on any shot, but a film's themes cannot be derived from
+first principles under exam pressure, they must be **owned**.
+
+- **Themes are clauses, not nouns.** The bare noun ("refugees", "belonging") is the **trap**, never a
+  valid answer, present only as the enemy / caught error. Three forms, mapping to the depths: the
+  **word** (trap, surface), the **spine** (breath-length memory hook, midwater), the **clause**
+  (deployable, scoring, the Deep). Tuned so the spine is short enough to burn in and unfolds into the
+  clause. (Over-long "sophisticated" clauses were rejected precisely because an un-recalled clause
+  scores nothing.)
+- **The theme bank is grounded in the real assessment, not guessed.** The question bank **is** the
+  theme bank, every question is a concern pre-vetted by the markers. Seven **dives**, each a 3-rung
+  nested chain (seed, mid, seabed = the views-and-values line):
+
+  | dive | seed | mid | seabed (scoring) |
+  |---|---|---|---|
+  | Change | change is survival | ...not surrender | ...not surrender of who you are |
+  | The fair go | a fair go | ...for everyone | ...wherever they are from |
+  | Belonging | who belongs | who a town lets belong | ...and who it shuts out |
+  | Language | the power of words | ...to connect | ...to connect or exclude |
+  | Unity | coming together | ...across difference | ...to heal a town |
+  | Courage | quiet courage | ...without power | ...from those with the least |
+  | Emotion vs reason | emotion over reason | the danger of... | ...acting on... |
+
+  Wording is Ben's and editable. **Note:** five dives accrete cleanly (words added to the end);
+  **belonging and emotion rephrase** rather than append, so their built phrase jumps rather than
+  grows, a wording tweak if visible accretion is wanted.
+- **The game.** Picture-book ocean cutaway: tugboat on the surface, three ruled depths, seabed
+  treasure. The **diver is the Reel Evidence mascot** (the Telehead robot) descending on his line;
+  the **anglerfish rises** from the trench as time pressure. Same creature is the apex reward and the
+  hazard, the deep holds both meaning and danger.
+- **Three modes = the fading scaffold:** LEARN (gentle, one decoy, slow fish), MATCH (decoys mixed
+  from all themes at mixed lengths, faster), MASTER (**type the seabed line cold**, relentless fish).
+  Recognition, then matching, then recall.
+- **Two mechanic decisions that were hard-won:**
+  - **The length exploit is dead.** Shortest-first-longest-last must never win. Killed by mixing
+    **same-tier** decoys (a same-length twin forces meaning) with **off-tier** long/short decoys, so
+    length is never a correctness signal at any depth. The skill is recognising your theme's growing
+    string against adjacent-theme noise.
+  - **The seed is placed for free.** Every pick is a legible **continuation** of the phrase already in
+    the water ("which line grows THIS one"), never an arbitrary guess between unrelated seeds. This
+    fixed a real fault: punishing a choice between two legitimate surface seeds felt unfair.
+  - Master's typed seabed is where **no decoy trick can help**, pure recall, which is where memory has
+    to end up.
+- **Reward:** rarer/deeper creature = less scaffold used. Anglerfish is the apex, earned nearly
+  unaided. **The login/collection backend is dropped** (minor-data / privacy risk); fish are
+  in-session reveals, no persistence. A local shared-storage collection was discussed and parked.
+- **Tuning knobs**, all single numbers near the top of the script: anglerfish `rise`/`jump` speeds and
+  distractor count `n` per mode.
+
+---
+
+**Assets.** `reel-evidence-title.png` (mascot menu tile, transparent). Splash poster. `tugboat.png`
+and the Telehead diver, both supplied as **genuinely transparent RGBA**. Process by **preserving
+alpha**: do NOT `.convert('RGB')` first, it flattens transparency to **black** and manufactures black
+boxes (this happened and was corrected). Fish creature art: Ben to produce (emoji placeholders for
+now). **Per-theme "home still" images:** Ben to scrub the film, one iconic frame per theme spine, for
+dual-coding; would turn 0.3's surface into a picture-match.
+
+**Menu:** Reel Evidence is the featured / Editor's Choice activity, listed first in the English
+chapter, image referenced as `reel-evidence-title.png` with an `icon_film.png` fallback.
+
+**The confidential question bank** (`DO_NOT_SHARE...`) is used **only** to derive the theme bank. It
+must never surface in student-facing output. The point is students who can handle those questions, not
+students who have seen them.
+
+**Open for Reel Evidence:** wire 0.1/0.2/0.3 into a progression; finalise theme-bank wording (and the
+belonging/emotion accretion); Ben's home stills and fish art; tune anglerfish + `n` by feel; Master
+typed-seabed uses exact match (lowercased, punctuation-stripped), may want fuzzier matching; 0.1 is
+~1.2MB (splash + stills), thin the heaviest if load time bites; "Play quote" audio still to come; Ben
+flagged **rite of passage** as a possible future theme/module.
 
 ---
 
@@ -507,3 +678,36 @@ sets equal.
   remove buttons after grading); a CSS `animation` with `fill-mode: both` will override a later opacity
   transition (this stopped Durkheim from fading out); and "transparent" PNGs from image generators are often
   **fully opaque with a checkerboard or white background painted in** (this happened three separate times).
+
+---
+
+## 10. Context protocol (why sessions crash, and how to stop it)
+
+The "Compacting our conversation" bar is the failure signal. It fires when the context window
+fills, and after it fires, continuity degrades. The cause is almost always the same, and it is
+avoidable.
+
+**Where the weight is.** These activity files are ~99% base64. In `writers-workshop.html`, two
+single lines hold the embedded PNGs and account for ~61% of the whole 676KB file. The actual
+editable code (lessons, logic, hint ladder) is a thin minority of the bytes. `reel-evidence.html`
+is the same shape: three lines carry the images, everything else is a rounding error.
+
+**The death spiral to avoid.** Uploading the whole file, OR regenerating the whole file as an
+artifact, pumps all that base64 into the conversation. Regenerating is worse: it re-emits every
+blob on the way out. Paying the base64 tax on both ends, every round, is what triggers Compacting.
+
+**The protocol (Claude should do this without being reminded):**
+1. **Fetch, never ask for an upload.** `curl -s -o f.html
+   https://raw.githubusercontent.com/benjaminedmondrobertcoady-sys/MSCsociology/main/<file>`
+   Costs the user zero context.
+2. **Never view the fat lines.** Find them first with `awk '{print length, NR}' f.html | sort -rn | head`,
+   then read only the code ranges. Map structure with `grep`, not by dumping the file.
+3. **Edit surgically with `str_replace`**, against specific strings. This never re-emits the base64;
+   the blobs stay on disk untouched and never enter the conversation.
+4. **Hand back the finished file as a download.** Do not paste the file into chat.
+5. **Verify before shipping:** grep for em dashes (must be zero), confirm every referenced element
+   `id` exists, `node --check` the script block, and confirm the base64 line sizes are unchanged
+   (proof nothing was re-emitted).
+
+If a file genuinely must be uploaded, RTF-wrapping is still the only reliable path. But fetching
+should be the default, and with it the whole upload step disappears.
