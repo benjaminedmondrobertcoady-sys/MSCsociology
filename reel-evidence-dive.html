@@ -159,6 +159,7 @@
   .exit-list{margin:14px 0 6px 20px;}
   .exit-list li{font-size:14.5px;line-height:1.6;color:#dbecf8;margin-bottom:9px;}
   .exit-list b{color:var(--mustard);}
+  .exit-list li:last-child{border-top:1px solid #2f5c7c;padding-top:9px;margin-top:12px;color:#bcd9ee;}
   .exit-card{max-height:86vh;overflow-y:auto;}
   .exit-card button{background:var(--mustard);color:#1a1205;display:block;margin:14px auto 0;}
   .tabs{display:flex;gap:6px;margin:14px 0 12px;border-bottom:1px solid #3f6d8c;}
@@ -202,6 +203,14 @@
     text-transform:uppercase;color:#5f89a6;margin-bottom:3px;}
 
   /* the gap in the paragraph is a drop target */
+  /* view / value: both on screen, one lit, one faded */
+  .vv{display:inline-block;white-space:nowrap;}
+  .vvb{font-family:var(--prose);font-size:15px;background:transparent;border:none;padding:0 2px;cursor:pointer;
+    color:#4d7f92;font-weight:400;border-bottom:1px dotted transparent;transition:all .18s;}
+  .vvb:hover{color:var(--mustard);border-bottom-color:var(--mustard);}
+  .vvb.on{color:var(--mustard);font-weight:700;border-bottom-color:var(--mustard);}
+  .vvsep{color:#33566e;padding:0 1px;}
+
   .deck-sent .slot{display:inline-block;min-width:170px;border-bottom:2px dashed var(--mustard);
     color:var(--mustard);font-weight:700;padding:0 4px;}
   .deck-sent .slot.over{background:rgba(224,164,48,.22);border-bottom-style:solid;}
@@ -412,6 +421,7 @@
       <li>Copy out <b>at least two</b> of the analysis paragraphs you completed, with <b>your own views and values sentence</b> written into the gap.</li>
       <li>Underline the second half of each of your sentences. That is the part that says what the film reckons, and it is the part that scores.</li>
       <li>In one sentence: which of your two was the better line, and why?</li>
+    <li><b>If you want to go further:</b> rewrite one of the paragraphs completely, in your own words. The frame is a starting point, not a cage. If you can say it better than the model does, say it better.</li>
     </ol>
     <div class="note" id="exitCount"></div>
   </div>
@@ -469,27 +479,37 @@ var DIVES = [
   {key:'change',  name:'Change',
     rungs:['change','a town has to change to survive','a town has to change to survive, and that does not mean losing who it is'],
     twin:'a town has to change to survive, even if it loses who it is',
+    mids:['change comes either way','every town gets changed by something','change is something the young force on the old','a town changes when it runs out of money','change always costs a town something'],
+    deeps:['change is something the young force on the old, whether it wants it or not','a town has to change to survive, and only the young can carry it','change works only once everybody in a town agrees to it'],
     stem:'By using a wide shot of the empty clubrooms while the town meeting argues, Grentell positions us to feel the club slipping away, revealing the film&rsquo;s view that '},
 
   {key:'fairgo',  name:'The fair go',
     rungs:['the fair go','everyone deserves a fair go','everyone deserves a fair go, no matter where they come from'],
     twin:'everyone deserves a fair go, once they prove they fit in',
+    mids:['a fair go is earned','a fair go depends on who is asking','a fair go has to be earned on the field','a fair go means treating everyone exactly the same','a fair go is something the law should guarantee'],
+    deeps:['everyone deserves a fair go, as long as there is enough to go around','a fair go belongs to whoever works hardest for it','a fair go means treating everyone the same, no matter what they need'],
     stem:'By using a low angle on the new players running onto the ground, Grentell positions us to feel they have as much right to be there as anyone, revealing the film&rsquo;s view that '},
 
   {key:'belong',  name:'Belonging',
     rungs:['belonging','belonging is something a town gives','belonging is something a town gives, and it can choose who it gives it to'],
     twin:'belonging is something a town gives, to the people who earn it',
+    mids:['belonging takes years','belonging is quiet','belonging is something you are born into','belonging comes from living somewhere long enough','belonging is a feeling you find on your own'],
+    deeps:['belonging is something a town gives, and it hands that out to whoever has been there the longest','belonging is something you are born into and nobody can hand you','belonging arrives once you have stopped being a stranger','belonging is something a town gives back once you have proved useful'],
     stem:'By using a shot that leaves Sayyid standing outside the group at the bar, Grentell positions us to feel how far outside he is, revealing the film&rsquo;s view that '},
 
   {key:'language',name:'Language',
     rungs:['words','words can bring people together','words can bring people together or push them apart'],
     twin:'words can bring people together, as long as everyone speaks the same one',
+    mids:['words can wound','words are easy to get wrong','words matter less than what people do','words are hardest for anyone learning a new language','words can settle an argument'],
+    deeps:['words matter less than what people actually do for each other','words are only a barrier until somebody learns the language','words can settle an argument that actions never could'],
     stem:'By using a two-shot of Sayyid and Neil arguing about where the lamington comes from, Grentell positions us to feel them getting along for the first time, revealing the film&rsquo;s view that ',
     script:[['Sayyid','Lamington, yes?'],['Neil','Yep.'],['Sayyid','New Zealand cake but Australia steal and say &lsquo;Australia cake.&rsquo;'],['Neil','Nah, they&rsquo;re Australian.'],['Sayyid','Like Russell Crowe.'],['Neil','You know your cakes.']]},
 
   {key:'unity',   name:'Unity',
     rungs:['unity','a town is stronger together','a town is stronger together, even when its people are different'],
     twin:'a town is stronger together, once its people are the same',
+    mids:['a town is stronger when it wins','a town pulls together when it has to','a town is stronger with the right leader','a town is stronger once everyone agrees','a town is strongest at the very end'],
+    deeps:['a town is stronger together, as long as everybody agrees on what it is for','a town is stronger together when it has something to win','a town is stronger together, provided somebody is leading it','a town pulls together when it runs out of other choices'],
     script:[['Bull','Go on, have a bloody good look at yourselves.'],
             ['Bull','This bloke here has made you lot into a team. I&rsquo;m buggered if I know how.'],
             ['Bull','But we are so close to nailing another premiership plank on that gum tree, I can smell the eucalypt. Go on, smell it!'],
@@ -501,11 +521,15 @@ var DIVES = [
   {key:'courage', name:'Courage',
     rungs:['courage','courage is made easier','courage is made easier when you have the support of a community behind you'],
     twin:'courage is made easier when you have nothing left to lose',
+    mids:['courage is rare','courage looks like nothing much','courage is something you find alone','courage is loudest in the people who lead','courage means standing up to a crowd'],
+    deeps:['courage is made easier when somebody else has already gone first and shown it can be done','courage is something a person finds alone, when nobody is watching','courage belongs to whoever is willing to speak first','courage is made easier by having something to prove'],
     stem:'By using a close-up on Sayyid while the crowd cheers, Grentell positions us to feel his personal triumph and the triumph of the merger, revealing the film&rsquo;s view that '},
 
   {key:'emotion', name:'Emotion vs reason',
     rungs:['emotion','a crowd can be led by feeling','a crowd can be led by feeling instead of fact'],
     twin:'a crowd can be led by feeling, and that is what brings people together',
+    mids:['a crowd can be led by anyone','a crowd can be talked round','a crowd can be led by the loudest voice','a crowd feels before it thinks','a crowd can be calmed down'],
+    deeps:['a crowd can be led by feeling until somebody louder turns up','a crowd can be led by feeling, which is what makes a town care','a crowd can be led by whoever shouts first','a crowd can be led by feeling once it has stopped listening'],
     stem:'By using a shaky handheld camera as the meeting turns to shouting, Grentell positions us to feel how quickly the room has turned, revealing the film&rsquo;s view that '}
 ];
 /* Rarity tracks SCAFFOLD REMOVED, not dive number. The Anglerfish only exists at
@@ -549,28 +573,51 @@ var SHELF = 4;       /* paragraphs offered per dive: the right one plus three */
    football talent, the falling sheep skit, the tent fire. Two themes here have
    no 0.1 still yet, marked NEEDS SHOT.
    Ben to overwrite the prose and fix the theme-to-shot mapping. ========== */
+/* ===== THE PARAGRAPH BANK ==============================================
+   FIXED VERB BANK, used the same way in every paragraph so repeated exposure
+   builds a schema rather than seven separate readings.
+
+     EFFECT VERBS (what it does to us) - these are the ones held steady:
+       Grentell puts us inside [the situation]
+       ...and lets us observe [what happens] as it [does something]
+       Grentell conveys an atmosphere of [X] when [Y]
+       [the shot] highlights how [X is Y]
+       Grentell positions us to feel [emotion]
+       This choice reveals the [view/value] that ___   <- the tail is built by
+       openParagraph(), not stored here, because the student toggles view vs value
+
+     STAGING VERBS (what is on screen) stay plain: frames, keeps, leaves.
+
+   NOTE: "conveys the idea/view that..." is deliberately NOT used here even
+   though it is valid usage, because stating an idea inside the paragraph gives
+   away the gap. Here conveys always takes an atmosphere. Save the idea/view
+   collocation for when students write freely.
+
+   Clause rules: main clause first, one idea per clause, no participle openers.
+   Ben to rewrite for register; the shape is the thing to judge. ============ */
 var PARAS = [
   {key:'emotion', shot:'the town meeting', tech:'handheld camera',
-   text:'The camera never settles during the town meeting. Grentell keeps it loose and handheld so the room feels like it is tipping, and he cuts faster as the voices get louder. We are put inside the noise rather than above it, so we feel the meeting turn before anyone has actually decided anything. It reveals the film&rsquo;s view that '},
+   text:'Grentell puts us inside the lively meeting that is falling apart at the seams and lets us observe Troy&rsquo;s arrival as it silences the din. This choice reveals the '},
 
   {key:'language', shot:'culture and cakes', tech:'two-shot at the window',
-   text:'Grentell holds Sayyid and Neil in the one frame at the bakery window, with the glass and the cakes between them. What starts as an argument about who owns the lamington turns into a joke they both get. Keeping them in the same shot lets us watch the distance close in real time. It reveals the film&rsquo;s view that '},
+   text:'Grentell puts us inside a small argument about a lamington at the bakery window. He positions us to feel the distance between the two of them close as the argument turns into a joke. This choice reveals the '},
 
   {key:'fairgo', shot:'a new football talent', tech:'low angle, and the honour board',
-   text:'Sayyid learned this game from a book in a detention centre library, and Grentell shoots him the way the film shoots any good player, low and full frame. By the end of the season he is the club best and fairest. The film puts the town&rsquo;s own highest honour, the one it votes on itself, in the hands of the man it did not want. It reveals the film&rsquo;s view that '},
+   text:'The low angle on Sayyid highlights how the film treats him exactly like the local players. Grentell lets us observe him take out the club best and fairest, an award the town votes on itself. This choice reveals the '},
 
   {key:'change', shot:'the falling sheep skit', tech:'wide shot',
-   text:'Grentell stays wide through the skit so we can see the whole room at once, the people laughing and the people who are not. The club is doing what it has always done while the town around it has moved on. Holding the wide shot lets us see the gap the club refuses to look at. It reveals the film&rsquo;s view that '},
+   text:'The wide shot highlights how the whole room is doing what it has always done. Grentell conveys an atmosphere of a club standing still while the town outside it moves on. This choice reveals the '},
 
   {key:'unity', shot:'the half-time huddle', tech:'who gets the line',
-   text:'Grentell hands the speech to Bull, the man who fought hardest to keep these players out. Bull tells them that Troy has made them into a team and admits he cannot work out how. Giving that line to the loudest objector, rather than to the coach, means the film is not asking us to watch outsiders being accepted; it is watching the town change its own mind out loud. It reveals the film&rsquo;s view that '},
+   text:'Grentell puts us inside the huddle at half time and lets us observe Bull, the man who fought hardest to keep these players out, call them a team. This choice reveals the '},
 
   {key:'courage', shot:'the winning run', tech:'close-up in a crowd',
-   text:'Grentell pushes in close on Sayyid while everything behind him stays loud and wide. He is quiet in the middle of a crowd that is not. Keeping the crowd in shot behind him means we never see the moment as his alone. It reveals the film&rsquo;s view that '},
+   text:'The close-up on Sayyid highlights how quiet he is while the crowd behind him is loud. Grentell positions us to feel his triumph and the town&rsquo;s at the same moment. This choice reveals the '},
 
   {key:'belong', shot:'the club bar', tech:'framing and foreground',
-   text:'Grentell puts the locals in a loose circle and leaves Sayyid just outside it, slightly out of focus in the foreground. Nobody says anything cruel and nobody has to. The framing does the excluding for them. It reveals the film&rsquo;s view that '}
+   text:'Grentell frames the locals in a circle and leaves Sayyid just outside it. He conveys an atmosphere of exclusion when nobody has said a word. This choice reveals the '}
 ];
+
 
 var DEPTH_Y=[14,14,42,76];
 var HOOK_Y=61;      /* px from ocean top to the hook mouth on the boat's crane */
@@ -600,6 +647,7 @@ var myClauses=[];   /* EVERY LINE THE STUDENT HAS WRITTEN. This, not the model, 
 var picked=null;    /* index of the chip currently picked up */
 var caught=[];      /* fish logged this session, max SLOTS */
 var pool=[];        /* remaining fish, shuffled at the start of a session */
+var vvFor={};      /* themeKey -> 'view' or 'value', the student's call */
 var mineFor={};     /* themeKey -> the line THEY wrote, so filled paragraphs keep their words */
 var snd=true;       /* ON here so the harp actually lands. House rule says muted by
                        default for a lab of thirty; flip to false to restore that. */
@@ -730,8 +778,8 @@ function startDive(){
   el('ocean').classList.remove('seabed','rising','sinking');
   el('chest').classList.remove('show','lit'); el('chestSay').classList.remove('show');
   el('modeHint').textContent = modelShown()
-    ? 'The seed is placed. Grow it down, then open the canister for a model before you write your own.'
-    : 'The seed is placed. Grow it down. This time the canister is empty and the line is all yours.';
+    ? 'The seed is placed. Every option names your theme, so length and keywords will not help you. Only the film will.'
+    : 'The seed is placed. Every option names your theme. This time the canister is empty, so the line is all yours too.';
   el('fb').textContent='';
   positionDiver(); positionAngler();
   el('chest').classList.add('show');       /* visible destination from the first breath */
@@ -753,23 +801,28 @@ function renderBuilt(){
   el('built').innerHTML='<b>'+dive.rungs[depth-1]+'</b>';
 }
 
+/* EVERY OPTION NAMES THE THEME. Decoys are drawn from this dive's own bank of
+   same-theme statements, so a student cannot win by spotting their word. The
+   themes all exist outside the film; the question is which one THIS film argues.
+   That gets harder with depth: midwater asks which claim about the theme the film
+   makes, the seabed asks which version of that claim it actually holds. */
 function renderChoices(){
-  var box=el('choices'); var m=TUNE;
+  var box=el('choices'), m=TUNE;
   var labels=['', 'Grow it deeper \u00b7 the midwater line', 'Finish it \u00b7 the seabed line'];
   el('depthQ').textContent=labels[depth];
   var correct=dive.rungs[depth];
-  var others=DIVES.filter(function(d){return d.key!==dive.key;});
-  var sameTier=shuffle(others)[0].rungs[depth];               /* a same-length decoy: forces meaning over length */
-  var mixedPool=[];
-  others.forEach(function(d){ d.rungs.forEach(function(r){ if(r!==sameTier) mixedPool.push(r); }); });
-  var forced=[sameTier];
-  if(depth===2){ forced=[dive.twin, sameTier]; }             /* seabed: the wrong-values twin is ALWAYS present.
-                                                                 Same opening words, so prefix-matching returns two
-                                                                 candidates and only meaning separates them. */
-  var extra=shuffle(mixedPool).slice(0, Math.max(0, m.n-forced.length));
+  var forced=[], pool;
+  if(depth===2){
+    forced=[dive.twin];                 /* the wrong-values twin is always present */
+    pool=(dive.deeps||[]).slice();
+  } else {
+    pool=(dive.mids||[]).slice();
+  }
+  var extra=shuffle(pool).slice(0, Math.max(0, m.n-forced.length));
   var opts=shuffle([correct].concat(forced).concat(extra));
-  opts=shuffle(opts);
-  box.innerHTML=opts.map(function(o){ return '<button class="choice" data-v="'+o.replace(/"/g,'&quot;')+'" type="button">'+o+'</button>'; }).join('');
+  box.innerHTML=opts.map(function(o){
+    return '<button class="choice" data-v="'+o.replace(/"/g,'&quot;')+'" type="button">'+o+'</button>';
+  }).join('');
   Array.prototype.forEach.call(box.querySelectorAll('.choice'), function(b){
     b.addEventListener('click', function(){ pick(b, b.dataset.v===correct, b.dataset.v===dive.twin); });
   });
@@ -782,7 +835,7 @@ function pick(btn, ok, isTwin){
   /* The twin is the teaching error: right theme, wrong values. Name that difference. */
   el('fb').textContent = isTwin
     ? 'Close. That is the right theme but the wrong values. The film does not argue that. Which line says what the film actually believes?'
-    : 'That line belongs to a different theme. Read the meaning and match it to THIS dive.';
+    : 'That is a fair thing to say about ' + dive.rungs[0] + ' in general, but it is not what THIS film argues. Think about what happens in the story.';
 }
 
 function advance(){
@@ -950,7 +1003,25 @@ function openParagraph(key){
   el('pvTech').textContent=pa.tech;
   el('pvCount').textContent=(i+1)+' / '+set.length;
   el('paraView').classList.toggle('done', !!placed[key]);
-  el('deckSent').innerHTML=pa.text+'<span class="slot" id="slot">drop a clause here</span>.';
+  /* The student chooses whether they are naming a VIEW or a VALUE. Both words stay
+     on screen, one lit and one faded, so the pair is taught by exposure and the
+     choice is deliberate and reversible. */
+  var vv=vvFor[key]||'view';
+  el('deckSent').innerHTML = pa.text
+    + '<span class="vv">'
+    +   '<button class="vvb'+(vv==='view'?' on':'')+'" data-v="view" type="button">view</button>'
+    +   '<span class="vvsep">/</span>'
+    +   '<button class="vvb'+(vv==='value'?' on':'')+'" data-v="value" type="button">value</button>'
+    + '</span> that <span class="slot" id="slot">drop a clause here</span>.';
+  Array.prototype.forEach.call(el('deckSent').querySelectorAll('.vvb'), function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      vvFor[key]=b.dataset.v;
+      Array.prototype.forEach.call(el('deckSent').querySelectorAll('.vvb'), function(x){
+        x.classList.toggle('on', x===b);
+      });
+    });
+  });
   el('deckDo').innerHTML='';
   renderLib();
   if(placed[key]){ fillSlot(mineFor[key]); return; }
@@ -1062,7 +1133,7 @@ function buildSheet(target){
   var out='';
   PARAS.forEach(function(pa){
     if(!placed[pa.key]) return;
-    out+='<h4>'+pa.shot+' &middot; '+pa.tech+'</h4><p>'+pa.text+'<span class="cl">'+mineFor[pa.key]+'</span>.</p>';
+    out+='<h4>'+pa.shot+' &middot; '+pa.tech+'</h4><p>'+pa.text+'<b>'+(vvFor[pa.key]||'view')+'</b> that <span class="cl">'+mineFor[pa.key]+'</span>.</p>';
   });
   target.innerHTML = out || '<i>Nothing placed yet. Dive and place a clause first.</i>';
 }

@@ -104,10 +104,14 @@
   .tile.wrong{animation:shake .32s ease;}
   @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
   .tile svg{width:60px;height:60px;}
+  .tile.photo{width:148px;height:96px;}
+  .tile-photo{width:136px;height:76px;object-fit:cover;border-radius:4px;display:block;margin:0 auto;}
   .tile .cap{font-family:var(--prose);font-size:11px;font-weight:700;color:var(--navy);text-align:center;line-height:1.15;}
   .tile.word{background:linear-gradient(180deg,#FBF3DA,#E5D3A2);}
   .tile.word .cap{font-size:13px;padding:0 2px;}
   .tile.word .sub{font-family:var(--ui);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);}
+  .tile.photo.word .cap{font-size:11px;padding:0 4px;}
+  .tile.photo.word .sub{font-size:7px;}
 
   .foot{flex:0 0 auto;padding:9px 16px 12px;display:flex;align-items:center;gap:12px;border-top:2px solid var(--gold);
     background:linear-gradient(180deg,var(--parchment),var(--parchment-deep));}
@@ -243,7 +247,11 @@ const SHOTS = {
   crowd:    {name:'Crowd Shot',        set:'people',   does:'Shows scale, and makes the individual small inside it.'},
   establish:{name:'Establishing Shot', set:'concepts', does:'Tells us where we are and when, before anything else happens.'},
   ots:      {name:'Over the Shoulder', set:'concepts', does:'Puts us behind one character, seeing what they see.'},
-  mise:     {name:'Mise en Sc\u00e8ne',set:'concepts', does:'Everything placed in the frame, telling us who lives here.'}
+  mise:     {name:'Mise en Sc\u00e8ne',set:'concepts', does:'Everything placed in the frame, telling us who lives here.'},
+  birdseye: {name:'Bird\'s Eye View',  set:'angles',   does:'Looks straight down on the subject, making them small and exposed.'},
+  highangle:{name:'High Angle',        set:'angles',   does:'Looks down slightly, making the subject seem smaller or vulnerable.'},
+  lowangle: {name:'Low Angle',         set:'angles',   does:'Looks up at the subject, giving them power and dominance.'},
+  dutch:    {name:'Dutch Angle',       set:'angles',   does:'Tilts the frame off-axis, telling us something is wrong or unstable.'}
 };
 
 /* ---------- the levels ---------- */
@@ -266,7 +274,15 @@ const LEVELS = [
 
   {id:'C.5', name:'What a Shot Does',  sub:'effect, not name',       shots:['medium','closeup','extreme','one','two','three','crowd','establish','ots','mise'],
    poster:null,       mode:'effect', copies:1,
-   note:'Now the hard turn. Match each shot not to its name, but to what it does to an audience. Naming a shot is not analysis. This is.'}
+   note:'Now the hard turn. Match each shot not to its name, but to what it does to an audience. Naming a shot is not analysis. This is.'},
+
+  {id:'C.6', name:'Camera Angles', landscape:true,     sub:'high, low, and tilted',   shots:['birdseye','highangle','lowangle','dutch'],
+   poster:null,       mode:'name',   copies:2,
+   note:'Four camera angles. The angle shapes how we feel about whoever is in the frame. Study each photo, then match it to its name.'},
+
+  {id:'C.7', name:'What an Angle Does', landscape:true, sub:'effect, not name',        shots:['birdseye','highangle','lowangle','dutch'],
+   poster:null,       mode:'effect', copies:2,
+   note:'Same four angles. Now match each photo to what it does to an audience — not its name.'}
 ];
 
 /* ---------- SVG tile art (drawn, not photographed: the whole file stays small) ---------- */
@@ -307,6 +323,13 @@ function art(k){
       ${p('M48,46 v-6 q0,-6 4,-6 q4,0 4,6 v6',2)}
       ${p('M10,48 h46',2.2)}</svg>`;
   }
+  const PNG_SHOTS = {
+    birdseye: 'birdseyeview.png',
+    highangle: 'highangle.png',
+    lowangle:  'lowangle.png',
+    dutch:     'dutchangle.png'
+  };
+  if(PNG_SHOTS[k]) return `<img class="tile-photo" src="${PNG_SHOTS[k]}" alt="${SHOTS[k].name}"><span class="cap">&nbsp;</span>`;
   return '<svg viewBox="0 0 64 64"></svg>';
 }
 
@@ -341,7 +364,8 @@ function unlocked(i){ return teacherMode || i===0 || !!progress()[LEVELS[i-1].id
 /* ---------- state ---------- */
 let tiles=[], sel=[], matched=0, misses=0, total=0, busy=false;
 
-const TW=96, TH=112, GX=12, GY=12, LAYER_DX=7, LAYER_DY=-7;
+let TW=96, TH=112, GX=12, GY=12, LAYER_DX=7, LAYER_DY=-7;
+const TW_PORT=96, TH_PORT=112, TW_LAND=148, TH_LAND=96;
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
@@ -420,6 +444,7 @@ function render(){
   g.innerHTML = tiles.map((t,i)=>{
     const cls = ['tile'];
     if(t.face==='word') cls.push('word');
+    if(LEVELS[cur].landscape) cls.push('photo');
     if(t.gone) cls.push('gone');
     else if(!isFree(t)) cls.push('blocked');
     if(sel.includes(i)) cls.push('sel');
@@ -524,6 +549,7 @@ function renderLevels(){
 
 function loadLevel(){
   const L = LEVELS[cur];
+  if(L.landscape){ TW=TW_LAND; TH=TH_LAND; } else { TW=TW_PORT; TH=TH_PORT; }
   document.getElementById('levTitle').textContent = `${L.id} ${L.name}`;
   document.getElementById('levSub').textContent = L.sub;
   renderLevels();
