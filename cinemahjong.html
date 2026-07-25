@@ -104,8 +104,8 @@
   .tile.wrong{animation:shake .32s ease;}
   @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
   .tile svg{width:60px;height:60px;}
-  .tile.photo{width:148px;height:96px;}
-  .tile-photo{width:136px;height:76px;object-fit:cover;border-radius:4px;display:block;margin:0 auto;}
+  .tile.photo{width:160px;height:110px;padding:5px;}
+  .tile-photo{width:100%;height:80px;object-fit:cover;border-radius:4px;display:block;}
   .tile .cap{font-family:var(--prose);font-size:11px;font-weight:700;color:var(--navy);text-align:center;line-height:1.15;}
   .tile.word{background:linear-gradient(180deg,#FBF3DA,#E5D3A2);}
   .tile.word .cap{font-size:13px;padding:0 2px;}
@@ -365,7 +365,7 @@ function unlocked(i){ return teacherMode || i===0 || !!progress()[LEVELS[i-1].id
 let tiles=[], sel=[], matched=0, misses=0, total=0, busy=false;
 
 let TW=96, TH=112, GX=12, GY=12, LAYER_DX=7, LAYER_DY=-7;
-const TW_PORT=96, TH_PORT=112, TW_LAND=148, TH_LAND=96;
+const TW_PORT=96, TH_PORT=112, TW_LAND=160, TH_LAND=110;
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
