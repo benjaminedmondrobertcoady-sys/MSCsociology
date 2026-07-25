@@ -1167,7 +1167,7 @@ Link: connects back to the theme or argument.</div>
 
   function checkConventions(text) {
     const results = [];
-    const homophones = [['there','their','they're'],['your','you're'],['its','it's'],['affect','effect']];
+
     // Basic: check sentences start with capital
     const sents = sentences(text);
     const uncapped = sents.filter(s => s.trim() && s.trim()[0] !== s.trim()[0].toUpperCase()).length;
