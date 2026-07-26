@@ -861,21 +861,19 @@ function stopDrag(){ dragEl=null; document.removeEventListener('mousemove',onDra
 
 // LOGIN
 el('btn-begin').addEventListener('click',async()=>{
-  const c=el('sel-class').value,n=el('inp-name').value.trim().toLowerCase();
+  const c=el('sel-class').value;
+  const pw=(el('inp-classpw').value||'').trim();
   const err=el('login-err'); err.textContent='';
   if(!c){err.textContent='Please select your class.';return;}
-  if(!n){err.textContent='Please enter your name.';return;}
+  if(!pw){err.textContent='Please enter the class password.';return;}
+  const expectedPw = BIRD_PASSWORDS[c]||'';
+  if(pw.toLowerCase() !== expectedPw.toLowerCase()){err.textContent='Incorrect class password. Ask your teacher.';return;}
   el('btn-begin').disabled=true; el('btn-begin').textContent='Please wait...';
   try{
-    const sref=doc(db,'classes',c,'students',n);
-    const snap=await getDoc(sref);
-    if(snap.exists()){err.textContent='Already registered. Use "Returning on a new computer?" if this is you.';el('btn-begin').disabled=false;el('btn-begin').textContent='OK';return;}
-    const code=genCode();
-    await createUserWithEmailAndPassword(auth,emailFor(c,n),code);
-    await setDoc(sref,{class:c,name:n,recoveryCode:code,createdAt:serverTimestamp()});
-    el('r-code').textContent=code;
-    el('modal-recovery').style.display='flex';
-    el('btn-r-ok').onclick=()=>{el('modal-recovery').style.display='none';showApp(c,n);};
+    const tempCode=genCode();
+    const tempEmail='pending_'+tempCode+'@'+c+'.hermes';
+    await createUserWithEmailAndPassword(auth,tempEmail,tempCode);
+    showAvatarScreen(c, tempCode);
   }catch(e){
     err.textContent='Error: '+e.code;
     el('btn-begin').disabled=false; el('btn-begin').textContent='OK';
