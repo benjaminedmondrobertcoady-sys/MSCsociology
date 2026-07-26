@@ -143,9 +143,12 @@ body { font-family: "Courier New", Courier, monospace; background: #c0bdb0; colo
         <label>Class:</label>
         <select id="sel-class">
           <option value="">-- select --</option>
-          <option value="puffin">Puffin</option>
-          <option value="toucan">Toucan</option>
-          <option value="hummingbird">Hummingbird</option>
+          <option value="kookaburra">Kookaburra</option>
+          <option value="tawnyfrogmouth">Tawny Frogmouth</option>
+          <option value="magpie">Magpie</option>
+          <option value="galah">Galah</option>
+          <option value="rosella">Rosella</option>
+          <option value="fairywren">Fairy Wren</option>
         </select>
       </div>
       <div class="field-row">
@@ -165,9 +168,12 @@ body { font-family: "Courier New", Courier, monospace; background: #c0bdb0; colo
         <label>Class:</label>
         <select id="sel-class-r">
           <option value="">-- select --</option>
-          <option value="puffin">Puffin</option>
-          <option value="toucan">Toucan</option>
-          <option value="hummingbird">Hummingbird</option>
+          <option value="kookaburra">Kookaburra</option>
+          <option value="tawnyfrogmouth">Tawny Frogmouth</option>
+          <option value="magpie">Magpie</option>
+          <option value="galah">Galah</option>
+          <option value="rosella">Rosella</option>
+          <option value="fairywren">Fairy Wren</option>
         </select>
       </div>
       <div class="field-row">
@@ -213,7 +219,7 @@ body { font-family: "Courier New", Courier, monospace; background: #c0bdb0; colo
 
   <div class="infobar">
     <span class="badge" id="app-badge"></span>
-    <span class="task-text" id="task-text">Your teacher will provide today's writing task.</span>
+    <span class="task-text" id="task-text" onclick="teacherEditPrompt()" style="cursor:default;">Your teacher will provide today's writing task.</span>
     <span class="infobar-date" id="app-date"></span>
   </div>
 
@@ -443,14 +449,17 @@ function showApp(c,n){
   cls=c; name=n;
   el('screen-login').style.display='none';
   el('screen-app').style.display='flex';
-  el('app-badge').textContent=n.charAt(0).toUpperCase()+n.slice(1)+' / '+c.charAt(0).toUpperCase()+c.slice(1);
+  const birdNames = {kookaburra:'Kookaburra',tawnyfrogmouth:'Tawny Frogmouth',magpie:'Magpie',galah:'Galah',rosella:'Rosella',fairywren:'Fairy Wren'};
+  el('app-badge').textContent=n.charAt(0).toUpperCase()+n.slice(1)+' / '+(birdNames[c]||c.charAt(0).toUpperCase()+c.slice(1));
   el('sp-name').textContent=n+'@'+c;
   el('app-date').textContent=sessionDate;
   sessionStart=new Date();
   el('st-start').textContent=hhmm();
   loadExisting();
   snapTimer=setInterval(maybeSnap,30000);
+  if(name==='teacher') { const tt=el('task-text'); if(tt) tt.style.cursor='pointer'; }
   loadQuotes();
+  listenForPrompt();
 }
 
 async function loadExisting(){
@@ -997,6 +1006,83 @@ window.sendToTeacher = function() {
   }, function(err) {
     msg.textContent = 'Something went wrong. Ask your teacher for help. (' + JSON.stringify(err) + ')';
   });
+};
+
+
+// TEACHER PROMPT
+async function listenForPrompt() {
+  if(!cls) return;
+  try {
+    const { getFirestore, doc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js");
+    const db = getFirestore();
+    const promptRef = doc(db, 'classes', cls, 'meta', 'prompt');
+    onSnapshot(promptRef, snap => {
+      if(snap.exists() && snap.data().text) {
+        el('task-text').textContent = snap.data().text;
+      }
+    });
+  } catch(e) {}
+}
+
+async function savePrompt(text, targetCls) {
+  try {
+    const { getFirestore, doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js");
+    const db = getFirestore();
+    await setDoc(doc(db, 'classes', targetCls, 'meta', 'prompt'),
+      { text, updated: serverTimestamp() }, { merge: true });
+  } catch(e) { alert('Could not save prompt: ' + e.message); }
+}
+
+window.teacherEditPrompt = function() {
+  if(name !== 'teacher') return;
+  const taskEl = el('task-text');
+  const currentText = taskEl.textContent;
+
+  // Build inline editor
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'display:flex;align-items:center;gap:8px;flex:1;';
+
+  const clsSel = document.createElement('select');
+  clsSel.style.cssText = 'font-family:"Courier New",monospace;font-size:12px;padding:2px 4px;background:#404040;color:#fff;border:1px solid #606060;outline:none;';
+  [['kookaburra','Kookaburra'],['tawnyfrogmouth','Tawny Frogmouth'],['magpie','Magpie'],['galah','Galah'],['rosella','Rosella'],['fairywren','Fairy Wren']].forEach(([v,l]) => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = l;
+    clsSel.appendChild(o);
+  });
+
+  const inp = document.createElement('input');
+  inp.value = currentText === "Your teacher will provide today's writing task." ? "" : currentText;
+  inp.placeholder = "Type today's writing task...";
+  inp.style.cssText = 'flex:1;font-family:"Courier New",monospace;font-size:13px;font-style:italic;color:#c0c0c0;background:transparent;border:none;border-bottom:1px solid #808080;outline:none;padding:2px 0;';
+
+  const setBtn = document.createElement('button');
+  setBtn.textContent = 'Set';
+  setBtn.style.cssText = 'font-family:"Courier New",monospace;font-size:12px;background:#404040;color:#f0ead0;border:1px solid #606060;padding:2px 10px;cursor:pointer;';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = 'font-family:"Courier New",monospace;font-size:12px;background:transparent;color:#c0c0c0;border:none;cursor:pointer;';
+
+  wrapper.appendChild(clsSel);
+  wrapper.appendChild(inp);
+  wrapper.appendChild(setBtn);
+  wrapper.appendChild(cancelBtn);
+  taskEl.replaceWith(wrapper);
+  inp.focus();
+
+  async function doSet() {
+    const text = inp.value.trim();
+    const targetCls = clsSel.value;
+    if(!text) { wrapper.replaceWith(taskEl); return; }
+    taskEl.textContent = text;
+    wrapper.replaceWith(taskEl);
+    await savePrompt(text, targetCls);
+    playSound('snd-pop');
+  }
+
+  setBtn.addEventListener('click', doSet);
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') doSet(); if(e.key === 'Escape') wrapper.replaceWith(taskEl); });
+  cancelBtn.addEventListener('click', () => wrapper.replaceWith(taskEl));
 };
 
 // RULER
