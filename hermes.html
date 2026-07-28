@@ -5899,7 +5899,6 @@ function renameDoc(id) {
 }
 
 // Override maybeSnap to save to active doc
-const _origMaybeSnap = typeof maybeSnap !== 'undefined' ? maybeSnap : null;
 
 
 // WORKED EXAMPLES TABS
@@ -5913,17 +5912,6 @@ window.setWeTab = function(tab) {
   });
 };
 
-// FURTHER READING TABS
-window.setFrTab = function(tab) {
-  ['article','script'].forEach(t => {
-    const el = document.getElementById('fr-content-' + t);
-    if(el) el.style.display = t === tab ? 'block' : 'none';
-  });
-  document.querySelectorAll('#fr-tabs .we-tab').forEach((btn, i) => {
-    btn.classList.toggle('active', (i === 0 && tab === 'article') || (i === 1 && tab === 'script'));
-  });
-  if(tab === 'script') buildSceneIndex();
-};
 
 function buildSceneIndex() {
   const idx = document.getElementById('fr-scene-index');
@@ -5935,6 +5923,19 @@ function buildSceneIndex() {
       `<button class="fr-scene-btn" onclick="jumpToLine(${lineNum})">${label}</button>`
     ).join('');
 }
+
+
+// FURTHER READING TABS
+window.setFrTab = function(tab) {
+  ['article','script'].forEach(t => {
+    const el = document.getElementById('fr-content-' + t);
+    if(el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#fr-tabs .we-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', (i === 0 && tab === 'article') || (i === 1 && tab === 'script'));
+  });
+  if(tab === 'script') buildSceneIndex();
+};
 
 window.jumpToLine = function(lineNum) {
   const body = document.getElementById('fr-script-body');
