@@ -1358,7 +1358,7 @@ async function confirmChar() {
 
 
 // TEACHER PANEL
-function buildTeacherPanel() {
+window.buildTeacherPanel = function() {
   const birds = [
     ['kookaburra','Kookaburra'],['tawnyfrogmouth','Tawny Frogmouth'],
     ['magpie','Magpie'],['galah','Galah'],['rosella','Rosella'],
@@ -1404,7 +1404,7 @@ function buildTeacherPanel() {
   });
 }
 
-async function loadCurrentPrompt(key) {
+window.loadCurrentPrompt = async function(key) {
   try {
     const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js");
     const db = getFirestore();
@@ -1416,7 +1416,7 @@ async function loadCurrentPrompt(key) {
   } catch(e) {}
 }
 
-async function savePromptFor(key) {
+window.savePromptFor = async function(key) {
   const inp = document.getElementById('prompt-' + key);
   if(!inp || !inp.value.trim()) return;
   await savePrompt(inp.value.trim(), key);
@@ -1425,7 +1425,7 @@ async function savePromptFor(key) {
   setTimeout(() => { inp.style.background = '#f7f3e8'; }, 1000);
 }
 
-async function releaseUnconfirmed(key) {
+window.releaseUnconfirmed = async function(key) {
   const stat = document.getElementById('av-status-' + key);
   stat.textContent = 'Working...';
   try {
@@ -1443,7 +1443,7 @@ async function releaseUnconfirmed(key) {
   } catch(e) { stat.textContent = 'Error: ' + e.message; }
 }
 
-async function resetAllAvatars(key) {
+window.resetAllAvatars = async function(key) {
   if(!confirm('Reset ALL avatars for ' + key + '? This releases every character including confirmed ones. Students will need to re-select.')) return;
   const stat = document.getElementById('av-status-' + key);
   stat.textContent = 'Working...';
@@ -1459,7 +1459,7 @@ async function resetAllAvatars(key) {
   } catch(e) { stat.textContent = 'Error: ' + e.message; }
 }
 
-function savePasswords() {
+window.savePasswords = function() {
   const birds = ['kookaburra','tawnyfrogmouth','magpie','galah','rosella','fairywren','cassowary'];
   birds.forEach(key => {
     const inp = document.getElementById('pw-' + key);
@@ -1470,13 +1470,13 @@ function savePasswords() {
   setTimeout(() => { saved.style.display = 'none'; }, 2000);
 }
 
-function teacherEnterApp() {
+window.teacherEnterApp = function() {
   document.querySelectorAll('#screen-teacher,#screen-login,#screen-avatar').forEach(s=>s.style.display='none');
   showApp('teacher','teacher');
-}
+};
 
 
-async function resetStudentCode() {
+window.resetStudentCode = async function() {
   const cls = document.getElementById('reset-cls').value;
   const char = document.getElementById('reset-char').value.trim().toLowerCase();
   const result = document.getElementById('reset-result');
