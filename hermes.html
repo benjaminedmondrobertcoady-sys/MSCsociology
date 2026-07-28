@@ -497,6 +497,7 @@ function setSave(state){
 function showApp(c,n){
   cls=c; name=n;
   el('screen-login').style.display='none';
+  const st=document.getElementById('screen-teacher'); if(st) st.style.display='none';
   el('screen-app').style.display='flex';
   const birdNames = {kookaburra:'Kookaburra',tawnyfrogmouth:'Tawny Frogmouth',magpie:'Magpie',galah:'Galah',rosella:'Rosella',fairywren:'Fairy Wren',cassowary:'Cassowary'};
   el('app-badge').textContent=n.charAt(0).toUpperCase()+n.slice(1)+' / '+(birdNames[c]||c.charAt(0).toUpperCase()+c.slice(1));
@@ -1399,7 +1400,57 @@ function savePasswords() {
 
 function teacherEnterApp() {
   document.getElementById('screen-teacher').style.display = 'none';
+  document.getElementById('screen-login').style.display = 'none';
   showApp('teacher', 'teacher');
+}
+
+
+async function resetStudentCode() {
+  const cls = document.getElementById('reset-cls').value;
+  const char = document.getElementById('reset-char').value.trim().toLowerCase();
+  const result = document.getElementById('reset-result');
+  result.textContent = '';
+  result.style.color = '#1a1a1a';
+
+  if(!cls) { result.textContent = 'Please select a class.'; result.style.color = '#800000'; return; }
+  if(!char) { result.textContent = 'Please enter the character name.'; result.style.color = '#800000'; return; }
+
+  result.textContent = 'Working...';
+
+  try {
+    const { getFirestore, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js");
+    const { getAuth, signInWithEmailAndPassword, updatePassword } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js");
+    const db = getFirestore();
+    const auth2 = getAuth();
+
+    // Check student exists in Firestore
+    const sref = doc(db, 'classes', cls, 'students', char);
+    const snap = await getDoc(sref);
+    if(!snap.exists()) {
+      result.textContent = 'No student found: ' + char + ' in ' + cls + '. Check the name and class.';
+      result.style.color = '#800000';
+      return;
+    }
+
+    const oldCode = snap.data().recoveryCode;
+    const newCode = genCode();
+    const email = emailFor(cls, char);
+
+    // Sign in as that student to get their auth credential, then update password
+    await signInWithEmailAndPassword(auth2, email, oldCode);
+    await updatePassword(auth2.currentUser, newCode);
+
+    // Update Firestore record
+    await setDoc(sref, { recoveryCode: newCode }, { merge: true });
+
+    result.innerHTML = '<strong>New code for ' + char.charAt(0).toUpperCase() + char.slice(1) + ' (' + cls + '):</strong> <span style="font-size:20px;letter-spacing:0.2em;font-weight:bold;color:#2a2a6a;">' + newCode + '</span><br><span style="font-size:12px;color:#555;">Tell this to the student now. Their writing is safe.</span>';
+    result.style.color = '#1a1a1a';
+    playSound('snd-pop');
+
+  } catch(e) {
+    result.textContent = 'Error: ' + (e.code || e.message) + '. If the code says wrong-password, the student may have already had their code reset -- check Firestore.';
+    result.style.color = '#800000';
+  }
 }
 
 // EMAILJS
@@ -1595,6 +1646,28 @@ for(let i=1;i<130;i++){
       <div id="password-rows"></div>
       <button class="win-btn" style="margin-top:12px;" onclick="savePasswords()">Save Passwords</button>
       <span id="pw-saved" style="font-size:12px;color:#2a6a2a;margin-left:10px;display:none;">Saved.</span>
+    </div>
+
+    <!-- STUDENT RECOVERY CODE RESET -->
+    <div style="background:#fff;border:1px solid #a09870;padding:1.2rem;margin-bottom:1rem;">
+      <div style="font-weight:bold;font-size:14px;letter-spacing:0.08em;margin-bottom:0.5rem;color:#2a2a2a;">STUDENT RECOVERY CODE RESET</div>
+      <div style="font-size:12px;color:#555;margin-bottom:1rem;">If a student has forgotten their recovery code, issue them a new one here. Their writing is preserved. Give them the new code verbally.</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <select id="reset-cls" style="font-family:'Courier New',monospace;font-size:13px;padding:4px 8px;border:1px solid #a09870;background:#f7f3e8;outline:none;">
+          <option value="">-- class --</option>
+          <option value="kookaburra">Kookaburra</option>
+          <option value="tawnyfrogmouth">Tawny Frogmouth</option>
+          <option value="magpie">Magpie</option>
+          <option value="galah">Galah</option>
+          <option value="rosella">Rosella</option>
+          <option value="fairywren">Fairy Wren</option>
+          <option value="cassowary">Cassowary</option>
+        </select>
+        <input id="reset-char" type="text" placeholder="character name (e.g. athena)" autocomplete="off" spellcheck="false"
+          style="font-family:'Courier New',monospace;font-size:13px;padding:4px 8px;border:1px solid #a09870;background:#f7f3e8;outline:none;width:180px;">
+        <button class="win-btn" onclick="resetStudentCode()">Issue New Code</button>
+      </div>
+      <div id="reset-result" style="margin-top:12px;font-size:14px;min-height:20px;"></div>
     </div>
   </div>
 </div>
