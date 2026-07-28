@@ -5647,9 +5647,7 @@ window.resetStudentCode = async function() {
 }
 
 // EMAILJS
-(function(){
-  emailjs.init({ publicKey: '3fYd7Ad67oVpNSeZq' });
-})();
+// EmailJS init deferred to sendToTeacher call
 
 window.sendToTeacher = function() {
   const text = document.getElementById('writing-area').value.trim();
@@ -5660,7 +5658,10 @@ window.sendToTeacher = function() {
   msg.textContent = 'Sending your work to your teacher...';
   modal.style.display = 'flex';
   playSound('snd-fluffy');
-  emailjs.send('service_ac7kjyo', 'template_73git4p', {
+  const ejs = window.emailjs;
+  if(!ejs) { msg.textContent = 'Email service not loaded. Try refreshing the page.'; return; }
+  try { ejs.init({ publicKey: '3fYd7Ad67oVpNSeZq' }); } catch(e) {}
+  ejs.send('service_ac7kjyo', 'template_73git4p', {
     student_name: name || 'Unknown',
     student_class: cls || 'Unknown',
     word_count: w,
