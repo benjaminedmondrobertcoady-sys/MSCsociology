@@ -145,6 +145,20 @@ body { font-family: "Courier New", Courier, monospace; background: #c0bdb0; colo
 .colour-sq:first-child { border-radius: 2px 0 0 2px; }
 .colour-sq:last-child { border-radius: 0 2px 2px 0; border-left: none; }
 
+
+/* Documents */
+.doc-btn { width:100%; text-align:left; font-family:"Courier New",monospace; font-size:13px;
+  background:#fff; border:1px solid #c8b878; padding:6px 8px; cursor:pointer;
+  margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+.doc-btn:hover { background:#fff8e8; border-color:#a09850; }
+.doc-btn.active { background:#f0ead0; border-color:#808040; border-left:3px solid #2a2a2a; }
+.doc-btn .doc-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.doc-btn .doc-wc { color:#808080; font-size:11px; flex-shrink:0; }
+.doc-btn .doc-del { color:#c0c0c0; font-size:12px; flex-shrink:0; cursor:pointer; padding:0 2px; }
+.doc-btn .doc-del:hover { color:#800000; }
+.doc-name-input { width:100%; font-family:"Courier New",monospace; font-size:13px;
+  padding:4px 6px; border:1px solid #a09870; background:#fff; outline:none; margin-bottom:6px; }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
@@ -348,6 +362,15 @@ The camera moves slowly, as though reluctant to arrive. We observe the gap betwe
           <button class="panel-btn" style="width:100%;text-align:center;padding:6px;" onclick="forceSave()">Save Now</button>
         </div>
       </div>
+
+      <!-- DOCUMENTS -->
+      <div class="panel-head" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>MY DOCUMENTS</span>
+        <button class="qs-add-btn" onclick="newDocument()" title="New document">+</button>
+      </div>
+      <div class="panel-body" id="docs-panel">
+        <div class="panel-empty">No documents yet. Click + to create one.</div>
+      </div>
     </div>
   </div>
 
@@ -527,6 +550,8 @@ async function loadExisting(){
 }
 
 async function maybeSnap(){
+  // Also save active document
+  if(activeDocId) saveCurrentDoc();
   const text=el('writing-area').value, w=wc(text);
   if(Math.abs(w-lastWC)<5) return;
   lastWC=w; snapCount++;
@@ -688,14 +713,61 @@ function checkWC(text){
   if(!rep.length) r.push({t:'pass',msg:'No words repeated 4+ times. Good variety.'});
   else rep.slice(0,3).forEach(([w,c])=>r.push({t:'warn',msg:'"'+w+'" appears '+c+' times. Vary this word.'}));
 
-  // Weak analytical verbs
-  const weak=['shows','show','uses','use','makes','make','gives','give','tells','tell','says','said','looks','look'];
-  const foundWeak=weak.filter(v=>new RegExp('\\b'+v+'\\b','i').test(text));
+  // Weak analytical verbs with synonym suggestions
+  const verbSynonyms = {
+    'shows':    ['reveals','highlights','conveys','demonstrates','positions us to see'],
+    'show':     ['reveal','highlight','convey','demonstrate','position us to see'],
+    'uses':     ['employs','deploys','utilises','draws on'],
+    'use':      ['employ','deploy','utilise','draw on'],
+    'makes':    ['creates','constructs','establishes','produces'],
+    'make':     ['create','construct','establish','produce'],
+    'gives':    ['provides','offers','grants','conveys'],
+    'give':     ['provide','offer','grant','convey'],
+    'tells':    ['reveals','conveys','communicates','suggests'],
+    'tell':     ['reveal','convey','communicate','suggest'],
+    'says':     ['states','asserts','suggests','implies'],
+    'said':     ['stated','asserted','suggested','implied'],
+    'looks':    ['appears','seems','presents','reads as'],
+    'look':     ['appear','seem','present','read as'],
+  };
+  const foundWeak=Object.keys(verbSynonyms).filter(v=>new RegExp('\\b'+v+'\\b','i').test(text));
   if(foundWeak.length){
-    r.push({t:'warn',msg:'Weak verbs found: "'+foundWeak.join('", "')+'". Use the verb bank: positions, conveys, highlights, reveals, lets us observe, puts us inside.'});
+    foundWeak.slice(0,4).forEach(v=>{
+      const syns = verbSynonyms[v];
+      r.push({t:'warn',msg:'"'+v+'" is weak. Try: '+syns.join(', ')+'.'});
+    });
   } else {
     r.push({t:'pass',msg:'No weak verbs. Good analytical vocabulary.'});
   }
+
+  // Hypernym synonym suggestions
+  const hypernymSynonyms = {
+    'things':    ['techniques','moments','choices','decisions','details'],
+    'thing':     ['technique','moment','choice','decision','detail'],
+    'stuff':     ['material','content','details','substance'],
+    'aspects':   ['techniques','elements','dimensions','features'],
+    'aspect':    ['technique','element','dimension','feature'],
+    'elements':  ['techniques','components','details','choices'],
+    'element':   ['technique','component','detail','choice'],
+    'features':  ['techniques','qualities','characteristics','details'],
+    'feature':   ['technique','quality','characteristic','detail'],
+    'ideas':     ['arguments','claims','positions','views'],
+    'idea':      ['argument','claim','position','view'],
+    'ways':      ['techniques','methods','strategies','approaches'],
+    'way':       ['technique','method','strategy','approach'],
+    'factors':   ['reasons','causes','influences','forces'],
+    'factor':    ['reason','cause','influence','force'],
+    'people':    ['characters','individuals','figures','refugees','players'],
+    'person':    ['character','individual','figure'],
+    'society':   ['community','culture','world','town'],
+    'world':     ['community','culture','society','environment'],
+    'things happening': ['events','moments','developments'],
+  };
+  const foundHyperSyns = Object.keys(hypernymSynonyms).filter(h=>new RegExp('\\b'+h+'\\b','i').test(text));
+  foundHyperSyns.slice(0,3).forEach(h=>{
+    const syns = hypernymSynonyms[h];
+    if(syns) r.push({t:'fail',msg:'"'+h+'" is too vague. Be specific -- try: '+syns.join(', ')+'.'});
+  });
 
   return r;
 }
@@ -1399,9 +1471,8 @@ function savePasswords() {
 }
 
 function teacherEnterApp() {
-  document.getElementById('screen-teacher').style.display = 'none';
-  document.getElementById('screen-login').style.display = 'none';
-  showApp('teacher', 'teacher');
+  document.querySelectorAll('#screen-teacher,#screen-login,#screen-avatar').forEach(s=>s.style.display='none');
+  showApp('teacher','teacher');
 }
 
 
@@ -1556,6 +1627,157 @@ window.teacherEditPrompt = function() {
   inp.addEventListener('keydown', e => { if(e.key === 'Enter') doSet(); if(e.key === 'Escape') wrapper.replaceWith(taskEl); });
   cancelBtn.addEventListener('click', () => wrapper.replaceWith(taskEl));
 };
+
+
+// DOCUMENTS
+let docs = {};          // { docId: {name, body, wordCount, updated} }
+let activeDocId = null;
+const MAX_DOCS = 5;
+
+function docsKey() { return cls + '/' + name + '/documents'; }
+
+async function loadDocs() {
+  if(!cls || !name || name === 'teacher') return;
+  try {
+    const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js");
+    const db = getFirestore();
+    const snap = await getDocs(collection(db, 'classes', cls, 'students', name, 'documents'));
+    docs = {};
+    snap.forEach(d => { docs[d.id] = d.data(); });
+    // If no docs yet, create a default one
+    if(Object.keys(docs).length === 0) {
+      await createDefaultDoc();
+    } else {
+      // Load most recently updated doc
+      const sorted = Object.entries(docs).sort((a,b) => (b[1].updated||0) - (a[1].updated||0));
+      loadDocIntoEditor(sorted[0][0]);
+    }
+    renderDocPanel();
+  } catch(e) { console.error('loadDocs:', e); }
+}
+
+async function createDefaultDoc() {
+  const id = 'doc_' + Date.now();
+  const today = new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'short'});
+  const doc = { name: 'Draft ' + today, body: '', wordCount: 0, updated: Date.now() };
+  docs[id] = doc;
+  activeDocId = id;
+  await saveDocToFirestore(id);
+  renderDocPanel();
+}
+
+function loadDocIntoEditor(id) {
+  activeDocId = id;
+  const doc = docs[id];
+  if(!doc) return;
+  const ta = document.getElementById('writing-area');
+  ta.value = doc.body || '';
+  const w = wc(ta.value);
+  document.getElementById('st-wc').textContent = w;
+  document.getElementById('sp-wc').textContent = w;
+  renderDocPanel();
+}
+
+function renderDocPanel() {
+  const panel = document.getElementById('docs-panel');
+  if(!panel) return;
+  const entries = Object.entries(docs).sort((a,b) => (b[1].updated||0) - (a[1].updated||0));
+  if(entries.length === 0) {
+    panel.innerHTML = '<div class="panel-empty">No documents yet.</div>';
+    return;
+  }
+  panel.innerHTML = entries.map(([id, doc]) => `
+    <div class="doc-btn ${id === activeDocId ? 'active' : ''}" onclick="switchDoc('${id}')">
+      <span class="doc-name" id="docname-${id}">${doc.name || 'Untitled'}</span>
+      <span class="doc-wc">${doc.wordCount||0}w</span>
+      <span class="doc-del" onclick="event.stopPropagation();deleteDoc('${id}')" title="Delete">x</span>
+    </div>`).join('') +
+    (entries.length < MAX_DOCS ? '' : '<div style="font-size:11px;color:#808080;margin-top:4px;">Maximum 5 documents reached.</div>');
+
+  // Double-click to rename
+  entries.forEach(([id]) => {
+    const el = document.getElementById('docname-' + id);
+    if(el) el.addEventListener('dblclick', e => { e.stopPropagation(); renameDoc(id); });
+  });
+}
+
+async function switchDoc(id) {
+  if(id === activeDocId) return;
+  // Save current doc first
+  await saveCurrentDoc();
+  loadDocIntoEditor(id);
+  playSound('snd-menuslide');
+}
+
+async function newDocument() {
+  if(Object.keys(docs).length >= MAX_DOCS) {
+    alert('Maximum 5 documents. Delete one first.');
+    return;
+  }
+  await saveCurrentDoc();
+  await createDefaultDoc();
+  playSound('snd-fluffy');
+}
+
+async function saveCurrentDoc() {
+  if(!activeDocId) return;
+  const ta = document.getElementById('writing-area');
+  const body = ta ? ta.value : '';
+  const w = wc(body);
+  docs[activeDocId] = { ...docs[activeDocId], body, wordCount: w, updated: Date.now() };
+  await saveDocToFirestore(activeDocId);
+  renderDocPanel();
+}
+
+async function saveDocToFirestore(id) {
+  if(!cls || !name || name === 'teacher') return;
+  try {
+    const { getFirestore, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js");
+    const db = getFirestore();
+    await setDoc(doc(db, 'classes', cls, 'students', name, 'documents', id), docs[id]);
+  } catch(e) { console.error('saveDocToFirestore:', e); }
+}
+
+async function deleteDoc(id) {
+  if(Object.keys(docs).length <= 1) { alert('You need at least one document.'); return; }
+  if(!confirm('Delete "' + (docs[id]?.name||'this document') + '"? This cannot be undone.')) return;
+  try {
+    const { getFirestore, doc, deleteDoc: fsDelete } = await import("https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js");
+    const db = getFirestore();
+    await fsDelete(doc(db, 'classes', cls, 'students', name, 'documents', id));
+    delete docs[id];
+    if(activeDocId === id) {
+      const remaining = Object.keys(docs);
+      if(remaining.length > 0) loadDocIntoEditor(remaining[0]);
+    }
+    renderDocPanel();
+    playSound('snd-toggle');
+  } catch(e) { alert('Delete failed: ' + e.message); }
+}
+
+function renameDoc(id) {
+  const el = document.getElementById('docname-' + id);
+  if(!el) return;
+  const current = docs[id]?.name || 'Untitled';
+  const input = document.createElement('input');
+  input.className = 'doc-name-input';
+  input.value = current;
+  input.style.cssText = 'font-size:12px;padding:2px 4px;width:100%;';
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+  async function finish() {
+    const newName = input.value.trim() || current;
+    docs[id] = { ...docs[id], name: newName };
+    await saveDocToFirestore(id);
+    renderDocPanel();
+  }
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', e => { if(e.key==='Enter') input.blur(); if(e.key==='Escape') { input.value=current; input.blur(); } });
+}
+
+// Override maybeSnap to save to active doc
+const _origMaybeSnap = typeof maybeSnap !== 'undefined' ? maybeSnap : null;
 
 // RULER
 const ruler=el('ruler');
