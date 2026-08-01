@@ -29,6 +29,9 @@
     snap.forEach(d => rows.push(d.data()));
     return rows;
   };
+  // signal the main script that Firebase is ready (modules run after normal scripts)
+  window.__fbReady = true;
+  document.dispatchEvent(new Event('firebase-ready'));
 </script>
 <style>
   :root{
@@ -228,11 +231,31 @@
     return Math.round(s/86400)+'d ago'; }
 
   /* ---------- auth ---------- */
-  var A=window.__auth;
+  var A=null;
+  function startAuth(){
+    A=window.__auth;
+    if(!A){ el('gateErr').textContent='Could not reach the sign-in service. Check your connection and reload.'; return; }
+    A.onAuthStateChanged(A.auth, function(user){
+      if(user){
+        el('gate').style.display='none';
+        el('app').style.display='block';
+        el('whoami').textContent=user.email;
+        initClassPicker();
+        loadClass(el('classPick').value);
+      } else {
+        el('gate').style.display='flex';
+        el('app').style.display='none';
+      }
+    });
+  }
+  if(window.__fbReady) startAuth();
+  else document.addEventListener('firebase-ready', startAuth);
+
   el('signInBtn').addEventListener('click', doSignIn);
   el('pw').addEventListener('keydown', function(e){ if(e.key==='Enter') doSignIn(); });
   function doSignIn(){
     el('gateErr').textContent='';
+    if(!A){ el('gateErr').textContent='Still connecting. Give it a second and try again.'; return; }
     A.signInWithEmailAndPassword(A.auth, el('email').value.trim(), el('pw').value)
      .catch(function(e){ el('gateErr').textContent = friendlyAuth(e.code); });
   }
@@ -242,19 +265,7 @@
     if(code==='auth/too-many-requests') return 'Too many tries. Wait a moment and try again.';
     return 'Could not sign in. Check your connection.';
   }
-  el('signOutBtn').addEventListener('click', function(){ A.signOut(A.auth); });
-  A.onAuthStateChanged(A.auth, function(user){
-    if(user){
-      el('gate').style.display='none';
-      el('app').style.display='block';
-      el('whoami').textContent=user.email;
-      initClassPicker();
-      loadClass(el('classPick').value);
-    } else {
-      el('gate').style.display='flex';
-      el('app').style.display='none';
-    }
-  });
+  el('signOutBtn').addEventListener('click', function(){ if(A) A.signOut(A.auth); });
 
   function initClassPicker(){
     var sel=el('classPick');
