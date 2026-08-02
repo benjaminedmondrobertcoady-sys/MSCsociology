@@ -94,6 +94,19 @@
   .menu a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--navy);font-weight:bold;font-size:0.92rem;
     padding:7px 6px;border-bottom:1px dotted var(--rule);}
   .menu a:hover{background:#fff7e0;color:var(--gold-d);}
+  /* ---------- pinned quick-access cards (above spotlight) ---------- */
+  .pinned-title{font-variant:small-caps;letter-spacing:.1em;color:var(--navy);font-weight:bold;font-size:0.95rem;
+    text-align:center;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:8px;margin-top:4px;}
+  .pinned-cards{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
+  .pinned-card{display:flex;align-items:center;gap:10px;text-decoration:none;
+    background:var(--cream);border:1.5px solid var(--rule);padding:8px 10px;
+    border-left:4px solid var(--gold);transition:background .12s,border-color .12s;}
+  .pinned-card:hover{background:#fff7e0;border-color:var(--gold-d);}
+  .pinned-card img{width:36px;height:36px;object-fit:contain;flex-shrink:0;}
+  .pinned-card-text{flex:1;}
+  .pinned-card-name{font-weight:bold;font-size:0.9rem;color:var(--navy);line-height:1.2;}
+  .pinned-card-sub{font-size:0.75rem;color:var(--gold-d);letter-spacing:.04em;}
+  .pinned-card-arrow{font-size:0.85rem;color:var(--gold-d);flex-shrink:0;}
   .menu a .b{width:16px;text-align:center;}
 
   /* ---------- left-column discovery widget (replaces old netscape badge) ---------- */
@@ -547,6 +560,28 @@ body.us-mode .bulletin{
         <a href="#eal"><span class="b">&#128483;&#65039;</span> EAL / EFL</a>
       </div>
 
+
+      <!-- PINNED: QUICK ACCESS - always visible above spotlight -->
+      <div class="pinned-title">Quick Access</div>
+      <div class="pinned-cards">
+        <a class="pinned-card" href="quiz-town.html">
+          <img src="quiz-town-title.png" alt="Quiz Town" onerror="this.onerror=null;this.src='icon_book.png';">
+          <div class="pinned-card-text">
+            <div class="pinned-card-name">Quiz Town</div>
+            <div class="pinned-card-sub">Paragraph quiz &amp; marking</div>
+          </div>
+          <span class="pinned-card-arrow">&#9656;</span>
+        </a>
+        <a class="pinned-card" href="hermes.html">
+          <img src="hermes-title.png" alt="Hermes" onerror="this.onerror=null;this.src='icon_book.png';">
+          <div class="pinned-card-text">
+            <div class="pinned-card-name">Hermes</div>
+            <div class="pinned-card-sub">Writing &amp; submission</div>
+          </div>
+          <span class="pinned-card-arrow">&#9656;</span>
+        </a>
+      </div>
+
       <!-- SPOTLIGHT: single rotating box, cycles the 32-card pool -->
       <div class="widget" id="discoveryWidget">
         <div class="widget-title"><img src="spotlight-title.png" alt="Spotlight"></div>
@@ -597,6 +632,22 @@ body.us-mode .bulletin{
       <div id="sociology"></div>
       <div class="chapter-bar"><span class="num">I</span> Sociology <span class="right">Deviance &amp; Social Norms</span></div>
       <div class="entries">
+
+
+        <a class="entry" href="quiz-town.html">
+          <img class="ic" src="quiz-town-title.png" alt="" onerror="this.onerror=null;this.src='icon_book.png';">
+          <span class="tx">
+            <h3>Quiz Town</h3>
+            <p>Paragraph-answer quizzes, AI-marked against key beats. Write clearly, use your vocabulary, and hit the key ideas. Includes the Key Concept Index for tracking class understanding over time.</p>
+            <span class="skill">Thinking skill: extended recall &amp; academic writing</span>
+            <span class="tags">
+              <span class="rec">&#127891; VCE Sociology</span>
+              <span class="rec">&#9998; Paragraph Writing</span>
+              <span class="rec">&#127970; Teacher Tools</span>
+            </span>
+          </span>
+          <span class="open">Open &#9656;</span>
+        </a>
 
         <a class="entry" href="sociologygame.html">
           <img class="ic" src="icon_globe.png" alt="">
