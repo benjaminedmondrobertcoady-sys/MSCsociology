@@ -1638,9 +1638,9 @@
   function updateProgress(L){
     if(L.kind==='rewrite'){
       var ta=el('writer').querySelector('textarea');
-      var changed = ta && ta.value.trim() && ta.value.trim()!==L.passage.text.trim();
-      el('progress').textContent = changed ? 'Ready to check' : 'Rewrite the paragraph above';
-      el('submitBtn').classList.toggle('ready', !!changed);
+      var didChange = ta && ta.value.trim() && ta.value.trim()!==L.passage.text.trim();
+      el('progress').textContent = didChange ? 'Ready to check' : 'Rewrite the paragraph above';
+      el('submitBtn').classList.toggle('ready', !!didChange);
       return;
     }
     if(L.kind==='repair'){
