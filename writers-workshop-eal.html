@@ -1278,6 +1278,21 @@
   var STORE='eq-ww-eal-progress';
   function progress(){ try{ return JSON.parse(localStorage.getItem(STORE)||'{}'); }catch(_){ return {}; } }
   function setResult(id,flag){ var p=progress(); p[id]=flag; try{ localStorage.setItem(STORE, JSON.stringify(p)); }catch(_){} renderLessons(); }
+
+  /* ---- per-lesson WORK save/restore (keeps sentences when switching lessons) ---- */
+  var WORKSTORE='eq-ww-eal-work';
+  function allWork(){ try{ return JSON.parse(localStorage.getItem(WORKSTORE)||'{}'); }catch(_){ return {}; } }
+  function saveWork(){
+    try{
+      var L=LESSONS[currentLesson]; if(!L) return;
+      var rows={};
+      allRows().forEach(function(r){ var ta=r.querySelector('textarea'); if(ta && ta.value.trim()) rows[r.dataset.key]=ta.value; });
+      var w=allWork();
+      w[L.id]={ collected: collected.slice(), round: currentRound, rows: rows };
+      localStorage.setItem(WORKSTORE, JSON.stringify(w));
+    }catch(_){}
+  }
+  function loadWork(id){ var w=allWork(); return w[id]||null; }
   function unlockedAt(i){ var p=progress(); return teacherMode || i===0 || !!p[LESSONS[i-1].id]; }
 
   function renderLessons(){
@@ -1300,7 +1315,7 @@
         var i=+b.dataset.i;
         if(!unlockedAt(i)) return;
         if(i===currentLesson) return;
-        currentLesson=i; loadLesson();
+        saveWork(); currentLesson=i; loadLesson();
       });
     });
   }
@@ -1449,7 +1464,7 @@
       if(collected.length>=L.collect){ showHint('You have enough already. Tap a green person to swap them out.','Note'); return; }
       collected.push(p.name); p._pin.classList.add('got'); p._tag.classList.add('show');
     }
-    renderWriterRows(L); updateProgress(L);
+    renderWriterRows(L); updateProgress(L); saveWork();
   }
 
   /* ---------- writer rows ---------- */
@@ -1553,7 +1568,7 @@
       '<textarea rows="1" aria-label="'+esc(label.replace(/<[^>]+>/g,''))+'" placeholder="'+esc(placeholder)+'"></textarea>'+
       '<div class="fb"></div></div>';
     var ta=row.querySelector('textarea'); ta.value=value;
-    ta.addEventListener('input',function(){ updateProgress(LESSONS[currentLesson]); });
+    ta.addEventListener('input',function(){ updateProgress(LESSONS[currentLesson]); saveWork(); });
     return row;
   }
 
@@ -1599,6 +1614,7 @@
     buildBank(L.bank);
     renderWarm(L);
     renderWriterRows(L);
+    restoreWorkValues(L);
     updateProgress(L);
     setModel(currentRound===0);
     // in names/scratch rounds the scene is reference only; keep it tappable in scaffold/noverb
@@ -1759,16 +1775,64 @@
       if(tags.indexOf('compound')>-1||tags.indexOf('complex')>-1) bits.push('one grew into more than one idea, which is a later lesson');
       advice=(bits.length? bits.join(', and ') : 'a couple need another look')+'. Read the note under each marked sentence, fix it, then check again.';
     }
+    // work out what the student can do next
+    var passed = rag!=='red';
+    var moreRounds = lessonUsesRounds(L) && currentRound < ROUNDS.length-1;
+    var lessonDone = passed && !moreRounds;
+    var hasNextLesson = currentLesson < LESSONS.length-1;
+    var advanceBtn='';
+    if(passed && moreRounds){
+      advanceBtn='<button class="btn primary" id="nextRoundBtn" style="margin-top:12px">Next round &#9656;</button>';
+    } else if(lessonDone && hasNextLesson){
+      advanceBtn='<button class="btn primary" id="nextLessonBtn" style="margin-top:12px">Next lesson: '+LESSONS[currentLesson+1].id+' &#9656;</button>';
+    }
     openModal('Feedback',
       '<div class="ragrow"><div class="ragbadge rag-'+rag+'"><span class="rl">'+rag+'</span><span class="rs">'+green+'/'+total+'</span></div>'+
       '<div class="rtext"><b>'+headline+'</b><br>'+advice+'</div></div>'+
-      (off===0 ? '<p style="margin-top:10px">Show this code to your teacher: <b style="font-family:var(--prose);letter-spacing:.06em;color:var(--gold-deep)">'+lastRecord.code+'</b></p>' : ''));
+      (off===0 ? '<p style="margin-top:10px">Show this code to your teacher: <b style="font-family:var(--prose);letter-spacing:.06em;color:var(--gold-deep)">'+lastRecord.code+'</b></p>' : '')+
+      advanceBtn);
+    // wire the advance buttons (they live inside the modal)
+    var nr=document.getElementById('nextRoundBtn');
+    if(nr) nr.addEventListener('click',function(){
+      closeModal();
+      currentRound++; graded=false;
+      el('submitBtn').textContent='Submit for feedback';
+      allRows().forEach(function(r){ var t=r.querySelector('textarea'); if(t) t.disabled=false; r.classList.remove('correct','near','wrong','graded'); });
+      renderRoundBar(L); renderWarm(L); renderWriterRows(L); restoreWorkValues(L); updateProgress(L);
+      el('buildspace') && (el('buildspace').scrollTop=0);
+    });
+    var nl=document.getElementById('nextLessonBtn');
+    if(nl) nl.addEventListener('click',function(){
+      closeModal();
+      saveWork();
+      if(currentLesson < LESSONS.length-1){ currentLesson++; loadLesson(); }
+    });
   }
 
   /* ---------- load a lesson in place ---------- */
+  function restoreWorkValues(L){
+    var saved=loadWork(L.id); if(!saved) return;
+    // refill textareas by row key
+    if(saved.rows){
+      allRows().forEach(function(r){
+        var v=saved.rows[r.dataset.key];
+        if(v!=null){ var ta=r.querySelector('textarea'); if(ta) ta.value=v; }
+      });
+    }
+    // re-mark collected people in the scene as selected (visual), so the tags/pins match
+    if(saved.collected && saved.collected.length && SCENES[L.scene]){
+      var people=SCENES[L.scene].people||[];
+      people.forEach(function(p){
+        if(saved.collected.indexOf(p.name)>-1 && p._pin){ p._pin.classList.add('got'); if(p._tag) p._tag.classList.add('show'); }
+      });
+    }
+  }
+
   function loadLesson(){
     var L=LESSONS[currentLesson];
     graded=false; collected=[];
+    var _saved=loadWork(L.id);
+    if(_saved){ collected=(_saved.collected||[]).slice(); }
     el('submitBtn').textContent='Submit for feedback';
     el('lessonTitle').innerHTML="Grammar Works "+L.id+' <span style="font-weight:400;font-size:14px;opacity:.7;">'+L.name+'</span>';
     el('loText').textContent=L.lo;
@@ -1779,13 +1843,14 @@
       : L.kind==='repair'
       ? 'Step 1 &middot; <b>Read each sentence.</b> Name what is wrong with it, then write it correctly'
       : ('Step '+(L.warm?2:1)+' &middot; <b>Tap '+(L.joinTwo?'two people':(L.collect===1?'a person':(L.collect===2?'two people':'three people')))+'</b> in the picture');
-    currentRound=0;
+    currentRound = (_saved && typeof _saved.round==='number') ? _saved.round : 0;
     renderModel(L);
     renderScene(L);
     renderRoundBar(L);
     buildBank(L.bank);
     renderWarm(L);
     renderWriterRows(L);
+    restoreWorkValues(L);
     updateProgress(L);
     setModel(true);
     renderLangNote();
