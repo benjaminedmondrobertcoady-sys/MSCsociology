@@ -140,7 +140,7 @@ var STORE_KEY="merger_annot_v2";
 var EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
 var EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
 var EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-var TEACHER_EMAIL = "you@example.com";
+var TEACHER_EMAIL = "eduquestpostbox@gmail.com";
 /* In the EmailJS template add a Dynamic Attachment:
      Content  = {{content}}      Filename = {{filename}}
    and use {{student_name}}, {{shot}}, {{message}} in the subject/body. */
@@ -278,6 +278,25 @@ document.getElementById('clear').onclick=function(){
 
 window.addEventListener('resize',drawLines);
 
+function fieldToDiv(cdoc,o,c){
+  var g=window.getComputedStyle(o);
+  var d=cdoc.createElement('div');
+  d.textContent=o.value||'';
+  d.style.cssText='box-sizing:border-box;margin:0;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;'
+    +'width:'+o.offsetWidth+'px;min-height:'+o.offsetHeight+'px;'
+    +'font-family:'+g.fontFamily+';font-size:'+g.fontSize+';font-weight:'+g.fontWeight+';line-height:'+g.lineHeight+';'
+    +'color:'+g.color+';text-align:'+g.textAlign+';letter-spacing:'+g.letterSpacing+';'
+    +'padding:'+g.paddingTop+' '+g.paddingRight+' '+g.paddingBottom+' '+g.paddingLeft+';'
+    +'border:'+g.borderTopWidth+' solid '+g.borderTopColor+';border-radius:'+g.borderRadius+';background:'+g.backgroundColor+';';
+  c.parentNode.replaceChild(d,c);
+}
+function captureWork(scale){
+  return html2canvas(document.getElementById('work'),{backgroundColor:'#f4f1ea',scale:scale,useCORS:true,onclone:function(cdoc){
+    var o=document.querySelectorAll('#work textarea, #work input[type=text]');
+    var c=cdoc.querySelectorAll('#work textarea, #work input[type=text]');
+    for(var i=0;i<c.length && i<o.length;i++){ fieldToDiv(cdoc,o[i],c[i]); }
+  }});
+}
 document.getElementById('send').onclick=function(){
   var name=(data.who||'').trim();
   if(!name){alert('Please type your name in the box on the shot first, so I know whose work this is.');whoBox.focus();return;}
@@ -285,7 +304,7 @@ document.getElementById('send').onclick=function(){
   sfx('open');commitColumns();drawLines();
   var btn=this;btn.disabled=true;btn.classList.add('sending');btn.title='Sending…';
   var work=document.getElementById('work');
-  html2canvas(work,{backgroundColor:'#f4f1ea',scale:1.4,useCORS:true}).then(function(cv){
+  captureWork(1.4).then(function(cv){
     var maxW=1400,k=cv.width>maxW?maxW/cv.width:1,out=cv;
     if(k<1){var c2=document.createElement('canvas');c2.width=Math.round(cv.width*k);c2.height=Math.round(cv.height*k);c2.getContext('2d').drawImage(cv,0,0,c2.width,c2.height);out=c2;}
     var b64=out.toDataURL('image/jpeg',0.82).split(',')[1];
@@ -309,9 +328,8 @@ document.getElementById('send').onclick=function(){
 };
 document.getElementById('png').onclick=function(){
   sfx('open');commitColumns();drawLines();
-  var work=document.getElementById('work');
   var name=(data.who||'student').replace(/[^a-z0-9]+/gi,'_');
-  html2canvas(work,{backgroundColor:'#f4f1ea',scale:2,useCORS:true}).then(function(cv){
+  captureWork(2).then(function(cv){
     var a=document.createElement('a');a.download='merger_'+current+'_'+name+'.png';a.href=cv.toDataURL('image/png');a.click();
   });
 };
