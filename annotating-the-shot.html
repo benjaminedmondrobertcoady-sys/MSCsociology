@@ -300,30 +300,28 @@ function captureWork(scale){
 document.getElementById('send').onclick=function(){
   var name=(data.who||'').trim();
   if(!name){alert('Please type your name in the box on the shot first, so I know whose work this is.');whoBox.focus();return;}
-  if(EMAILJS_SERVICE_ID.indexOf('YOUR_')===0){alert('The Send button is not connected yet — the EmailJS keys at the top of this file still need filling in.');return;}
   sfx('open');commitColumns();drawLines();
-  var btn=this;btn.disabled=true;btn.classList.add('sending');btn.title='Sending…';
-  var work=document.getElementById('work');
-  captureWork(1.4).then(function(cv){
-    var maxW=1400,k=cv.width>maxW?maxW/cv.width:1,out=cv;
-    if(k<1){var c2=document.createElement('canvas');c2.width=Math.round(cv.width*k);c2.height=Math.round(cv.height*k);c2.getContext('2d').drawImage(cv,0,0,c2.width,c2.height);out=c2;}
-    var b64=out.toDataURL('image/jpeg',0.82).split(',')[1];
-    var fname='merger_'+current+'_'+name.replace(/[^a-z0-9]+/gi,'_')+'.jpg';
-    return emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
-      to_email:TEACHER_EMAIL,
-      student_name:name,
-      shot:LABELS[current],
-      subject:'Shot annotation \u2014 '+name+' \u2014 '+LABELS[current],
-      message:name+' submitted an annotated shot ('+LABELS[current]+') from The Merger.',
-      filename:fname,
-      content:b64
-    });
-  }).then(function(){
-    btn.classList.remove('sending');btn.disabled=false;btn.title='Posted \u2713 — sent to teacher';savedEl.textContent='Sent to teacher';
-    setTimeout(function(){savedEl.textContent='';btn.title='Post your work to your teacher';},2600);
-  }).catch(function(err){
-    btn.disabled=false;btn.classList.remove('sending');btn.title='Post your work to your teacher';
-    alert('Could not send: '+((err&&err.text)?err.text:err)+'\n\nYou can still use "Download my work" and hand it in that way.');
+  var btn=this;btn.disabled=true;btn.classList.add('sending');btn.title='Sending\u2026';
+  captureWork(1.6).then(function(cv){
+    cv.toBlob(function(blob){
+      var fname='merger_'+current+'_'+name.replace(/[^a-z0-9]+/gi,'_')+'.jpg';
+      var fd=new FormData();
+      fd.append('name',name);
+      fd.append('shot',LABELS[current]);
+      fd.append('Techniques',data.shots[current].tech||'(none written)');
+      fd.append('Analysis',data.shots[current].analysis||'(none written)');
+      fd.append('_subject','Shot annotation: '+name+' \u2014 '+LABELS[current]);
+      fd.append('_captcha','false');
+      fd.append('_template','table');
+      fd.append('attachment',blob,fname);
+      fetch('https://formsubmit.co/'+TEACHER_EMAIL,{method:'POST',mode:'no-cors',body:fd}).then(function(){
+        btn.classList.remove('sending');btn.disabled=false;btn.title='Posted \u2713 \u2014 sent to teacher';savedEl.textContent='Posted to teacher \u2713';
+        setTimeout(function(){savedEl.textContent='';btn.title='Post your work to your teacher';},3000);
+      }).catch(function(err){
+        btn.disabled=false;btn.classList.remove('sending');btn.title='Post your work to your teacher';
+        alert('Could not send: '+err+'\n\nYou can still use "Download my work" and hand it in.');
+      });
+    },'image/jpeg',0.82);
   });
 };
 document.getElementById('png').onclick=function(){
