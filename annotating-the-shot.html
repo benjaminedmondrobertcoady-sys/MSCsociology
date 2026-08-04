@@ -304,6 +304,18 @@ function fieldToDiv(cdoc,o,c){
 }
 function captureWork(scale){
   return html2canvas(document.getElementById('work'),{backgroundColor:'#f4f1ea',scale:scale,useCORS:true,onclone:function(cdoc){
+    var stage=document.getElementById('stage'); var sr=stage.getBoundingClientRect();
+    function pin(sel){
+      var o=document.querySelectorAll(sel), c=cdoc.querySelectorAll(sel);
+      for(var i=0;i<c.length && i<o.length;i++){
+        var r=o[i].getBoundingClientRect();
+        c[i].style.left=(r.left-sr.left)+'px';
+        c[i].style.top=(r.top-sr.top)+'px';
+        c[i].style.transform='none';
+        c[i].style.right='auto'; c[i].style.bottom='auto'; c[i].style.margin='0';
+      }
+    }
+    pin('#stage .note'); pin('#stage .anchor');
     var o=document.querySelectorAll('#work textarea, #work input[type=text]');
     var c=cdoc.querySelectorAll('#work textarea, #work input[type=text]');
     for(var i=0;i<c.length && i<o.length;i++){ fieldToDiv(cdoc,o[i],c[i]); }
