@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reel Evidence | Build Your Contention | EduQuest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1B2A4A;
+  --cream:#F3E4C4;
+  --ink:#1a1a2e;
+  --mustard:#C8860A;
+  --ohu-o:#1B6B72;
+  --ohu-o-bg:#DDF3F5;
+  --ohu-h:#9B2A24;
+  --ohu-h-bg:#FDECEA;
+  --ohu-u:#7A5C00;
+  --ohu-u-bg:#FFF8E1;
+  --display:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --prose:"Bitter",Georgia,serif;
+  --type:"Courier Prime",monospace;
+}
+body{font-family:var(--prose);color:var(--ink);background:var(--cream);min-height:100vh;}
+.wrap{max-width:900px;margin:0 auto;padding:16px 20px 70px;}
+
+/* HEADER */
+.top{display:flex;align-items:center;gap:12px;padding:12px 0 16px;border-bottom:2px solid #c8b89a;margin-bottom:18px;flex-wrap:wrap;}
+.wordmark{font-family:var(--type);font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);}
+.wordmark span{color:#7a6a50;font-weight:400;}
+.spacer{flex:1;}
+.txtbtn{font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:transparent;border:2px solid #9a8a70;color:var(--navy);border-radius:8px;padding:9px 15px;cursor:pointer;}
+.txtbtn:hover{border-color:var(--navy);background:var(--navy);color:var(--cream);}
+.txtbtn.on{background:var(--navy);border-color:var(--navy);color:var(--cream);}
+
+/* NAME ENTRY */
+.name-screen{max-width:480px;margin:60px auto 0;text-align:center;}
+.name-screen h1{font-family:var(--display);font-size:32px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.name-screen p{font-size:16px;color:#5a4a30;margin-bottom:30px;line-height:1.6;}
+.name-row{display:flex;gap:8px;}
+.name-row input{flex:1;font-family:var(--prose);font-size:17px;background:#fff;border:2px solid #9a8a70;color:var(--ink);border-radius:9px;padding:13px 16px;}
+.name-row input::placeholder{color:#a09070;font-style:italic;}
+.name-row input:focus{outline:none;border-color:var(--navy);}
+.name-row button{font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--navy);color:var(--cream);border:none;border-radius:9px;padding:0 22px;cursor:pointer;}
+
+/* LO BANNER -- navy with compass, matching WW structure */
+.lo-banner{margin-bottom:18px;padding:12px 18px;border-radius:10px;display:flex;gap:0;align-items:center;
+  background:linear-gradient(135deg,#1B2A4A,#0d1d38);border:2px solid #0d1d38;
+  box-shadow:0 3px 0 rgba(13,29,56,.5);}
+.lo-emblem{flex:0 0 auto;height:46px;width:auto;opacity:.92;padding-right:14px;
+  border-right:1px solid rgba(255,255,255,.25);filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));}
+.lo-text{flex:1;font-family:var(--prose);font-size:16px;line-height:1.45;color:var(--cream);font-weight:600;padding-left:14px;}
+.lo-text em{font-style:normal;}
+.lo-o{color:#7de8ef;font-weight:700;font-style:normal;}
+.lo-h{color:#f4a09a;font-weight:700;font-style:normal;}
+.lo-u{color:#f5cc5a;font-weight:700;font-style:normal;}
+.lo-badge{font-family:var(--type);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--mustard);color:#fff;border-radius:5px;padding:4px 10px;flex:0 0 auto;margin-left:12px;}
+
+/* QUESTION PICKER */
+.q-pick{margin-bottom:20px;}
+.section-head{font-family:var(--type);font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:12px;}
+.q-option{background:#fff;border:2.5px solid #c8b89a;border-radius:12px;padding:16px 20px;cursor:pointer;
+  margin-bottom:10px;transition:all .12s;}
+.q-option:hover{border-color:var(--navy);}
+.q-option.selected{border-color:var(--navy);background:#eee8d8;}
+.q-option .q-num{font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7a6a50;margin-bottom:5px;}
+.q-option .q-text{font-family:var(--prose);font-size:17px;line-height:1.55;color:var(--ink);font-style:italic;}
+.q-option.selected .q-num{color:var(--navy);}
+
+/* QUESTION DISPLAY (after selection) */
+.q-card{background:#fff;border:2px solid #c8b89a;border-radius:12px;padding:16px 20px;margin-bottom:20px;}
+.q-label{font-family:var(--type);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#7a6a50;margin-bottom:7px;font-weight:700;}
+.q-text{font-family:var(--prose);font-size:19px;line-height:1.55;color:var(--ink);font-style:italic;}
+
+/* MODEL */
+.model-box{background:#fff;border:2px solid #c8b89a;border-radius:12px;padding:16px 20px;margin-bottom:18px;}
+.model-box .mb-label{font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);margin-bottom:5px;}
+.model-box .mb-note{font-size:14px;color:#5a4a30;margin-bottom:14px;font-style:italic;}
+.model-row{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.model-row:last-child{margin-bottom:0;}
+.mr-badge{font-family:var(--type);font-size:15px;font-weight:700;padding:4px 11px;border-radius:6px;flex:0 0 auto;margin-top:2px;}
+.mr-o{background:var(--ohu-o-bg);color:var(--ohu-o);border:2px solid var(--ohu-o);}
+.mr-h{background:var(--ohu-h-bg);color:var(--ohu-h);border:2px solid var(--ohu-h);}
+.mr-u{background:var(--ohu-u-bg);color:var(--ohu-u);border:2px solid var(--ohu-u);}
+.mr-text{font-family:var(--prose);font-size:15px;line-height:1.6;color:var(--ink);}
+.mr-why{font-family:var(--type);font-size:12px;color:#7a6a50;margin-top:4px;}
+
+/* LIVE PREVIEW */
+.built-box{background:#fff;border:2px solid #c8b89a;border-radius:12px;padding:16px 20px;margin-bottom:20px;}
+.built-box .bb-label{font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);margin-bottom:12px;}
+.built-line{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
+.built-line:last-child{margin-bottom:0;}
+.bl-badge{font-family:var(--type);font-size:14px;font-weight:700;padding:3px 10px;border-radius:5px;flex:0 0 auto;margin-top:4px;}
+.bl-o{background:var(--ohu-o-bg);color:var(--ohu-o);border:2px solid var(--ohu-o);}
+.bl-h{background:var(--ohu-h-bg);color:var(--ohu-h);border:2px solid var(--ohu-h);}
+.bl-u{background:var(--ohu-u-bg);color:var(--ohu-u);border:2px solid var(--ohu-u);}
+.bl-text{font-family:var(--prose);font-size:16px;line-height:1.55;color:var(--ink);}
+.bl-text.empty{color:#a09070;font-style:italic;font-size:14px;}
+
+/* STEP RAIL */
+.step-rail{display:flex;gap:0;margin-bottom:22px;border-radius:10px;overflow:hidden;border:2px solid #c8b89a;}
+.step-tab{flex:1;padding:14px 8px;text-align:center;cursor:pointer;border:none;background:#f0e8d8;transition:background .12s;border-right:1px solid #c8b89a;}
+.step-tab:last-child{border-right:none;}
+.step-tab .st-letter{font-family:var(--type);font-size:32px;font-weight:700;display:block;margin-bottom:3px;}
+.step-tab .st-name{font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.step-tab.o-tab .st-letter{color:var(--ohu-o);}
+.step-tab.o-tab .st-name{color:var(--ohu-o);}
+.step-tab.h-tab .st-letter{color:var(--ohu-h);}
+.step-tab.h-tab .st-name{color:var(--ohu-h);}
+.step-tab.u-tab .st-letter{color:var(--ohu-u);}
+.step-tab.u-tab .st-name{color:var(--ohu-u);}
+.step-tab.active.o-tab{background:var(--ohu-o-bg);border-bottom:4px solid var(--ohu-o);}
+.step-tab.active.h-tab{background:var(--ohu-h-bg);border-bottom:4px solid var(--ohu-h);}
+.step-tab.active.u-tab{background:var(--ohu-u-bg);border-bottom:4px solid var(--ohu-u);}
+.step-tab.done .st-name::after{content:" \2713";}
+.step-tab:disabled{opacity:.35;cursor:not-allowed;}
+
+/* STEP PANELS */
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+
+/* BEAT HEADER */
+.beat-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:16px 20px;border-radius:10px;}
+.beat-header.o-head{background:var(--ohu-o-bg);border:2px solid var(--ohu-o);}
+.beat-header.h-head{background:var(--ohu-h-bg);border:2px solid var(--ohu-h);}
+.beat-header.u-head{background:var(--ohu-u-bg);border:2px solid var(--ohu-u);}
+.beat-letter{font-family:var(--type);font-size:48px;font-weight:700;line-height:1;flex:0 0 auto;}
+.beat-letter.o{color:var(--ohu-o);}
+.beat-letter.h{color:var(--ohu-h);}
+.beat-letter.u{color:var(--ohu-u);}
+.beat-name{font-family:var(--type);font-size:18px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
+.beat-name.o{color:var(--ohu-o);}
+.beat-name.h{color:var(--ohu-h);}
+.beat-name.u{color:var(--ohu-u);}
+.beat-prompt{font-family:var(--prose);font-size:15px;color:#3a2a10;line-height:1.5;}
+.beat-prompt strong{color:var(--ink);}
+
+/* CHIP BANKS */
+.chip-section{background:#fff;border:1.5px solid #c8b89a;border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+.chip-section-label{font-family:var(--type);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:10px;}
+.chip-bank{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{font-family:var(--prose);font-size:16px;background:#f5efe3;border:2px solid #c8b89a;color:var(--ink);
+  border-radius:8px;padding:10px 16px;cursor:pointer;transition:all .12s;user-select:none;}
+.chip:hover{border-color:var(--navy);background:#e8dcc8;}
+.chip.o-chip.selected{border-color:var(--ohu-o);background:var(--ohu-o-bg);color:var(--ohu-o);font-weight:700;}
+.chip.h-chip.selected{border-color:var(--ohu-h);background:var(--ohu-h-bg);color:var(--ohu-h);font-weight:700;}
+.chip.u-chip.selected{border-color:var(--ohu-u);background:var(--ohu-u-bg);color:var(--ohu-u);font-weight:700;}
+
+/* OWN WRITING */
+.own-label{font-family:var(--type);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:8px;margin-top:18px;}
+textarea.own{width:100%;font-family:var(--prose);font-size:17px;background:#fff;border:2px solid #c8b89a;
+  color:var(--ink);border-radius:9px;padding:13px 16px;resize:vertical;min-height:90px;line-height:1.6;}
+textarea.own::placeholder{color:#a09070;font-style:italic;}
+textarea.own:focus{outline:none;border-color:var(--navy);}
+
+/* FEEDBACK */
+.fb{min-height:20px;font-family:var(--type);font-size:14px;font-weight:700;margin-top:10px;padding:10px 14px;border-radius:7px;display:none;}
+.fb.warn{display:block;background:#fff3cd;border:1.5px solid #f0b429;color:#6b4a00;}
+.fb.ok{display:block;background:#e6f4ea;border:1.5px solid #2e7d32;color:#1b5e20;}
+
+/* NEXT BUTTON */
+.next-btn{font-family:var(--type);font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--navy);color:var(--cream);border:none;border-radius:10px;padding:15px 30px;cursor:pointer;margin-top:18px;display:block;}
+.next-btn:hover{background:#0d1d38;}
+.next-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* DIVIDER */
+.section-div{border:none;border-top:2px solid #c8b89a;margin:22px 0;}
+
+/* FINALE */
+.finale-o{color:var(--ohu-o);}
+.finale-h{color:var(--ohu-h);}
+.finale-u{color:var(--ohu-u);}
+
+/* SELF-CHECK */
+.check-item{display:flex;align-items:flex-start;gap:12px;cursor:pointer;font-size:16px;color:var(--ink);line-height:1.55;
+  padding:12px 14px;border-radius:8px;border:1.5px solid #c8b89a;background:#fff;margin-bottom:8px;}
+.check-item input[type=checkbox]{margin-top:3px;width:20px;height:20px;accent-color:var(--navy);flex:0 0 auto;}
+
+/* EXIT TICKET */
+.exit-card{background:var(--navy);border-radius:12px;padding:22px 24px;}
+.exit-card h2{font-family:var(--display);font-size:22px;color:var(--cream);margin-bottom:4px;}
+.exit-card .et-sub{font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mustard);margin-bottom:16px;}
+.exit-list{list-style:none;margin:0;padding:0;}
+.exit-list li{font-size:16px;line-height:1.65;color:#e8dcc8;margin-bottom:12px;padding-left:24px;position:relative;}
+.exit-list li::before{content:"";position:absolute;left:0;top:8px;width:12px;height:12px;border-radius:50%;border:2.5px solid var(--mustard);}
+.exit-list li strong{color:var(--mustard);}
+.et-instruction{font-family:var(--type);font-size:13px;color:#a09070;margin-top:16px;padding-top:14px;border-top:1px solid #3a4d6a;line-height:1.6;}
+
+@media(max-width:580px){
+  .step-tab .st-name{font-size:11px;}
+  .beat-letter{font-size:36px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="top">
+    <div class="wordmark">Reel Evidence <span>/ Build Your Contention</span></div>
+    <div class="spacer"></div>
+    <button class="txtbtn" id="modelToggle" onclick="toggleModel()">Model</button>
+    <button class="txtbtn" id="resetBtn" onclick="resetAll()" style="display:none">Start Over</button>
+  </div>
+
+  <!-- NAME ENTRY -->
+  <div id="nameScreen" class="name-screen">
+    <h1>Build Your Contention</h1>
+    <p>The O-H-U framework gives you a three-part argument before you write a word of your essay. Enter your name to begin.</p>
+    <div class="name-row">
+      <input type="text" id="nameInput" placeholder="Your full name" autocomplete="off">
+      <button onclick="startActivity()">Begin</button>
+    </div>
+  </div>
+
+  <!-- MAIN ACTIVITY -->
+  <div id="mainActivity" style="display:none;">
+
+    <!-- LO BANNER with compass -->
+    <div class="lo-banner">
+      <img class="lo-emblem" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHIAAACWCAMAAAA11izbAAAAflBMVEUAAAD///////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKXXvsAAAAIHRSTlMA+AsvTm6Pr88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEOtItsAABRnSURBVHjatZuJdhu5DkS7uYH//8VTtwBKsuOsI/u8zEtkqYsAgcKq6/qrn6b/9eafi/90XmjX9/0cwD7qR//o3a9/G6IAWp9zpHB96K+89G2YIAJoWS2i/jLWsKDfhKhHDwG2Odf0z5qdf+kA3yKoEecQxJKA9TOWjjCitfENNnQQuyR7+ZGi9RqYbxfTiGsKMSVs9aO/JWZ/OyZizBDiB8D8mf7V6O/FlJCt797Wj4Bg9muPt1+nhFxL9vpAfIov7U5M6L1icpMtUsgPgIkppbZlMdsbIfVAmcj8EfFKGrrmuuY7IS8bT8Mfv3xsm/LWNvpbxZQvRD7zS8ihyxQxvA9SbDYeYrQv9X4N2fN8N2S8QPq/L2aLlKPP9jZMhxCkHB+843oESiuhvxMynyknSUgHL1HDCZRlse+GnLLYkW5gmf1qYeJCbZUS3neZsw15XodgnPAoH1BC0BKEq5w6VH8rJPyyFKGb6dbMp0NcjlkALx1g/cyH/tF+JIQMqA3LZHfoSIvcDqTS62ztvZqFRiOBWkVpAAbAaPlavb/VfASD64XkkhX1uWKHdDlJFBS6e0aZ9mZin9hI4ArwUEwrVPG57UVW8GYhU7V2viXoJYB9i25kTnMMEB9x7b2piDDHUjoJ5LzvaFaxLFWWu0Z/p70+r3OStQKpq9RdLt8qdusk7N2IJlXp8OIu8/mYKjllc37yfiETU+VBT0JIgOn0efRvkfGkVgNNrh2xdK0OME8RvwnSVvR8do/+nYjXyc/lnyvEBREw+/chVjoA4lqoVf+NhfF0B9FvsFaHYoflH1Ixy3m9s4LPxz2ea7UiYsAL03XB4zDtXYCZdICGMmelXdk0SP02coTS8HsAeSKyjbrQkVX0SDXrdiNUCynK/O8OiQGV0ggv4USuse8PPyI+40yj+t3/A7TluVWOBD2JsYwWa1TajlrzBFuma9RxQP+5ycOzJaB0NiKfXJlzf5ip9Qqu4PSu/wNKkqOHzL30t+VHpmax1ZcfMayzTlClix47ffWvMa1ThQ4Ae6QI3GhU+6V+MCOOgN475/Lbo3Mhf3mjiNjrwwJEsx2rHHKTjYqnYrTUufUvOQ2wvu1tUB8UFbW/QUTEiYqWH2J7HDNso3PdWw8Mwa55l/XgQj1BpxIwffRv+k9W6tU56kzAxTN9W4HMU5CSfCzQ79uWtfSOsAVJdulmx/Xn3YNUKiJ25VQdQGXGQhP+Hrw2BKN/X8toymD5hf4oAfT7dQAE7X/amHHCf0VYRJvsLIfsSMTV6vFIJ7HHeQkNS7w5AgOyoEOf/qMLzRJjr6uFcjgswRJijumaKHFn8FpxXrm5Q34vSbfucnKjnT+/v9BE5L0SQbCBXehJOkVqVlZEvjNcevHXiQrQ67D36k7REIq4OPlvMR+I+ohUI0Who3KKmzSnlCzB9zHWetFvCb1ZH9JpdcSmI1+/aVq8IO6GpdsJ/SypTPGjCFWSxlh4aQILNn91c40qGDbZNBdjzF+I+YLod+vzwsnn1EMrnvSxu+seOMma1RvDLnv3vncPbNZPWb/EbC+ITeQJz20ZDvHJiu0mva1MPe7Wb//NcTJ/25FZaQJGvQIjSszxU0xq/ks3bkScTIfvXea/eOSGsw2f+V3r2O1clH0VacQO6AX8LZ03Y1qGn/inS2J0j33KMPUE7EGwxWL+v17ms692InQxK+6p4sFOIyuStxhTz6OvcbWveVXq16n01rDJzOHYkDRrG5r9JAOBTZ6/3hVDMG9/Jo0cE7zRmhtfX6XFw7/c8g4Qp+/lHkUlssMtp1kHUtlHnL9LxX0mneOeextWYS4gFMm4vzQhN2/MlzR75z0mUkRPnw7fjsL1PDD6/XxCqqqVRRHqtsTlLKGgrezvShHWF9fpixT7DxQh3pb/QwHdPDsQSiwjUxkPGFXvT0jmChBjuaMMQIWoVBTQXliWzz1Fq3VykTc9dJ9SVilEKXX6RTmNXGYUFcjbVb2PZYHGahVKb5vpBpMTcBjpDbejG95+ptZ8M4wKIhaAy/k1WauIhrQums7HMfyvSv16v/OI+9yzDgk7Nyvwg2ptrYFa41LBGGmXPUlIEUrwtk9xjJggyAG6rggpd/EO759mh266TCKU24p9bv58ate6Y2RrlQYxmJ7mioPaM2TrI50yoNoQ3wMJ2cLDmPVNQmmobgrAxOSxw6rVn/2BhI7tyDPkH2lvgW/x7keMWFLuekrkX1p3Yl+cZNsf98iPcSYHsyFP4ezynhcxU0iTANbqAAkiFrXgAzDR2okXsqcguNU/IMTprOUmR0rl9Ixly01VzOTVOZ83Sdq26SA7xGPgckQCykAMq6/sAndreeWOlbJoTNy5JhbRfJ0jk4X2g5iYK9agm8QPfOj6nIwwnNQ08bj12I25GzTT0i1MqvptT35dviBTNDm3TAgxxQd5m6eokF06VQlh6mY2Uti6ZS3OQ7YtyjVAEipx8eKlktW36xRTBojWg9PposWTiPnBaNMnBadPwy4mWA46HyzuzuDhcIdRch0Oiraq6EMUq0SvOYAQTpzZB+90XJw1vTnEo8S0zAO9cQEF2THf82jo3DFRdLIygU79qgZM70Ua00odc0/biV5svbrzMp69/SIJzc7kiufRuKoohHj5BOUf0vYypB6SCpcc+NTK1KwtRRNbQoUAG9D1YNoXvQpQ/iQD6vuuNy3rx4fX1WeSrFABQ2Tb148lIQpfAHUKKnqISSkjyiAS2yuym/FJr7G4BNMtObR8JHW3UYvP022lghT9UZgwcZ/Jsvrt3CJmDoyXyh7J1dDsPJr12CXttZ3QNFYJOeG6Q7mEtXJa05nUd1HukZmlvzjL4tn0MJM/XzSL04mXmpsnl91KahNxkKSJtjhVpq8c/MRFCFugaVaNQLWGQ+wVz9DpqkHaXeWqOrNS+MvxZNEYv8wDXOVF4oaxlV6JTH1BWI/mR8NImK6PguxQhRAfb1HyIVXoVSnDmoWkxEqrFel5FyK5Qc/TVer6F+L1w1aKBEp7xsyIqOwGkbd9vlFGWt8tfYMoExngN5bYGzqiuL/zMonUXEejfDE9HHG682J/VJ/dFqwN19BYeJjU7/tiO8SIZocJmwW5x7qPn4UT/edlOshm3LqdbEolPm17uUq5RGaTKhzFCJOURXew7fDXZaOQomGEZXVHXUQQ3+dtY5f4YT3ijJNKl8+hBt49Bu68LsfkTQipAEm03M3OKZfAKFwyL1pOOzJ+HwNyxZtuIhpxYbiK88Kzj9ZN/jZYThRpTeQVBPXxTCPDuZCMbroN3CGsy0l1L6XU5euzY5oz13ADJabZzNFkMiY83JPHXMRN0x6svR/5uZRMOUuh0Mhol6qUnTtOj7LB1ya9bPN5uw7nMeBwOqIrXEyub0sNMVGbThtwuYWOcyrKTkG9feeTUs9cS53g1g+ltatNerUPP3Y+vGum4ixDie41/XdZEP5B/qH/6+2UG7Xcc7wkc5CWSaOiaI+2Hh3L2gMajyqCx3YXognpONDkL4a8zQQvkHX08QpWx1i91MVyU9yfeqXLLQS3GIBU3oecY9kxnR1cmS8n5HCSvyKnvehxf8LLy16jLneNz7/c1mN1puke8S/neckFus9rvkC6pSKxGIac1uf1umbjPaYPUo72aR3n2eQf3c0oyTEMuWdywSvkCmoX892pVhO4j/Fsv166yzHrLlc/DVqv5RXYzM5w3iXlxGG8V8hti90PJ4lzM4p1qaReDXW58ehOGBQaRdI5Rsg+NFdI//DVfE5U+wESWl20/hzxDBnuFRTVYo6OdPNyKYTZ0z6jXq9RRpnZNMmaAHASMQPD3bLYJ6QJWJbsaFmxazlE9Sf7bAqB5c7e0i8luwiS4WWsyhsO+5BM8mGoHNqkR/wZ0n7aopqrPQmZLJbAEKdSd43bKpcNFHhhadQtffeHNnmbjkD+5IB5PwhvPCDnnYqG/FUpOynosA6V5YxKDqbj71Uh3zkWlaAc6nILYYxTURLK9HxnjfrNkqMt0zpZRTPkuLNgpwKSBThetuzunssM7xjuzKp0q07TL3IfoldfrjidsFBRJttlJqLcQ5WukjZMCfYxZHf6uEnw6EHgJTpTVaVO99nMmJEaJRcw38lAr6xBJIC3DBxTKg7MUQYLLcim3BMgExHhYfVuEuCYd6WG9B50SBGJc58zAspW4JWh0dtwbjNV10kulXqVwfS0nsSHENzBIngZsmXV0l7sx7m2ErnOOR8Z3iTzvE7t2Kyx4YbPSz9GiSvp1nJ7paIo6RbX5+YZXQO3g+ycdAX0HFdOe5H10qU7OZFUPT1u0zNTysG8ps2Kr6aRnbXPdGYjs3CXHOvBFd0hdKNi7VIk3LHNP44z4jGxVT/ljHyNxqE521Vew8WlRN3fqfh0XJkKVuzL6m5pBFfpLjbM7m7pdCadNUl9ktRICWuIT3XyVlms23lE1ZZScsXuZozsG5i6yF3dBRnHK7ev8m52S+9D0KDDxfprheAqJgsg13rZ+HaiEc01iaSk/ZOu4QphZbWH+2ZFXFbAOgBipY94XYjRWIMQ1vR4K44BpdgkdpOS5VEC+MmN3sEcx39doiUHjfkQ0gERKt6+Sgy2Y/KyXRu6k7yB1VjM6SGMFMmzDmvD0vYWQVoFoy7D9dqAd9xUtZDiuTafevVkwv1i6ZCBCh4PG9Bo2j3nFHQs3WFJvzAPjWwM3M02s6+yHBAhYd6+3GukA+bgF9xSXM4JJt3yvExlplSQCtNu7ozlhgKttKjGbCUfya/ufKWfXw+fdbYuH4kyx+3kN9sTDJbCV9m98NYi3DnFNQ/RJCUWqS9ux75S/UNzyagAmawvDp6ZyJpnzhnvbMLAHO7serEOzxzZ1ZSjzsqoenYp84Fu7LrJHqXee7cn54zuRio9BLp7edgypu2OGkxMgBwJyd4w5byld67tfsHMdnO4ibgtyOrPlkm2TbN9uVIFItjpOGZC3fmcEW72uXRhKdyr/Cr56Ak41jZXiKvadBPMlanIdiWkEGbUbPrnSGZlP7wGbW4973MBTkF6CunZ3civSczuJBYxMdqiYvx95pzAs5Y7u6PSnDfEaCXktMvjEVua3difGfM+EykfDaqK1Kun8fSg75UTSwnsB6x2F6anXvY+07VAlCINIt9mg8uTqX1KoEKs0cPt7vrI4YIdsYZWLqaXb3NT6rpAJL6sxFw5fhYaeVtYysEgQnCO3Iwco+YqLqWnIy5thGnbwaGoh72Q1M5aH/Gx5YEW1WzPvbedpuZZ+yOMbWbhWHc5FL1xCphZYws3TDBx2tBu9F2XNxXXOgl4iTlzIJKTme0h1spZ7clqns0RGdnTR+Yq9OneyKjU14mTJ+jUpNjKHg9If2ljY86phV2mh62vnEhzoRJ/P5LauNbLnIQqpdYsKK5PBPCMhd7NfgpZDVnEFGK697ocLSraYf+RD9svlVZfj5nXHO6p5lYBKXANLboHM6jNM5dWQrbnkubFTNt9KibRzLHIg2llObfLNRDnV9vk2aq0sx492rRFZwuoOQmxi2GtXJqFfG7TIyYd/fDImzjg4ooSaGS6dnshQzerg2130x1HmLtvL6yYfnrucXhEXYi+SLJ60pWXBUF2F+GHfnutBMoi6ix6PSNHBClJy5lTdZ8f+zh0MO8cl0QN5SJd2sbHpdonX78y4ATh8nAF47duJWf38EIHn2aYvbKCZDeDXKu2f3Jjg3Ze1MBz9Rq6YwV7Mpme8WkLEkLSHxkLKUosY+ri3FReOQbtNQtz5bqwuMdiFaQQOXBn/O8xP4MTfIAGypW283HxMlVLwAFzLYeRauKnnznHPb0KZgyPKe3IxYLItQJ6hrnMAOLFiJkk84ud3ca3jcgVEtPTcqURI6NyTsB35KqouNXj9uoHKQ++a6lDxEe7z468jLho/LKk8uW3X5x81XzepMcGTnel4nzcROB2B0Bu8VS14k6KsyKyc68JbWc54TYAkny1z+oaHC7gSxWkBzuXheY4my45gU+/zPZMtr7cl/QKB/e2ckNkQkYxs6i4x9c7u/m9NHr9zMrdON7ephpJYIibyzfyoum46n9ljedLHbXwIxGnbbVnh3j+bEuYXrk7j4OpI72OXftf3jHKdbBpBbM5tkuhjpJBwpBrTU4GvN80aDuQcvTRf/r1l4MJW8mGZ+4UdHYbHRI917CCH1PG3F1gs6toViKa4aMVYvSf73uj1mxcT+81Ua7Hy75YUY9z+CAqusWzSYiCoJ+AZJH0Sdo0YvwK8YlJrYrlXR4hZJjouTVKD9WLqsu9Or8Q3k7LYJO3uEwirFHtXyMmJrW5HH211FS1IzOxr7VYcOlqJfrsxXoFeLHBJffpf4JoTOwVwx3spvEArNMpWM8vmM5aPPb42z2+/HV+BxR1TJfIeMfDcn4FyY4YQ2Nyh1a7i4CeoNRfP9xOSbacNHjPkZp8cyuegI4/2KJnIx7/9QIeqpy1ADznD+3g0xQGDwEBnGySmvOlqN/L+Oi/7vBkM2DjNI6Dmnube59eb36n1mu5usPNGMTWpnPv8adfFPB73MCw1fOlg7BVMJIjt1xnfdTXedaPYQdS1bBOadP1Mf50p91voub0R8NttkXUOMlZbuKN50p5Mx4Nk+21VkR8ucbfbzlWyzpvxOri+CIeO0Rvn78JSZMZAN5owOZ66Yn4R4uV2UmPAqX6WTZ3+jxnY316xTHYH2NExBC4FSBR+2+/KVCnG1HpDs5Gq3969pMNegowirbe2FjbM9/Ysnz5OxE/zA1GpP25qc/e72Y8Dc15nKfwGM4W2vnmxe1q8B8QX2YVHmH1h+vn+MQh2l7ywg0u+w7gv3394nyZIx/VP+wktfbpa6wmvfgE+Peb5I95TKVwx01++K4FtOSxyge8f9mXfxkCncFdZVv18hg1hfGM7aOA//oNk/YB9Vzkx+8g+AxHof8X8AvQIp7alH/+9P4uwC9FLZDPcL39GeB/rz2edNSl2JsAAAAASUVORK5CYII=" alt="">
+      <div class="lo-text">Build a three-part analytical contention using <span class="lo-o">Obviously</span>, <span class="lo-h">However</span>, <span class="lo-u">Ultimately</span> -- one move at a time.</div>
+      <div class="lo-badge">0.5 OHU</div>
+    </div>
+
+    <!-- QUESTION PICKER -->
+    <div id="qPickSection">
+      <div class="section-head">Choose your question</div>
+      <div class="q-option" id="qOpt1" onclick="selectQuestion(1)">
+        <div class="q-num">Question 1 -- Language</div>
+        <div class="q-text">"Ease up, Sultana" -- Carpetburn. "My name is Sayyid, not small dried fruit." -- Sayyid. In The Merger, language has the power to both connect and exclude. Discuss.</div>
+      </div>
+      <div class="q-option" id="qOpt2" onclick="selectQuestion(2)">
+        <div class="q-num">Question 2 -- Fairness</div>
+        <div class="q-text">The Merger is a cry for fairness. To what extent do you agree?</div>
+      </div>
+      <button class="next-btn" id="qNextBtn" onclick="confirmQuestion()" disabled>Confirm question and begin &rarr;</button>
+    </div>
+
+    <!-- QUESTION DISPLAY (after selection) -->
+    <div class="q-card" id="qCard" style="display:none;">
+      <div class="q-label">Your question</div>
+      <div class="q-text" id="qDisplay"></div>
+    </div>
+
+    <!-- MODEL -->
+    <div class="model-box" id="modelBox" style="display:none;">
+      <div class="mb-label">Worked Example -- Lion (dir. Garth Davis)</div>
+      <div class="mb-note">A different film so you can see the move, not copy the answer.</div>
+      <div class="model-row">
+        <span class="mr-badge mr-o">O</span>
+        <div>
+          <div class="mr-text">Davis clearly shows that belonging is something Saroo carries inside him even across decades and continents, representing it as an instinct that cannot be suppressed.</div>
+          <div class="mr-why">Direct answer. State what the film clearly does in relation to the question.</div>
+        </div>
+      </div>
+      <div class="model-row">
+        <span class="mr-badge mr-h">H</span>
+        <div>
+          <div class="mr-text">However, Davis complicates this by showing how Saroo's search fractures the family he has built in Australia, suggesting that recovering one home can cost you another.</div>
+          <div class="mr-why">Complication. Where does the film add tension or push back on its own argument?</div>
+        </div>
+      </div>
+      <div class="model-row">
+        <span class="mr-badge mr-u">U</span>
+        <div>
+          <div class="mr-text">Ultimately, Davis argues that belonging is not found in a place but forged through love -- and that the courage to search for it is itself an act of love.</div>
+          <div class="mr-why">Deepest message. What does the whole film add up to?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE PREVIEW -->
+    <div class="built-box" id="builtBox" style="display:none;">
+      <div class="bb-label">Your contention so far</div>
+      <div class="built-line">
+        <span class="bl-badge bl-o">O</span>
+        <div class="bl-text empty" id="builtO">Write your Obviously sentence below.</div>
+      </div>
+      <div class="built-line">
+        <span class="bl-badge bl-h">H</span>
+        <div class="bl-text empty" id="builtH">Complete Obviously first.</div>
+      </div>
+      <div class="built-line">
+        <span class="bl-badge bl-u">U</span>
+        <div class="bl-text empty" id="builtU">Complete However first.</div>
+      </div>
+    </div>
+
+    <!-- STEP RAIL -->
+    <div class="step-rail" id="stepRail" style="display:none;">
+      <button class="step-tab o-tab active" id="tab-O" onclick="goStep('O')">
+        <span class="st-letter">O</span>
+        <span class="st-name">Obviously</span>
+      </button>
+      <button class="step-tab h-tab" id="tab-H" onclick="goStep('H')" disabled>
+        <span class="st-letter">H</span>
+        <span class="st-name">However</span>
+      </button>
+      <button class="step-tab u-tab" id="tab-U" onclick="goStep('U')" disabled>
+        <span class="st-letter">U</span>
+        <span class="st-name">Ultimately</span>
+      </button>
+    </div>
+
+    <!-- STEP O -->
+    <div class="step-panel active" id="panel-O" style="display:none;">
+      <div class="beat-header o-head">
+        <span class="beat-letter o">O</span>
+        <div>
+          <div class="beat-name o">Obviously -- your direct answer</div>
+          <div class="beat-prompt">What does Grentell <strong>clearly</strong> show or argue? State your direct position on the question.</div>
+        </div>
+      </div>
+      <div class="chip-section">
+        <div class="chip-section-label">What Grentell does -- pick one</div>
+        <div class="chip-bank" id="oVerbBank"></div>
+      </div>
+      <div class="chip-section">
+        <div class="chip-section-label">The specific idea -- pick one</div>
+        <div class="chip-bank" id="oIdeaBank"></div>
+      </div>
+      <div class="own-label">Write your Obviously sentence</div>
+      <textarea class="own" id="oOwn" placeholder="Grentell clearly shows that..." oninput="updateBuilt('O')"></textarea>
+      <div class="fb" id="fb-O"></div>
+      <button class="next-btn" id="next-O" onclick="advanceStep('H')" disabled>Next -- However &rarr;</button>
+    </div>
+
+    <!-- STEP H -->
+    <div class="step-panel" id="panel-H" style="display:none;">
+      <div class="beat-header h-head">
+        <span class="beat-letter h">H</span>
+        <div>
+          <div class="beat-name h">However -- the complication</div>
+          <div class="beat-prompt">Where does Grentell <strong>complicate or add tension</strong>? Ask yourself: but what else does the film show?</div>
+        </div>
+      </div>
+      <div class="chip-section">
+        <div class="chip-section-label">Opening word -- pick one</div>
+        <div class="chip-bank">
+          <div class="chip h-chip" onclick="selectChip(this,'hOpener')">However,</div>
+          <div class="chip h-chip" onclick="selectChip(this,'hOpener')">Despite this,</div>
+          <div class="chip h-chip" onclick="selectChip(this,'hOpener')">Yet</div>
+          <div class="chip h-chip" onclick="selectChip(this,'hOpener')">Alongside this,</div>
+        </div>
+      </div>
+      <div class="chip-section">
+        <div class="chip-section-label">The complication -- pick one</div>
+        <div class="chip-bank" id="hIdeaBank"></div>
+      </div>
+      <div class="own-label">Write your However sentence</div>
+      <textarea class="own" id="hOwn" placeholder="However, Grentell also shows..." oninput="updateBuilt('H')"></textarea>
+      <div class="fb" id="fb-H"></div>
+      <button class="next-btn" id="next-H" onclick="advanceStep('U')" disabled>Next -- Ultimately &rarr;</button>
+    </div>
+
+    <!-- STEP U -->
+    <div class="step-panel" id="panel-U" style="display:none;">
+      <div class="beat-header u-head">
+        <span class="beat-letter u">U</span>
+        <div>
+          <div class="beat-name u">Ultimately -- the deepest message</div>
+          <div class="beat-prompt">What is Grentell <strong>really arguing</strong> through the whole film? This should resolve both O and H.</div>
+        </div>
+      </div>
+      <div class="chip-section">
+        <div class="chip-section-label">The film's deepest argument -- pick one</div>
+        <div class="chip-bank" id="uIdeaBank"></div>
+      </div>
+      <div class="chip-section">
+        <div class="chip-section-label">How the film wants us to respond -- pick one</div>
+        <div class="chip-bank">
+          <div class="chip u-chip" onclick="selectChip(this,'uStance')">celebrates and affirms</div>
+          <div class="chip u-chip" onclick="selectChip(this,'uStance')">urges the audience to value</div>
+          <div class="chip u-chip" onclick="selectChip(this,'uStance')">warns that we risk losing</div>
+          <div class="chip u-chip" onclick="selectChip(this,'uStance')">argues we must actively choose</div>
+        </div>
+      </div>
+      <div class="own-label">Write your Ultimately sentence</div>
+      <textarea class="own" id="uOwn" placeholder="Ultimately, Grentell argues that..." oninput="updateBuilt('U')"></textarea>
+      <div class="fb" id="fb-U"></div>
+      <button class="next-btn" id="next-U" onclick="showFinale()" disabled>See my full contention &rarr;</button>
+    </div>
+
+    <!-- FINALE -->
+    <div class="step-panel" id="panel-done" style="display:none;">
+      <div style="margin-bottom:20px;">
+        <div style="font-family:var(--type);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);margin-bottom:6px;">Contention complete</div>
+        <div style="font-family:var(--display);font-size:24px;font-weight:700;color:var(--navy);">Your argument for The Merger</div>
+      </div>
+      <div class="built-box" style="border-color:var(--navy);">
+        <div class="bb-label">Read this as one paragraph</div>
+        <div style="font-family:var(--prose);font-size:18px;line-height:1.75;color:var(--ink);" id="finalePara"></div>
+      </div>
+      <hr class="section-div">
+      <div style="margin-bottom:20px;">
+        <div style="font-family:var(--type);font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:12px;">Check your own work</div>
+        <label class="check-item"><input type="checkbox"> Does your Obviously directly answer the question?</label>
+        <label class="check-item"><input type="checkbox"> Does your However add a genuine complication -- not just a second agreement?</label>
+        <label class="check-item"><input type="checkbox"> Does your Ultimately feel like it resolves the tension between O and H?</label>
+        <label class="check-item"><input type="checkbox"> Is Grentell named as the director in at least two sentences?</label>
+        <label class="check-item"><input type="checkbox"> Does each sentence end with a clear idea or view -- not just a description of events?</label>
+      </div>
+      <hr class="section-div">
+      <div class="exit-card">
+        <h2>Exit Ticket</h2>
+        <div class="et-sub">Write in your book -- hand to your teacher before you leave</div>
+        <ul class="exit-list">
+          <li><strong>Copy your full contention</strong> into your workbook. All three sentences.</li>
+          <li><strong>Circle one word</strong> in your Obviously sentence that you could make more precise. Write a stronger word beside it.</li>
+          <li><strong>In one sentence:</strong> explain what your However adds that your Obviously could not say on its own.</li>
+          <li><strong>Name one specific scene</strong> from The Merger that supports your Ultimately. One sentence only.</li>
+        </ul>
+        <div class="et-instruction">Your teacher will read these. Your reasoning matters more than being right.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ---- QUESTION DATA ----
+const QS = {
+  1: {
+    text: '"Ease up, Sultana" -- Carpetburn. "My name is Sayyid, not small dried fruit." -- Sayyid. In The Merger, language has the power to both connect and exclude. Discuss.',
+    oVerbs: ["reveals","shows","demonstrates","exposes"],
+    oIdeas: [
+      "language used to dehumanise and exclude those who are different",
+      "naming as an act of power -- to rename someone is to deny their identity",
+      "racist language as a weapon that reflects deeper community attitudes"
+    ],
+    hIdeas: [
+      "language also becomes a bridge between characters across cultural difference",
+      "humour and shared banter create connection beyond cultural boundaries",
+      "some characters actively choose language that includes rather than excludes"
+    ],
+    uIdeas: [
+      "Grentell argues that how we name others reveals what we truly believe about their humanity",
+      "dignity begins with being addressed correctly -- language is the first test of a fair go",
+      "the film asks the audience to examine the power of their own everyday words"
+    ]
+  },
+  2: {
+    text: "The Merger is a cry for fairness. To what extent do you agree?",
+    oVerbs: ["exposes","reveals","argues","condemns"],
+    oIdeas: [
+      "Bodgy Creek's treatment of refugees as a betrayal of the Australian fair go ideal",
+      "economic anxiety used to justify excluding those who are already vulnerable",
+      "prejudice shown to be systemic -- carried by institutions, not just individuals"
+    ],
+    hIdeas: [
+      "fairness is not simply given -- some characters must actively fight for it",
+      "the film acknowledges how hard it is to be fair when a community is afraid",
+      "Grentell shows that even well-meaning characters can fall short of genuine fairness"
+    ],
+    uIdeas: [
+      "Grentell argues that fairness is a moral choice, not a circumstance -- it must be chosen every day",
+      "the fair go is meaningless unless it extends to everyone regardless of background",
+      "decency must be chosen even when the community around you chooses otherwise"
+    ]
+  }
+};
+
+// ---- STATE ----
+let selectedQ = null;
+let modelVisible = false;
+let selections = {oVerb:'',oIdea:'',hOpener:'',hIdea:'',uIdea:'',uStance:''};
+
+function startActivity(){
+  const n = document.getElementById('nameInput').value.trim();
+  if(!n || n.length < 2){ alert('Please enter your name.'); return; }
+  document.getElementById('nameScreen').style.display = 'none';
+  document.getElementById('mainActivity').style.display = 'block';
+  document.getElementById('resetBtn').style.display = '';
+}
+
+function selectQuestion(n){
+  selectedQ = n;
+  document.getElementById('qOpt1').classList.toggle('selected', n===1);
+  document.getElementById('qOpt2').classList.toggle('selected', n===2);
+  document.getElementById('qNextBtn').disabled = false;
+}
+
+function confirmQuestion(){
+  if(!selectedQ) return;
+  const q = QS[selectedQ];
+  document.getElementById('qPickSection').style.display = 'none';
+  document.getElementById('qCard').style.display = 'block';
+  document.getElementById('qDisplay').textContent = q.text;
+  document.getElementById('builtBox').style.display = 'block';
+  document.getElementById('stepRail').style.display = 'flex';
+  buildChips('oVerbBank', q.oVerbs, 'oVerb', 'o-chip');
+  buildChips('oIdeaBank', q.oIdeas, 'oIdea', 'o-chip');
+  buildChips('hIdeaBank', q.hIdeas, 'hIdea', 'h-chip');
+  buildChips('uIdeaBank', q.uIdeas, 'uIdea', 'u-chip');
+  document.getElementById('panel-O').style.display = 'block';
+  document.getElementById('panel-O').classList.add('active');
+}
+
+function buildChips(id, opts, key, cls){
+  const bank = document.getElementById(id);
+  bank.innerHTML = '';
+  opts.forEach(text => {
+    const c = document.createElement('div');
+    c.className = 'chip ' + cls;
+    c.textContent = text;
+    c.onclick = () => selectChip(c, key);
+    bank.appendChild(c);
+  });
+}
+
+function toggleModel(){
+  modelVisible = !modelVisible;
+  document.getElementById('modelBox').style.display = modelVisible ? 'block' : 'none';
+  document.getElementById('modelToggle').classList.toggle('on', modelVisible);
+}
+
+function goStep(s){
+  const tab = document.getElementById('tab-'+s);
+  if(tab && tab.disabled) return;
+  ['O','H','U','done'].forEach(id => {
+    const p = document.getElementById('panel-'+id);
+    if(p){ p.classList.toggle('active',id===s); p.style.display=(id===s)?'block':'none'; }
+  });
+  ['O','H','U'].forEach(id => {
+    const t = document.getElementById('tab-'+id);
+    if(t) t.classList.toggle('active',id===s);
+  });
+}
+
+function selectChip(el, key){
+  el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selections[key] = el.textContent;
+  const step = key.startsWith('o')?'O':key.startsWith('h')?'H':'U';
+  checkStepReady(step);
+}
+
+function updateBuilt(step){
+  const val = document.getElementById(step.toLowerCase()+'Own').value.trim();
+  const el = document.getElementById('built'+step);
+  const empties={O:'Write your Obviously sentence below.',H:'Complete Obviously first.',U:'Complete However first.'};
+  if(val){ el.textContent=val; el.classList.remove('empty'); }
+  else { el.textContent=empties[step]; el.classList.add('empty'); }
+  checkStepReady(step);
+}
+
+function checkStepReady(step){
+  const own = document.getElementById(step.toLowerCase()+'Own').value.trim();
+  const fb = document.getElementById('fb-'+step);
+  let ready = false;
+  const noGrentell = !own.toLowerCase().includes('grentell') && !own.toLowerCase().includes('director');
+
+  if(own.length===0){
+    fb.className='fb'; fb.textContent='';
+  } else if(own.length<=18){
+    fb.className='fb warn'; fb.textContent='Keep going -- your sentence needs more detail.';
+  } else if(step==='O'){
+    if(own.toLowerCase().startsWith('obviously')||own.toLowerCase().startsWith('clearly')){
+      fb.className='fb warn'; fb.textContent='Drop the word "obviously" from the sentence itself. The O stands for the move, not the word.';
+    } else if(noGrentell){
+      fb.className='fb warn'; fb.textContent='Name the director -- use "Grentell" in your sentence.';
+    } else {
+      fb.className='fb ok'; fb.textContent='Good. Move to However when ready.'; ready=true;
+    }
+  } else if(step==='H'){
+    const contrast=['however','despite','yet','alongside','although','while','whereas','but'];
+    if(!contrast.some(w=>own.toLowerCase().includes(w))){
+      fb.className='fb warn'; fb.textContent='This reads like a second Obviously. Use a contrast word: However, Despite this, Yet, Alongside this.';
+    } else { fb.className='fb ok'; fb.textContent='Good. Move to Ultimately when ready.'; ready=true; }
+  } else if(step==='U'){
+    if(noGrentell&&!own.toLowerCase().includes('film')&&!own.toLowerCase().includes('merger')){
+      fb.className='fb warn'; fb.textContent='Anchor this to the film -- mention Grentell or The Merger.';
+    } else { fb.className='fb ok'; fb.textContent='Your contention is complete.'; ready=true; }
+  }
+  document.getElementById('next-'+step).disabled=!ready;
+}
+
+function advanceStep(next){
+  const prev=next==='H'?'O':'H';
+  document.getElementById('tab-'+prev).classList.add('done');
+  const t=document.getElementById('tab-'+next); t.disabled=false;
+  document.getElementById('panel-'+next).style.display='block';
+  goStep(next);
+}
+
+function showFinale(){
+  document.getElementById('tab-U').classList.add('done');
+  const o=document.getElementById('oOwn').value.trim();
+  const h=document.getElementById('hOwn').value.trim();
+  const u=document.getElementById('uOwn').value.trim();
+  ['O','H','U'].forEach(s=>{
+    const el=document.getElementById('built'+s);
+    el.textContent=document.getElementById(s.toLowerCase()+'Own').value.trim();
+    el.classList.remove('empty');
+  });
+  document.getElementById('finalePara').innerHTML=
+    '<span class="finale-o">'+esc(o)+'</span> '+
+    '<span class="finale-h">'+esc(h)+'</span> '+
+    '<span class="finale-u">'+esc(u)+'</span>';
+  document.getElementById('panel-done').style.display='block';
+  ['O','H','U'].forEach(id=>{
+    document.getElementById('panel-'+id).classList.remove('active');
+    document.getElementById('panel-'+id).style.display='none';
+  });
+  document.getElementById('panel-done').classList.add('active');
+  document.getElementById('mainActivity').scrollIntoView({behavior:'smooth'});
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function resetAll(){if(!confirm('Start over?'))return;location.reload();}
+</script>
+</body>
+</html>
