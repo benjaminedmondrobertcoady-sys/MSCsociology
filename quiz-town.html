@@ -2586,6 +2586,7 @@ async function submitAnswer() {
       hintUsed: currentSession.hintUsed,
       pasteAttempts: 0
     });
+    saveProgressSnapshot();
   } else {
     const answer = textarea.value.trim();
     try {
@@ -2598,6 +2599,7 @@ async function submitAnswer() {
         hintUsed: currentSession.hintUsed,
         pasteAttempts
       });
+      saveProgressSnapshot();
     } catch (err) {
       const result = localScore(q, answer);
       displayScore(result, q);
@@ -2608,10 +2610,12 @@ async function submitAnswer() {
         hintUsed: currentSession.hintUsed,
         pasteAttempts
       });
+      saveProgressSnapshot();
     }
   }
 
   textarea.disabled = false;
+  document.getElementById('btn-hint').disabled = false;
 }
 
 async function scoreWithClaude(question, studentAnswer) {
@@ -2735,6 +2739,26 @@ function displayScore(result, question) {
   }
 }
 
+/* ── SAVE PROGRESS AFTER EACH ANSWER ── */
+function saveProgressSnapshot() {
+  // Save current partial results to localStorage immediately after each answer
+  // This means data is never more than one question behind
+  const quizId = (currentQuizTitle || 'quiz').replace(/\s+/g, '_').substring(0, 30);
+  const snapshotKey = 'qt_progress_' + quizId + '_' + (currentSession.studentName || 'unknown').replace(/\s+/g,'_');
+  const snapshot = {
+    quizId,
+    quizTitle: currentQuizTitle,
+    studentName: currentSession.studentName,
+    timestamp: Date.now(),
+    partial: true,
+    results: currentSession.results.map(r => {
+      const q = (activeQuiz || []).find(x => x.id === r.questionId);
+      return { ...r, conceptId: q ? q.conceptId : null };
+    })
+  };
+  try { localStorage.setItem(snapshotKey, JSON.stringify(snapshot)); } catch(e) {}
+}
+
 function nextQuestion() {
   currentSession.quizIndex++;
   if (currentSession.quizIndex >= activeQuiz.length) {
@@ -2779,6 +2803,25 @@ function showResults() {
   });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Save to Firebase (or localStorage fallback)
+  const quizId = currentQuizTitle.replace(/\s+/g, '_').substring(0, 30);
+  const sessionData = {
+    quizId,
+    quizTitle: currentQuizTitle,
+    kciSetId: localStorage.getItem('qt_active_kci_set') || null,
+    studentName: currentSession.studentName,
+    classId: 'unassigned',
+    className: 'Unassigned',
+    timestamp: Date.now(),
+    tabSwitches: tabSwitchCount,
+    focusLosses: focusLossCount,
+    results: currentSession.results.map(r => {
+      const q = (activeQuiz || []).find(x => x.id === r.questionId);
+      return { ...r, conceptId: q ? q.conceptId : null };
+    })
+  };
+  saveSessionToFirebase(sessionData);
 }
 
 function resetQuiz() {
@@ -3448,37 +3491,48 @@ async function deleteClassFromDB(classId) {
 // ── SESSIONS ───────────────────────────────
 async function saveSessionToFirebase(sessionData) {
   const docId = 'sess_' + sessionData.timestamp + '_' + sessionData.studentName.replace(/\s+/g,'_').substring(0,20);
+  // Always write to localStorage first as belt-and-braces backup
+  try { localStorage.setItem('qt_sess_' + docId, JSON.stringify(sessionData)); } catch(e) {}
+  // Then try Firebase
   try {
-    await withDB(async (db, fs) => {
+    const result = await withDB(async (db, fs) => {
       await fs.setDoc(fs.doc(db, 'qt_sessions', docId), sessionData);
+      return true;
     });
+    if (result) {
+      // Firebase succeeded -- clean up the localStorage copy
+      try { localStorage.removeItem('qt_sess_' + docId); } catch(e) {}
+    }
   } catch(e) {
-    // localStorage fallback
-    localStorage.setItem('qt_sess_' + docId, JSON.stringify(sessionData));
-    console.warn('Firebase session save failed, used localStorage:', e);
+    console.warn('Firebase session save failed, localStorage backup kept:', e);
   }
 }
 
 async function loadAllSessions() {
+  let sessions = [];
+  // Load from Firebase
   try {
-    return await withDB(async (db, fs) => {
-      const snap = await fs.getDocs(fs.query(
-        fs.collection(db, 'qt_sessions'),
-        fs.orderBy('timestamp', 'desc')
-      ));
-      return snap.docs.map(d => d.data());
+    const result = await withDB(async (db, fs) => {
+      const snap = await fs.getDocs(fs.collection(db, 'qt_sessions'));
+      return snap ? snap.docs.map(d => d.data()) : null;
     });
+    if (result) sessions = result;
   } catch(e) {
-    // localStorage fallback
-    const sessions = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.startsWith('qt_sess_')) {
-        try { sessions.push(JSON.parse(localStorage.getItem(k))); } catch(e2) {}
-      }
-    }
-    return sessions.sort((a,b) => b.timestamp - a.timestamp);
+    console.warn('Firebase load failed, using localStorage:', e);
   }
+  // Always also check localStorage (backup saves + partial progress snapshots)
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && (k.startsWith('qt_sess_') || k.startsWith('qt_progress_'))) {
+      try {
+        const s = JSON.parse(localStorage.getItem(k));
+        if (s && !sessions.find(x => x.studentName === s.studentName && Math.abs(x.timestamp - s.timestamp) < 5000)) {
+          sessions.push(s);
+        }
+      } catch(e2) {}
+    }
+  }
+  return sessions.sort((a,b) => b.timestamp - a.timestamp);
 }
 
 async function clearAllSessions() {
@@ -3621,31 +3675,7 @@ function populateClassDropdown() {
   if (prev) sel.value = prev;
 }
 
-/* ── UPDATE showResults TO PERSIST ── */
-const _originalShowResults = showResults;
-function showResults() {
-  _originalShowResults();
-  const classEl = document.getElementById('student-class');
-  const classId = classEl ? classEl.value : '';
-  const classObj = classes.find(c => c.id === classId);
-  const quizId = currentQuizTitle.replace(/\s+/g, '_').substring(0, 30);
-  const sessionData = {
-    quizId,
-    quizTitle: currentQuizTitle,
-    kciSetId: localStorage.getItem('qt_active_kci_set') || null,
-    studentName: currentSession.studentName,
-    classId: classId || 'unassigned',
-    className: classObj ? classObj.name : 'Unassigned',
-    timestamp: Date.now(),
-    tabSwitches: tabSwitchCount,
-    focusLosses: focusLossCount,
-    results: currentSession.results.map(r => {
-      const q = (activeQuiz || []).find(x => x.id === r.questionId);
-      return { ...r, conceptId: q ? q.conceptId : null };
-    })
-  };
-  saveSessionToFirebase(sessionData);
-}
+/* Results are saved inside showResults() above */
 
 /* ═══════════════════════════════════════════
    CLASS DASHBOARD
