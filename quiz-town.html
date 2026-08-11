@@ -1211,6 +1211,38 @@ body {
 }
 .bank-type-badge.tchart { background: var(--green-deep); color: var(--brass-pale); }
 
+
+/* ── QUESTION EDIT PANEL ── */
+.bank-item.editing { background: #e8f0ec; border-left: 3px solid var(--green-mid); }
+.edit-panel {
+  background: var(--parchment);
+  border: 2px solid var(--green-mid);
+  border-top: 3px solid var(--green-deep);
+  padding: 20px;
+  margin-top: 0;
+}
+.edit-panel-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green-mid);
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.edit-panel-close {
+  background: none;
+  border: none;
+  color: var(--burgundy-light);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 2px;
+}
+.edit-panel-close:hover { color: var(--burgundy); }
+
 /* ── TEACHER TABS ── */
 .teacher-tabs {
   display: flex;
@@ -1664,9 +1696,12 @@ body {
             <div class="bank-list" id="bank-list"></div>
           </div>
 
-          <!-- ADD QUESTION FORM -->
-          <div class="panel-card mt-20">
-            <div class="panel-card-header"><span>Add New Question</span></div>
+          <!-- ADD / EDIT QUESTION PANEL -->
+          <div class="panel-card mt-20" id="question-form-card">
+            <div class="panel-card-header">
+              <span id="question-form-title">Add New Question</span>
+              <button id="question-form-new-btn" onclick="openNewQuestionPanel()" style="display:none;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;padding:4px 12px;background:transparent;border:1px solid var(--brass);color:var(--brass-light);cursor:pointer;">+ New Question</button>
+            </div>
             <div class="add-form">
               <div class="form-field">
                 <label class="form-label">Subject / Unit</label>
@@ -2842,17 +2877,28 @@ function renderBank() {
   }
   filtered.forEach(q => {
     const inBuilder = selectedForBuilder.includes(q.id);
+    const isEditing = editingQuestionId === q.id;
     const item = document.createElement('div');
-    item.className = 'bank-item' + (inBuilder ? ' selected' : '');
+    item.className = 'bank-item' + (inBuilder ? ' selected' : '') + (isEditing ? ' editing' : '');
     item.dataset.id = q.id;
     const typeBadge = (q.type === 'tchart') ? '<span class="bank-type-badge tchart">T-Chart</span>' : '<span class="bank-type-badge">Paragraph</span>';
     item.innerHTML = `
-      <div class="bank-item-check">${inBuilder ? '✓' : ''}</div>
-      <div class="bank-item-body">
+      <div class="bank-item-check" data-toggle="${q.id}">${inBuilder ? '&#10003;' : ''}</div>
+      <div class="bank-item-body" data-edit="${q.id}" style="cursor:pointer;">
         <div class="bank-item-tag" style="display:flex;align-items:center;gap:8px;">${q.subject} ${typeBadge}</div>
         <div class="bank-item-q">${q.question}</div>
-      </div>`;
-    item.addEventListener('click', () => toggleForBuilder(q.id));
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);padding:0 6px;flex-shrink:0;">${isEditing ? '&#9650; Edit' : '&#9660; Edit'}</div>`;
+    // Checkbox toggles builder membership
+    item.querySelector('[data-toggle]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleForBuilder(q.id);
+    });
+    // Row body opens edit panel
+    item.querySelector('[data-edit]').addEventListener('click', () => openEditPanel(q.id));
+    item.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-toggle]') && !e.target.closest('[data-edit]')) openEditPanel(q.id);
+    });
     list.appendChild(item);
   });
 }
@@ -2979,6 +3025,7 @@ document.getElementById('btn-save-question').addEventListener('click', function(
   const subject = selectEl.value === '__new__'
     ? document.getElementById('new-subject-text').value.trim()
     : selectEl.value;
+  const isEditing = editingQuestionId !== null;
   const question = document.getElementById('new-question').value.trim();
   const hint = document.getElementById('new-hint').value.trim();
   const model = document.getElementById('new-model').value.trim();
@@ -3003,6 +3050,8 @@ document.getElementById('btn-save-question').addEventListener('click', function(
   }
 
   let newQ;
+  const conceptId = document.getElementById('new-concept-tag').value || null;
+
   if (currentQType === 'tchart') {
     const leftHead = document.getElementById('new-tchart-left').value.trim();
     const rightHead = document.getElementById('new-tchart-right').value.trim();
@@ -3011,19 +3060,26 @@ document.getElementById('btn-save-question').addEventListener('click', function(
     const tchartItems = parseTChartItems(rawItems);
     if (tchartItems.length < 2) { alert('Please enter at least 2 items to sort (one per line, format: item | left or right).'); return; }
     newQ = {
-      id: nextQuestionId++,
+      id: isEditing ? editingQuestionId : nextQuestionId++,
       type: 'tchart',
       subject, question, hint,
       tchartLeft: leftHead,
       tchartRight: rightHead,
       tchartItems,
-      conceptId: document.getElementById('new-concept-tag').value || null,
-      beats: [] // not used for tchart scoring
+      conceptId,
+      beats: []
     };
   } else {
-    newQ = { id: nextQuestionId++, type: 'paragraph', subject, question, hint, modelAnswer: model, beats, conceptId: document.getElementById('new-concept-tag').value || null };
+    newQ = { id: isEditing ? editingQuestionId : nextQuestionId++, type: 'paragraph', subject, question, hint, modelAnswer: model, beats, conceptId };
   }
-  questionBank.push(newQ);
+
+  // Save: replace existing or append new
+  if (isEditing) {
+    const idx = questionBank.findIndex(q => q.id === editingQuestionId);
+    if (idx > -1) questionBank[idx] = newQ;
+  } else {
+    questionBank.push(newQ);
+  }
   saveBank();
 
   // Reset form
@@ -3040,9 +3096,15 @@ document.getElementById('btn-save-question').addEventListener('click', function(
   document.getElementById('beats-builder').innerHTML = '';
   addBeatRow();
 
+  editingQuestionId = null;
   renderBank();
   renderSubjectFilter();
-  alert(`Question added to bank (ID ${newQ.id}).`);
+  renderConceptTagDropdown();
+  document.getElementById('question-form-title').textContent = 'Add New Question';
+  document.getElementById('question-form-new-btn').style.display = 'none';
+  document.getElementById('btn-save-question').textContent = 'Save Question to Bank';
+  const msg = isEditing ? 'Question updated.' : `Question added to bank (ID ${newQ.id}).`;
+  alert(msg);
 });
 
 /* ═══════════════════════════════════════════
@@ -3856,6 +3918,104 @@ _origLaunchBtn.addEventListener('click', function() {
   const setId = document.getElementById('quiz-kci-set').value;
   if (setId) localStorage.setItem('qt_active_kci_set', setId);
 }, true); // capture phase so it runs before existing handler
+
+/* ═══════════════════════════════════════════
+   QUESTION EDIT / NEW PANEL
+═══════════════════════════════════════════ */
+let editingQuestionId = null;
+
+function openNewQuestionPanel() {
+  editingQuestionId = null;
+  document.getElementById('question-form-title').textContent = 'Add New Question';
+  document.getElementById('question-form-new-btn').style.display = 'none';
+  document.getElementById('btn-save-question').textContent = 'Save Question to Bank';
+  // Clear all fields
+  document.getElementById('new-subject-select').value = '';
+  document.getElementById('new-subject-text').value = '';
+  document.getElementById('new-subject-custom').style.display = 'none';
+  document.getElementById('new-concept-tag').value = '';
+  document.getElementById('new-question').value = '';
+  document.getElementById('new-hint').value = '';
+  document.getElementById('new-model').value = '';
+  document.getElementById('new-tchart-left').value = '';
+  document.getElementById('new-tchart-right').value = '';
+  document.getElementById('new-tchart-items').value = '';
+  document.getElementById('beats-builder').innerHTML = '';
+  addBeatRow();
+  setQType('paragraph');
+  renderBank();
+  document.getElementById('question-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function openEditPanel(qid) {
+  // Toggle off if already editing this one
+  if (editingQuestionId === qid) {
+    editingQuestionId = null;
+    document.getElementById('question-form-title').textContent = 'Add New Question';
+    document.getElementById('question-form-new-btn').style.display = 'none';
+    document.getElementById('btn-save-question').textContent = 'Save Question to Bank';
+    openNewQuestionPanel();
+    return;
+  }
+
+  const q = questionBank.find(x => x.id === qid);
+  if (!q) return;
+  editingQuestionId = qid;
+
+  document.getElementById('question-form-title').textContent = 'Editing Question';
+  document.getElementById('question-form-new-btn').style.display = 'inline-block';
+  document.getElementById('btn-save-question').textContent = 'Save Changes';
+
+  // Populate subject
+  const subjectSel = document.getElementById('new-subject-select');
+  if ([...subjectSel.options].find(o => o.value === q.subject)) {
+    subjectSel.value = q.subject;
+  } else {
+    subjectSel.value = '__new__';
+    document.getElementById('new-subject-text').value = q.subject;
+    document.getElementById('new-subject-custom').style.display = 'block';
+  }
+
+  // Populate concept tag
+  const conceptSel = document.getElementById('new-concept-tag');
+  if (q.conceptId && [...conceptSel.options].find(o => o.value === q.conceptId)) {
+    conceptSel.value = q.conceptId;
+  } else {
+    conceptSel.value = '';
+  }
+
+  // Populate question text + hint
+  document.getElementById('new-question').value = q.question || '';
+  document.getElementById('new-hint').value = q.hint || '';
+
+  // Set type and populate type-specific fields
+  if (q.type === 'tchart') {
+    setQType('tchart');
+    document.getElementById('new-tchart-left').value = q.tchartLeft || '';
+    document.getElementById('new-tchart-right').value = q.tchartRight || '';
+    if (q.tchartItems) {
+      document.getElementById('new-tchart-items').value =
+        q.tchartItems.map(i => i.text + ' | ' + i.correct).join('\n');
+    }
+  } else {
+    setQType('paragraph');
+    document.getElementById('new-model').value = q.modelAnswer || '';
+    // Populate beats
+    const beatsBuilder = document.getElementById('beats-builder');
+    beatsBuilder.innerHTML = '';
+    (q.beats || []).forEach(b => {
+      addBeatRow();
+      const rows = beatsBuilder.querySelectorAll('.beat-row');
+      const lastRow = rows[rows.length - 1];
+      lastRow.querySelectorAll('input')[0].value = b.text || '';
+      lastRow.querySelectorAll('input')[1].value = b.weight || 1;
+    });
+    if ((q.beats || []).length === 0) addBeatRow();
+  }
+
+  renderBank();
+  document.getElementById('question-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 /* ═══════════════════════════════════════════
    QUESTION TYPE SYSTEM
