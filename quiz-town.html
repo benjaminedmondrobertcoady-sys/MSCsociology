@@ -1745,7 +1745,7 @@ body {
                 <div class="form-field">
                   <label class="form-label">Items to sort (one per line, format: item text | left or right)</label>
                   <textarea class="form-textarea" id="new-tchart-items"
-                    placeholder="Murder | left&#10;Littering | right&#10;Drink driving | left&#10;Speaking at the cinema | right"
+                    placeholder="e.g. Murder | left&#10;Littering | right&#10;Drink driving | left"
                     style="min-height:140px; font-family:'JetBrains Mono',monospace; font-size:12px;"></textarea>
                   <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);margin-top:4px;letter-spacing:0.08em;">
                     Use | to separate the item from its correct column (left or right). One item per line.
@@ -2036,7 +2036,7 @@ const DEFAULT_QUESTIONS = [
    STATE
 ═══════════════════════════════════════════ */
 // Bank version -- increment this to force a reset of cached localStorage bank data
-const BANK_VERSION = 'v3';
+const BANK_VERSION = 'v5';
 if (localStorage.getItem('qt_bank_version') !== BANK_VERSION) {
   localStorage.removeItem('qt_bank');
   localStorage.setItem('qt_bank_version', BANK_VERSION);
@@ -3065,10 +3065,18 @@ document.getElementById('btn-save-question').addEventListener('click', function(
   if (currentQType === 'tchart') {
     const leftHead = document.getElementById('new-tchart-left').value.trim();
     const rightHead = document.getElementById('new-tchart-right').value.trim();
-    const rawItems = document.getElementById('new-tchart-items').value;
+    const rawItems = document.getElementById('new-tchart-items').value.trim();
     if (!leftHead || !rightHead) { alert('Please enter both column headings.'); return; }
-    const tchartItems = parseTChartItems(rawItems);
-    if (tchartItems.length < 2) { alert('Please enter at least 2 items to sort (one per line, format: item | left or right).'); return; }
+
+    // If editing and items textarea is empty, keep the existing stored items
+    let tchartItems;
+    if (isEditing && !rawItems) {
+      const existing = questionBank.find(q => q.id === editingQuestionId);
+      tchartItems = existing ? existing.tchartItems : [];
+    } else {
+      tchartItems = parseTChartItems(rawItems);
+    }
+    if (!tchartItems || tchartItems.length < 2) { alert('Please enter at least 2 items to sort (one per line, format: item | left or right).'); return; }
     newQ = {
       id: isEditing ? editingQuestionId : nextQuestionId++,
       type: 'tchart',
@@ -4003,9 +4011,17 @@ function openEditPanel(qid) {
     setQType('tchart');
     document.getElementById('new-tchart-left').value = q.tchartLeft || '';
     document.getElementById('new-tchart-right').value = q.tchartRight || '';
-    if (q.tchartItems) {
+    document.getElementById('new-tchart-items').value = '';
+    if (q.tchartItems && q.tchartItems.length > 0) {
       document.getElementById('new-tchart-items').value =
         q.tchartItems.map(i => i.text + ' | ' + i.correct).join('\n');
+    } else {
+      // Items not in localStorage version -- look in DEFAULT_QUESTIONS
+      const defaultQ = DEFAULT_QUESTIONS.find ? DEFAULT_QUESTIONS.find(d => d.id === q.id) : null;
+      if (defaultQ && defaultQ.tchartItems) {
+        document.getElementById('new-tchart-items').value =
+          defaultQ.tchartItems.map(i => i.text + ' | ' + i.correct).join('\n');
+      }
     }
   } else {
     setQType('paragraph');
