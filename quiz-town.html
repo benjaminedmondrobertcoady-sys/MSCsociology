@@ -2507,7 +2507,8 @@ function loadQuestion() {
   document.getElementById('meta-progress').textContent = `${currentSession.quizIndex + 1} / ${activeQuiz.length}`;
   pasteAttempts = 0;
   pasteWarning.style.display = 'none';
-  document.getElementById('hint-box').classList.remove('visible');
+  document.getElementById('hint-box').style.display = 'none';
+  document.getElementById('btn-hint').textContent = 'Hint';
   document.getElementById('scoring-panel').classList.remove('visible');
   document.getElementById('scoring-panel').style.display = 'none';
   document.getElementById('scoring-result').classList.add('hidden');
@@ -2536,8 +2537,8 @@ function loadQuestion() {
 
 document.getElementById('btn-hint').addEventListener('click', function() {
   const hintBox = document.getElementById('hint-box');
-  const isVisible = hintBox.classList.contains('visible');
-  hintBox.classList.toggle('visible');
+  const isVisible = hintBox.style.display === 'block';
+  hintBox.style.display = isVisible ? 'none' : 'block';
   currentSession.hintUsed = true;
   this.textContent = isVisible ? 'Hint' : 'Hide Hint';
 });
@@ -2614,38 +2615,41 @@ async function submitAnswer() {
 }
 
 async function scoreWithClaude(question, studentAnswer) {
-  const beatsText = question.beats.map((b, i) => `${i+1}. [weight ${b.weight}] ${b.text}`).join('\n');
-  const prompt = `You are marking a student's paragraph answer for a VCE Sociology class.
+  const beatsText = question.beats.map((b, i) => `${i+1}. ${b.text}`).join('\n');
+  const prompt = `You are a supportive VCE Sociology teacher marking a student's paragraph answer. Your job is to recognise understanding even when it is expressed in the student's own words rather than textbook language.
 
 QUESTION: ${question.question}
 
-MODEL ANSWER: ${question.modelAnswer}
+MODEL ANSWER (use as a guide to understanding, not as a word-for-word checklist):
+${question.modelAnswer}
 
-KEY BEATS TO HIT (numbered list with weights):
+KEY IDEAS the student should demonstrate understanding of:
 ${beatsText}
 
 STUDENT ANSWER: ${studentAnswer}
 
-Evaluate the student's answer against the key beats. For each beat, assess:
-- "hit" (clearly addressed with correct understanding)
-- "partial" (mentioned but vague or incomplete)  
-- "miss" (not addressed or incorrect)
+MARKING GUIDANCE:
+- Award "hit" generously: if the student demonstrates understanding of the concept in their own words, even if phrased differently from the model, that counts as a hit
+- Award "partial" when the idea is present but underdeveloped, lacks an example, or is correct but vague
+- Award "miss" only when the concept is genuinely absent or the student has shown a clear misunderstanding
+- A student does not need to use exact terminology -- look for conceptual understanding
+- Be encouraging in tone; identify what the student did well before noting gaps
 
-Respond ONLY with valid JSON, no preamble, no markdown fences. Format:
+Respond ONLY with valid JSON, no preamble, no markdown fences:
 {
   "grade": "A" | "B" | "C" | "D" | "F",
-  "summary": "2-3 sentence encouraging but honest assessment of the answer",
+  "summary": "2-3 sentences. Start with genuine specific praise for what the student got right, then briefly note any gaps. Encouraging, not clinical.",
   "beats": [
-    { "text": "the beat text", "status": "hit" | "partial" | "miss", "feedback": "one sentence on why" }
+    { "text": "the key idea", "status": "hit" | "partial" | "miss", "feedback": "one brief, constructive sentence" }
   ]
 }
 
-Grade rubric:
-- A: All or nearly all beats hit including weighted ones; clear sociological language
-- B: Most beats hit; minor gaps  
-- C: Some key beats hit; significant gaps or vague understanding
-- D: Few beats hit; surface-level only
-- F: Minimal engagement with the question`;
+Grade rubric (be generous -- reward understanding, not memorisation):
+- A: Strong grasp of most key ideas, expressed clearly in their own words
+- B: Good understanding with minor gaps or underdeveloped points
+- C: Partial understanding -- some key ideas present, others missing or confused
+- D: Limited engagement -- only surface-level or one or two ideas addressed
+- F: Very little connection to the question or key concepts`;
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
