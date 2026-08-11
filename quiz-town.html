@@ -1058,6 +1058,159 @@ body {
   margin-top: 12px;
 }
 
+
+/* ── T-CHART QUESTION TYPE ── */
+.tchart-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 2px solid var(--green-deep);
+  margin-top: 4px;
+  background: var(--green-deep);
+}
+.tchart-col {
+  background: var(--parchment);
+  display: flex;
+  flex-direction: column;
+}
+.tchart-col + .tchart-col {
+  border-left: 2px solid var(--green-deep);
+}
+.tchart-col-header {
+  background: var(--green-deep);
+  color: var(--brass-light);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  text-align: center;
+}
+.tchart-items {
+  flex: 1;
+  min-height: 80px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tchart-drop-zone {
+  min-height: 60px;
+  border: 2px dashed var(--cream-rule);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.tchart-drop-zone.drag-over {
+  background: #e8f0ec;
+  border-color: var(--green-mid);
+}
+.tchart-item {
+  background: white;
+  border: 1px solid var(--cream-rule);
+  border-left: 3px solid var(--brass);
+  padding: 7px 12px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 13.5px;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.1s, opacity 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tchart-item:active { cursor: grabbing; opacity: 0.7; }
+.tchart-item.dragging { opacity: 0.4; box-shadow: 0 2px 8px var(--shadow); }
+.tchart-item-handle {
+  color: var(--cream-rule);
+  font-size: 14px;
+  flex-shrink: 0;
+  cursor: grab;
+}
+.tchart-unsorted {
+  background: var(--parchment-dark);
+  border: 2px solid var(--cream-rule);
+  border-top: 3px solid var(--brass);
+  padding: 12px;
+  margin-top: 14px;
+}
+.tchart-unsorted-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 8px;
+}
+.tchart-unsorted-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 44px;
+}
+.tchart-pill {
+  background: white;
+  border: 1.5px solid var(--green-mid);
+  border-radius: 2px;
+  padding: 5px 12px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  cursor: grab;
+  user-select: none;
+  transition: background 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tchart-pill:hover { background: #e8f0ec; }
+.tchart-pill.dragging { opacity: 0.4; }
+
+/* Result colouring after submission */
+.tchart-item.correct { border-left-color: var(--score-a); background: #f0faf3; }
+.tchart-item.incorrect { border-left-color: var(--score-f); background: #fdf0f0; }
+.tchart-item.correct::after { content: ' ✓'; color: var(--score-a); font-size: 12px; margin-left: auto; }
+.tchart-item.incorrect::after { content: ' ✗'; color: var(--score-f); font-size: 12px; margin-left: auto; }
+
+/* Question type selector in teacher form */
+.qtype-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--cream-rule);
+  margin-bottom: 14px;
+  width: fit-content;
+}
+.qtype-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  background: var(--parchment-dark);
+  color: var(--green-mid);
+  border: none;
+  border-right: 1px solid var(--cream-rule);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.qtype-btn:last-child { border-right: none; }
+.qtype-btn.active { background: var(--green-deep); color: var(--brass-pale); }
+
+/* Bank list type indicator */
+.bank-type-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  background: var(--brass-pale);
+  color: var(--green-deep);
+  border: 1px solid var(--cream-rule);
+  flex-shrink: 0;
+}
+.bank-type-badge.tchart { background: var(--green-deep); color: var(--brass-pale); }
+
 /* ── TEACHER TABS ── */
 .teacher-tabs {
   display: flex;
@@ -1286,40 +1439,50 @@ body {
 </style>
 
 <!-- Firebase SDK (compat build - works from file:// and GitHub Pages) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" onerror="window._firebaseFailed=true"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" onerror="window._firebaseFailed=true"></script>
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
-    authDomain: "eduquesthermes-d0d7a.firebaseapp.com",
-    projectId: "eduquesthermes-d0d7a",
-    storageBucket: "eduquesthermes-d0d7a.firebasestorage.app",
-    messagingSenderId: "29558718923",
-    appId: "1:29558718923:web:585463b020a394d49bb64e"
-  };
+  try {
+    if (typeof firebase === 'undefined') throw new Error('Firebase SDK not loaded');
 
-  firebase.initializeApp(firebaseConfig);
-  const _fireDb = firebase.firestore();
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
+      authDomain: "eduquesthermes-d0d7a.firebaseapp.com",
+      projectId: "eduquesthermes-d0d7a",
+      storageBucket: "eduquesthermes-d0d7a.firebasestorage.app",
+      messagingSenderId: "29558718923",
+      appId: "1:29558718923:web:585463b020a394d49bb64e"
+    };
 
-  // Expose compat API to match the interface our withDB() calls expect
-  window._db = _fireDb;
-  window._fs = {
-    collection: (db, path) => db.collection(path),
-    doc: (db, path, id) => db.collection(path).doc(id),
-    setDoc: (ref, data) => ref.set(data),
-    getDocs: (ref) => ref.get(),
-    deleteDoc: (ref) => ref.delete(),
-    // query() in compat is chainable: just apply constraints as functions
-    query: (ref, ...constraints) => {
-      let q = ref;
-      constraints.forEach(fn => { q = fn(q); });
-      return q;
-    },
-    where: (field, op, val) => (q) => q.where(field, op, val),
-    orderBy: (field, dir) => (q) => q.orderBy(field, dir || 'asc'),
-  };
-  window._firebaseReady = true;
-  document.dispatchEvent(new Event('firebase-ready'));
+    firebase.initializeApp(firebaseConfig);
+    const _fireDb = firebase.firestore();
+
+    window._db = _fireDb;
+    window._fs = {
+      collection: (db, path) => db.collection(path),
+      doc: (db, path, id) => db.collection(path).doc(id),
+      setDoc: (ref, data) => ref.set(data),
+      getDocs: (ref) => ref.get(),
+      deleteDoc: (ref) => ref.delete(),
+      query: (ref, ...constraints) => {
+        let q = ref;
+        constraints.forEach(fn => { q = fn(q); });
+        return q;
+      },
+      where: (field, op, val) => (q) => q.where(field, op, val),
+      orderBy: (field, dir) => (q) => q.orderBy(field, dir || 'asc'),
+    };
+    window._firebaseReady = true;
+    document.dispatchEvent(new Event('firebase-ready'));
+  } catch(e) {
+    // Firebase unavailable (e.g. local file:// testing) -- fall back to localStorage
+    console.info('Quiz Town: Firebase unavailable, using localStorage fallback.', e.message);
+    window._firebaseReady = false;
+    window._db = null;
+    window._fs = null;
+    // Dispatch ready anyway so withDB() resolves and the app continues
+    document.dispatchEvent(new Event('firebase-ready'));
+  }
 </script>
 </head>
 <body>
@@ -1385,6 +1548,38 @@ body {
         </div>
         <div class="word-count" id="word-count">0 words</div>
       </div>
+      <!-- T-CHART ANSWER AREA (shown for tchart questions) -->
+      <div id="tchart-answer-area" style="display:none;">
+        <div class="answer-label" style="margin-top:16px;">Sort the items into the correct column</div>
+        <div class="tchart-wrap" id="tchart-grid">
+          <div class="tchart-col">
+            <div class="tchart-col-header" id="tchart-left-head">Column A</div>
+            <div class="tchart-items">
+              <div class="tchart-drop-zone" id="tchart-drop-left"
+                ondragover="tchartDragOver(event)" ondrop="tchartDrop(event,'left')"
+                ondragleave="tchartDragLeave(event)"></div>
+            </div>
+          </div>
+          <div class="tchart-col">
+            <div class="tchart-col-header" id="tchart-right-head">Column B</div>
+            <div class="tchart-items">
+              <div class="tchart-drop-zone" id="tchart-drop-right"
+                ondragover="tchartDragOver(event)" ondrop="tchartDrop(event,'right')"
+                ondragleave="tchartDragLeave(event)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tchart-unsorted">
+          <div class="tchart-unsorted-label">Unsorted items - drag into a column</div>
+          <div class="tchart-unsorted-items" id="tchart-unsorted"
+            ondragover="tchartDragOver(event)" ondrop="tchartDrop(event,'unsorted')"
+            ondragleave="tchartDragLeave(event)"></div>
+        </div>
+        <div class="paste-warning" id="paste-warning-tchart" style="display:none;">
+          ⚠ All items must be sorted into a column before you can submit.
+        </div>
+      </div>
+
       <div class="hint-box" id="hint-box">
         <div class="hint-label">Hint</div>
         <div id="hint-text"></div>
@@ -1491,8 +1686,36 @@ body {
                 <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);margin-top:4px;letter-spacing:0.08em;">Link this question to a Key Concept Index concept. Create concepts first in the Key Concept Index tab.</div>
               </div>
               <div class="form-field">
+                <label class="form-label">Question Type</label>
+                <div class="qtype-toggle">
+                  <button class="qtype-btn active" id="qtype-paragraph" onclick="setQType('paragraph')">Paragraph</button>
+                  <button class="qtype-btn" id="qtype-tchart" onclick="setQType('tchart')">T-Chart</button>
+                </div>
+              </div>
+              <div class="form-field">
                 <label class="form-label">Question</label>
                 <textarea class="form-textarea" id="new-question" placeholder="Write the question..."></textarea>
+              </div>
+
+              <!-- T-CHART AUTHORING (shown only when T-Chart type selected) -->
+              <div id="tchart-author-fields" style="display:none;">
+                <div class="form-field">
+                  <label class="form-label">Left Column Heading</label>
+                  <input type="text" class="form-input" id="new-tchart-left" placeholder="e.g. Formal Deviance" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">Right Column Heading</label>
+                  <input type="text" class="form-input" id="new-tchart-right" placeholder="e.g. Informal Deviance" />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">Items to sort (one per line, format: item text | left or right)</label>
+                  <textarea class="form-textarea" id="new-tchart-items"
+                    placeholder="Murder | left&#10;Littering | right&#10;Drink driving | left&#10;Speaking at the cinema | right"
+                    style="min-height:140px; font-family:'JetBrains Mono',monospace; font-size:12px;"></textarea>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);margin-top:4px;letter-spacing:0.08em;">
+                    Use | to separate the item from its correct column (left or right). One item per line.
+                  </div>
+                </div>
               </div>
               <div class="form-field">
                 <label class="form-label">Hint (optional)</label>
@@ -2237,20 +2460,32 @@ function loadQuestion() {
   document.getElementById('q-number').textContent = `Question ${currentSession.quizIndex + 1} of ${activeQuiz.length}`;
   document.getElementById('q-text').textContent = q.question;
   document.getElementById('meta-progress').textContent = `${currentSession.quizIndex + 1} / ${activeQuiz.length}`;
-  textarea.value = '';
-  lastLength = 0;
   pasteAttempts = 0;
   pasteWarning.style.display = 'none';
-  document.getElementById('word-count').textContent = '0 words';
-  document.getElementById('btn-submit').disabled = true;
   document.getElementById('hint-box').classList.remove('visible');
   document.getElementById('scoring-panel').classList.remove('visible');
   document.getElementById('scoring-panel').style.display = 'none';
   document.getElementById('scoring-result').classList.add('hidden');
   document.getElementById('scoring-loading').style.display = 'flex';
   document.getElementById('hint-text').textContent = q.hint || 'Think carefully about the key sociological concepts involved.';
-  textarea.focus();
-  // Scroll to top of question
+
+  const isTChart = q.type === 'tchart';
+
+  // Show/hide answer areas
+  document.getElementById('answer-input').closest('.answer-area').style.display = isTChart ? 'none' : 'block';
+  document.getElementById('word-count').style.display = isTChart ? 'none' : 'block';
+  document.getElementById('tchart-answer-area').style.display = isTChart ? 'block' : 'none';
+
+  if (isTChart) {
+    buildTChart(q);
+  } else {
+    textarea.value = '';
+    lastLength = 0;
+    document.getElementById('word-count').textContent = '0 words';
+    document.getElementById('btn-submit').disabled = true;
+    textarea.focus();
+  }
+
   document.getElementById('question-card').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -2266,11 +2501,22 @@ document.getElementById('btn-submit').addEventListener('click', submitAnswer);
 document.getElementById('btn-next').addEventListener('click', nextQuestion);
 
 async function submitAnswer() {
-  const answer = textarea.value.trim();
-  if (!answer || answer.split(/\s+/).filter(w => w.length > 0).length < 20) return;
   const q = activeQuiz[currentSession.quizIndex];
+  const isTChart = q.type === 'tchart';
 
-  // Disable textarea during marking
+  if (!isTChart) {
+    const answer = textarea.value.trim();
+    if (!answer || answer.split(/\s+/).filter(w => w.length > 0).length < 20) return;
+  } else {
+    const allSorted = Object.values(tchartState).every(v => v === 'left' || v === 'right');
+    if (!allSorted) {
+      document.getElementById('paste-warning-tchart').style.display = 'block';
+      setTimeout(() => document.getElementById('paste-warning-tchart').style.display = 'none', 3000);
+      return;
+    }
+  }
+
+  // Disable inputs during marking
   textarea.disabled = true;
   document.getElementById('btn-submit').disabled = true;
   document.getElementById('btn-hint').disabled = true;
@@ -2284,27 +2530,39 @@ async function submitAnswer() {
   // Smooth scroll to scoring
   scoringPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  try {
-    const result = await scoreWithClaude(q, answer);
+  if (isTChart) {
+    const result = scoreTChart(q);
     displayScore(result, q);
     currentSession.results.push({
       questionId: q.id,
       questionText: q.question.substring(0, 60),
       grade: result.grade,
       hintUsed: currentSession.hintUsed,
-      pasteAttempts
+      pasteAttempts: 0
     });
-  } catch (err) {
-    // Fallback: local keyword scoring
-    const result = localScore(q, answer);
-    displayScore(result, q);
-    currentSession.results.push({
-      questionId: q.id,
-      questionText: q.question.substring(0, 60),
-      grade: result.grade,
-      hintUsed: currentSession.hintUsed,
-      pasteAttempts
-    });
+  } else {
+    const answer = textarea.value.trim();
+    try {
+      const result = await scoreWithClaude(q, answer);
+      displayScore(result, q);
+      currentSession.results.push({
+        questionId: q.id,
+        questionText: q.question.substring(0, 60),
+        grade: result.grade,
+        hintUsed: currentSession.hintUsed,
+        pasteAttempts
+      });
+    } catch (err) {
+      const result = localScore(q, answer);
+      displayScore(result, q);
+      currentSession.results.push({
+        questionId: q.id,
+        questionText: q.question.substring(0, 60),
+        grade: result.grade,
+        hintUsed: currentSession.hintUsed,
+        pasteAttempts
+      });
+    }
   }
 
   textarea.disabled = false;
@@ -2587,10 +2845,11 @@ function renderBank() {
     const item = document.createElement('div');
     item.className = 'bank-item' + (inBuilder ? ' selected' : '');
     item.dataset.id = q.id;
+    const typeBadge = (q.type === 'tchart') ? '<span class="bank-type-badge tchart">T-Chart</span>' : '<span class="bank-type-badge">Paragraph</span>';
     item.innerHTML = `
       <div class="bank-item-check">${inBuilder ? '✓' : ''}</div>
       <div class="bank-item-body">
-        <div class="bank-item-tag">${q.subject}</div>
+        <div class="bank-item-tag" style="display:flex;align-items:center;gap:8px;">${q.subject} ${typeBadge}</div>
         <div class="bank-item-q">${q.question}</div>
       </div>`;
     item.addEventListener('click', () => toggleForBuilder(q.id));
@@ -2743,7 +3002,27 @@ document.getElementById('btn-save-question').addEventListener('click', function(
     return;
   }
 
-  const newQ = { id: nextQuestionId++, subject, question, hint, modelAnswer: model, beats, conceptId: document.getElementById('new-concept-tag').value || null };
+  let newQ;
+  if (currentQType === 'tchart') {
+    const leftHead = document.getElementById('new-tchart-left').value.trim();
+    const rightHead = document.getElementById('new-tchart-right').value.trim();
+    const rawItems = document.getElementById('new-tchart-items').value;
+    if (!leftHead || !rightHead) { alert('Please enter both column headings.'); return; }
+    const tchartItems = parseTChartItems(rawItems);
+    if (tchartItems.length < 2) { alert('Please enter at least 2 items to sort (one per line, format: item | left or right).'); return; }
+    newQ = {
+      id: nextQuestionId++,
+      type: 'tchart',
+      subject, question, hint,
+      tchartLeft: leftHead,
+      tchartRight: rightHead,
+      tchartItems,
+      conceptId: document.getElementById('new-concept-tag').value || null,
+      beats: [] // not used for tchart scoring
+    };
+  } else {
+    newQ = { id: nextQuestionId++, type: 'paragraph', subject, question, hint, modelAnswer: model, beats, conceptId: document.getElementById('new-concept-tag').value || null };
+  }
   questionBank.push(newQ);
   saveBank();
 
@@ -2751,6 +3030,10 @@ document.getElementById('btn-save-question').addEventListener('click', function(
   document.getElementById('new-subject-select').value = '';
   document.getElementById('new-subject-text').value = '';
   document.getElementById('new-subject-custom').style.display = 'none';
+  document.getElementById('new-tchart-left').value = '';
+  document.getElementById('new-tchart-right').value = '';
+  document.getElementById('new-tchart-items').value = '';
+  setQType('paragraph');
   document.getElementById('new-question').value = '';
   document.getElementById('new-hint').value = '';
   document.getElementById('new-model').value = '';
@@ -3025,10 +3308,19 @@ function renderKCIQuizSetDropdown() {
 
 // Wait for Firebase to be ready before any Firestore ops
 function withDB(fn) {
-  if (window._firebaseReady) return fn(window._db, window._fs);
-  return new Promise(resolve => {
-    document.addEventListener('firebase-ready', () => resolve(fn(window._db, window._fs)), { once: true });
-  });
+  // Firebase ready and available
+  if (window._firebaseReady && window._db) return fn(window._db, window._fs);
+  // Not yet initialised -- wait for event
+  if (!window._firebaseReady) {
+    return new Promise(resolve => {
+      document.addEventListener('firebase-ready', () => {
+        if (window._db) resolve(fn(window._db, window._fs));
+        else resolve(null);
+      }, { once: true });
+    });
+  }
+  // Firebase explicitly unavailable (local file testing)
+  return Promise.resolve(null);
 }
 
 // ── CLASSES ────────────────────────────────
@@ -3564,6 +3856,231 @@ _origLaunchBtn.addEventListener('click', function() {
   const setId = document.getElementById('quiz-kci-set').value;
   if (setId) localStorage.setItem('qt_active_kci_set', setId);
 }, true); // capture phase so it runs before existing handler
+
+/* ═══════════════════════════════════════════
+   QUESTION TYPE SYSTEM
+═══════════════════════════════════════════ */
+let currentQType = 'paragraph';
+
+function setQType(type) {
+  currentQType = type;
+  document.getElementById('qtype-paragraph').classList.toggle('active', type === 'paragraph');
+  document.getElementById('qtype-tchart').classList.toggle('active', type === 'tchart');
+  document.getElementById('tchart-author-fields').style.display = type === 'tchart' ? 'block' : 'none';
+  // Show/hide beats and model answer (less relevant for tchart but keep for notes)
+  const modelField = document.getElementById('new-model').closest('.form-field');
+  const beatsField = document.getElementById('beats-builder').closest('.form-field');
+  if (type === 'tchart') {
+    modelField.style.display = 'none';
+    beatsField.style.display = 'none';
+  } else {
+    modelField.style.display = 'block';
+    beatsField.style.display = 'block';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   T-CHART DRAG AND DROP ENGINE
+═══════════════════════════════════════════ */
+let draggedItem = null;
+let tchartState = {}; // { itemId: 'left'|'right'|'unsorted' }
+
+function buildTChart(q) {
+  // Set column headings
+  document.getElementById('tchart-left-head').textContent = q.tchartLeft || 'Column A';
+  document.getElementById('tchart-right-head').textContent = q.tchartRight || 'Column B';
+
+  // Clear all zones
+  document.getElementById('tchart-drop-left').innerHTML = '';
+  document.getElementById('tchart-drop-right').innerHTML = '';
+  const unsortedEl = document.getElementById('tchart-unsorted');
+  unsortedEl.innerHTML = '';
+
+  // Initialise state -- all items start unsorted
+  tchartState = {};
+  q.tchartItems.forEach(item => { tchartState[item.id] = 'unsorted'; });
+
+  // Shuffle items for display
+  const shuffled = [...q.tchartItems].sort(() => Math.random() - 0.5);
+  shuffled.forEach(item => {
+    const pill = makeTChartPill(item);
+    unsortedEl.appendChild(pill);
+  });
+
+  updateSubmitFromTChart();
+}
+
+function makeTChartPill(item) {
+  const el = document.createElement('div');
+  el.className = 'tchart-pill';
+  el.draggable = true;
+  el.dataset.itemId = item.id;
+  el.innerHTML = `<span style="color:var(--cream-rule);font-size:13px;">&#8942;&#8942;</span> ${item.text}`;
+  el.addEventListener('dragstart', e => {
+    draggedItem = item.id;
+    el.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    draggedItem = null;
+  });
+  // Touch support
+  el.addEventListener('touchstart', tchartTouchStart, { passive: true });
+  el.addEventListener('touchmove', tchartTouchMove, { passive: false });
+  el.addEventListener('touchend', tchartTouchEnd);
+  return el;
+}
+
+function makeTChartItem(item) {
+  // Placed item (in a column) -- same as pill but different style
+  const el = document.createElement('div');
+  el.className = 'tchart-item';
+  el.draggable = true;
+  el.dataset.itemId = item.id;
+  el.innerHTML = `<span class="tchart-item-handle">&#8942;&#8942;</span> ${item.text}`;
+  el.addEventListener('dragstart', e => {
+    draggedItem = item.id;
+    el.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    draggedItem = null;
+  });
+  el.addEventListener('touchstart', tchartTouchStart, { passive: true });
+  el.addEventListener('touchmove', tchartTouchMove, { passive: false });
+  el.addEventListener('touchend', tchartTouchEnd);
+  return el;
+}
+
+function tchartDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function tchartDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+function tchartDrop(e, zone) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!draggedItem) return;
+  moveTChartItem(draggedItem, zone);
+}
+
+function moveTChartItem(itemId, zone) {
+  const q = activeQuiz[currentSession.quizIndex];
+  if (!q || q.type !== 'tchart') return;
+  const item = q.tchartItems.find(i => i.id === itemId);
+  if (!item) return;
+
+  tchartState[itemId] = zone;
+
+  // Re-render all three zones
+  const leftEl = document.getElementById('tchart-drop-left');
+  const rightEl = document.getElementById('tchart-drop-right');
+  const unsortedEl = document.getElementById('tchart-unsorted');
+  leftEl.innerHTML = '';
+  rightEl.innerHTML = '';
+  unsortedEl.innerHTML = '';
+
+  q.tchartItems.forEach(it => {
+    const loc = tchartState[it.id] || 'unsorted';
+    if (loc === 'left') leftEl.appendChild(makeTChartItem(it));
+    else if (loc === 'right') rightEl.appendChild(makeTChartItem(it));
+    else unsortedEl.appendChild(makeTChartPill(it));
+  });
+
+  updateSubmitFromTChart();
+}
+
+function updateSubmitFromTChart() {
+  // Enable submit only when all items are sorted
+  const allSorted = Object.values(tchartState).every(v => v === 'left' || v === 'right');
+  document.getElementById('btn-submit').disabled = !allSorted;
+}
+
+function scoreTChart(q) {
+  // Rule-based: each item correct/incorrect
+  let correct = 0;
+  const total = q.tchartItems.length;
+  const beatResults = q.tchartItems.map(item => {
+    const studentZone = tchartState[item.id] || 'unsorted';
+    const hit = studentZone === item.correct;
+    if (hit) correct++;
+    return {
+      text: `"${item.text}" goes in ${item.correct === 'left' ? q.tchartLeft : q.tchartRight}`,
+      status: hit ? 'hit' : 'miss',
+      feedback: hit
+        ? `Correctly placed in ${item.correct === 'left' ? q.tchartLeft : q.tchartRight}.`
+        : `Should be in ${item.correct === 'left' ? q.tchartLeft : q.tchartRight} -- placed in ${studentZone === 'left' ? q.tchartLeft : studentZone === 'right' ? q.tchartRight : 'Unsorted'}.`
+    };
+  });
+
+  const pct = total > 0 ? correct / total : 0;
+  const grade = pct >= 0.9 ? 'A' : pct >= 0.75 ? 'B' : pct >= 0.6 ? 'C' : pct >= 0.4 ? 'D' : 'F';
+  const summary = pct === 1
+    ? 'Perfect -- every item sorted correctly.'
+    : pct >= 0.75
+      ? `Strong effort -- ${correct} of ${total} items correctly sorted.`
+      : pct >= 0.5
+        ? `Some correct -- ${correct} of ${total} items in the right column. Review the misplaced items.`
+        : `${correct} of ${total} correct. Re-read the definitions of each category carefully.`;
+
+  // Also show correct placement in the chart
+  const leftEl = document.getElementById('tchart-drop-left');
+  const rightEl = document.getElementById('tchart-drop-right');
+  leftEl.querySelectorAll('.tchart-item').forEach(el => {
+    const itemId = el.dataset.itemId;
+    const item = q.tchartItems.find(i => i.id === itemId);
+    if (item) el.classList.add(tchartState[itemId] === item.correct ? 'correct' : 'incorrect');
+  });
+  rightEl.querySelectorAll('.tchart-item').forEach(el => {
+    const itemId = el.dataset.itemId;
+    const item = q.tchartItems.find(i => i.id === itemId);
+    if (item) el.classList.add(tchartState[itemId] === item.correct ? 'correct' : 'incorrect');
+  });
+
+  return { grade, summary, beats: beatResults };
+}
+
+// ── Touch support for mobile drag-drop ──
+let touchItem = null, touchClone = null, touchItemId = null;
+function tchartTouchStart(e) {
+  touchItemId = this.dataset.itemId;
+  touchItem = this;
+  touchClone = this.cloneNode(true);
+  touchClone.style.cssText = 'position:fixed;opacity:0.7;pointer-events:none;z-index:9999;width:'+this.offsetWidth+'px;';
+  document.body.appendChild(touchClone);
+}
+function tchartTouchMove(e) {
+  e.preventDefault();
+  const t = e.touches[0];
+  if (touchClone) { touchClone.style.left=(t.clientX-60)+'px'; touchClone.style.top=(t.clientY-20)+'px'; }
+}
+function tchartTouchEnd(e) {
+  if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+  const t = e.changedTouches[0];
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  if (!el || !touchItemId) { touchItemId = null; return; }
+  const zone = el.closest('#tchart-drop-left') ? 'left'
+             : el.closest('#tchart-drop-right') ? 'right'
+             : el.closest('#tchart-unsorted') ? 'unsorted' : null;
+  if (zone) moveTChartItem(touchItemId, zone);
+  touchItemId = null;
+}
+
+/* ── Parse T-chart items from teacher authoring textarea ── */
+function parseTChartItems(raw) {
+  return raw.split('\n')
+    .map(line => line.trim())
+    .filter(line => line.includes('|'))
+    .map((line, i) => {
+      const [text, side] = line.split('|').map(s => s.trim());
+      const correct = side.toLowerCase().startsWith('r') ? 'right' : 'left';
+      return { id: 'tci_' + i + '_' + Date.now(), text, correct };
+    });
+}
 
 /* ═══════════════════════════════════════════
    INIT
