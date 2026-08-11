@@ -1629,16 +1629,9 @@ body {
         Marking your answer…
       </div>
       <div id="scoring-result" class="hidden">
-        <div class="score-header">
-          <div class="score-grade" id="score-grade-display">-</div>
-          <div class="score-detail">
-            <div class="score-label">Assessment</div>
-            <div class="score-summary" id="score-summary"></div>
-          </div>
-        </div>
-        <div class="beats-section">
-          <div class="beats-title">Key Ideas - How Did You Go?</div>
-          <div id="beats-list"></div>
+        <div style="padding:24px 0 16px;">
+          <div class="score-label" style="margin-bottom:8px;">Answer recorded.</div>
+          <div style="font-size:15px;color:var(--green-mid);font-family:'Source Serif 4',serif;font-style:italic;">Your teacher will review your response.</div>
         </div>
         <div class="score-next">
           <button class="btn-primary" id="btn-next">Next Question →</button>
@@ -1652,7 +1645,7 @@ body {
     <div class="results-title">Quiz Complete</div>
     <div class="results-name" id="results-name"></div>
     <div class="sign-rule" style="margin:0 auto 20px;"></div>
-    <div class="results-breakdown" id="results-breakdown"></div>
+    <div style="font-family:'Source Serif 4',serif;font-style:italic;font-size:17px;color:var(--green-mid);margin:20px 0 28px;">Your answers have been submitted. Your teacher will review your responses.</div>
     <div id="integrity-summary" style="margin:16px 0; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; padding:12px 16px; background:white; border:1px solid var(--cream-rule);"></div>
     <div style="margin-top:20px;">
       <button class="btn-primary" onclick="resetQuiz()">Start Again</button>
@@ -2596,6 +2589,7 @@ async function submitAnswer() {
         questionId: q.id,
         questionText: q.question.substring(0, 60),
         grade: result.grade,
+        studentAnswer: answer,
         hintUsed: currentSession.hintUsed,
         pasteAttempts
       });
@@ -2606,7 +2600,8 @@ async function submitAnswer() {
       currentSession.results.push({
         questionId: q.id,
         questionText: q.question.substring(0, 60),
-        grade: result.grade,
+        grade: result.grade || 'C',
+        studentAnswer: answer,
         hintUsed: currentSession.hintUsed,
         pasteAttempts
       });
@@ -2620,40 +2615,28 @@ async function submitAnswer() {
 
 async function scoreWithClaude(question, studentAnswer) {
   const beatsText = question.beats.map((b, i) => `${i+1}. ${b.text}`).join('\n');
-  const prompt = `You are a supportive VCE Sociology teacher marking a student's paragraph answer. Your job is to recognise understanding even when it is expressed in the student's own words rather than textbook language.
+  const prompt = `You are an experienced VCE Sociology teacher. Read the student's answer and assign a grade based on the depth and accuracy of their sociological understanding. Reward genuine understanding expressed in any form -- students do not need to match the model answer word for word.
 
 QUESTION: ${question.question}
 
-MODEL ANSWER (use as a guide to understanding, not as a word-for-word checklist):
+MODEL ANSWER (one valid approach, not the only one):
 ${question.modelAnswer}
 
-KEY IDEAS the student should demonstrate understanding of:
+KEY IDEAS to look for (students may express these differently):
 ${beatsText}
 
-STUDENT ANSWER: ${studentAnswer}
+STUDENT ANSWER:
+${studentAnswer}
 
-MARKING GUIDANCE:
-- Award "hit" generously: if the student demonstrates understanding of the concept in their own words, even if phrased differently from the model, that counts as a hit
-- Award "partial" when the idea is present but underdeveloped, lacks an example, or is correct but vague
-- Award "miss" only when the concept is genuinely absent or the student has shown a clear misunderstanding
-- A student does not need to use exact terminology -- look for conceptual understanding
-- Be encouraging in tone; identify what the student did well before noting gaps
+Respond ONLY with valid JSON, no preamble, no markdown:
+{ "grade": "A" | "B" | "C" | "D" | "F" }
 
-Respond ONLY with valid JSON, no preamble, no markdown fences:
-{
-  "grade": "A" | "B" | "C" | "D" | "F",
-  "summary": "2-3 sentences. Start with genuine specific praise for what the student got right, then briefly note any gaps. Encouraging, not clinical.",
-  "beats": [
-    { "text": "the key idea", "status": "hit" | "partial" | "miss", "feedback": "one brief, constructive sentence" }
-  ]
-}
-
-Grade rubric (be generous -- reward understanding, not memorisation):
-- A: Strong grasp of most key ideas, expressed clearly in their own words
-- B: Good understanding with minor gaps or underdeveloped points
-- C: Partial understanding -- some key ideas present, others missing or confused
-- D: Limited engagement -- only surface-level or one or two ideas addressed
-- F: Very little connection to the question or key concepts`;
+Grade guide:
+- A: Strong, clear sociological understanding -- covers key ideas well in their own words
+- B: Good understanding with minor gaps
+- C: Partial understanding -- some key ideas present, others missing or underdeveloped
+- D: Thin or mostly off-track -- little genuine sociological engagement
+- F: No meaningful engagement with the question`;
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -2669,74 +2652,46 @@ Grade rubric (be generous -- reward understanding, not memorisation):
   const data = await response.json();
   const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
   const clean = text.replace(/```json|```/g, '').trim();
-  return JSON.parse(clean);
+  try {
+    return JSON.parse(clean);
+  } catch(e) {
+    // If JSON parse fails, try to extract just the grade letter from the raw text
+    const gradeMatch = text.match(/"grade"\s*:\s*"([A-F])"/);
+    if (gradeMatch) return { grade: gradeMatch[1] };
+    throw e; // give up and fall to localScore
+  }
 }
 
 function localScore(question, answer) {
-  // Fallback keyword scoring when API unavailable
+  // Fallback when API unavailable -- simple heuristic grade, no beats
   const answerLower = answer.toLowerCase();
-  let totalWeight = 0;
-  let earnedWeight = 0;
-  const beatsResult = question.beats.map(beat => {
-    totalWeight += beat.weight;
-    const keywords = beat.text.toLowerCase().split(/\W+/).filter(w => w.length > 3);
-    const hits = keywords.filter(kw => answerLower.includes(kw)).length;
-    const ratio = hits / Math.max(keywords.length, 1);
-    let status, feedback;
-    if (ratio >= 0.6) {
-      status = 'hit';
-      earnedWeight += beat.weight;
-      feedback = 'Key ideas addressed.';
-    } else if (ratio >= 0.3) {
-      status = 'partial';
-      earnedWeight += beat.weight * 0.5;
-      feedback = 'Partially addressed - could be more specific.';
-    } else {
-      status = 'miss';
-      feedback = 'This idea was not clearly addressed.';
-    }
-    return { text: beat.text, status, feedback };
+  const wordCount = answer.trim().split(/\s+/).length;
+  let keyMatches = 0;
+  (question.beats || []).forEach(beat => {
+    const keywords = beat.text.toLowerCase().split(/\W+/).filter(w => w.length > 4);
+    if (keywords.some(kw => answerLower.includes(kw))) keyMatches++;
   });
-
-  const pct = totalWeight > 0 ? earnedWeight / totalWeight : 0;
-  const grade = pct >= 0.85 ? 'A' : pct >= 0.7 ? 'B' : pct >= 0.55 ? 'C' : pct >= 0.35 ? 'D' : 'F';
-  const summaries = {
-    A: 'Strong answer that covers the key sociological ideas clearly.',
-    B: 'Good answer with most key ideas present. Review any gaps.',
-    C: 'Some important ideas are here but the answer needs more depth.',
-    D: 'The answer is too surface-level. Revisit the key concepts.',
-    F: 'Very few key ideas addressed. Re-read the relevant section.'
-  };
-  return { grade, summary: summaries[grade], beats: beatsResult };
+  const beatTotal = Math.max((question.beats || []).length, 1);
+  const pct = keyMatches / beatTotal;
+  const grade = wordCount < 20 ? 'F'
+    : pct >= 0.8 ? 'A'
+    : pct >= 0.6 ? 'B'
+    : pct >= 0.4 ? 'C'
+    : pct >= 0.2 ? 'D' : 'F';
+  return { grade };
 }
 
 function displayScore(result, question) {
+  // Ensure panel is visible regardless of prior state
+  const scoringPanel = document.getElementById('scoring-panel');
+  scoringPanel.style.display = 'block';
+  scoringPanel.classList.add('visible');
   document.getElementById('scoring-loading').style.display = 'none';
   document.getElementById('scoring-result').classList.remove('hidden');
-
+  const grade = (result && result.grade) ? result.grade : '?';
   const gradeEl = document.getElementById('score-grade-display');
-  gradeEl.textContent = result.grade;
-  gradeEl.className = 'score-grade grade-' + result.grade.toLowerCase();
-
-  document.getElementById('score-summary').textContent = result.summary;
-
-  const beatsList = document.getElementById('beats-list');
-  beatsList.innerHTML = '';
-  if (result.beats) {
-    result.beats.forEach(beat => {
-      const item = document.createElement('div');
-      item.className = 'beat-item';
-      const iconMap = { hit: '✓', partial: '~', miss: '✗' };
-      const classMap = { hit: 'beat-hit', partial: 'beat-partial', miss: 'beat-miss' };
-      item.innerHTML = `
-        <div class="beat-icon ${classMap[beat.status]}">${iconMap[beat.status]}</div>
-        <div>
-          <div class="beat-text">${beat.text}</div>
-          <div class="beat-feedback">${beat.feedback}</div>
-        </div>`;
-      beatsList.appendChild(item);
-    });
-  }
+  gradeEl.textContent = grade;
+  gradeEl.className = 'score-grade grade-' + grade.toLowerCase();
 }
 
 /* ── SAVE PROGRESS AFTER EACH ANSWER ── */
@@ -3930,11 +3885,14 @@ function drilldownStudent(name, quizId) {
         if (c) return c.name;
       } return null;
     })() : null;
-    html += `<div class="student-row">
-      <div class="student-name-cell" style="flex:2;">Q${i+1}: ${r.questionText}...</div>
-      ${concept ? `<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);flex:1;">${concept}</div>` : '<div></div>'}
-      <div class="student-grade-cell ${gradeClass(r.grade)}">${r.grade}</div>
-      ${(r.pasteAttempts||0) > 0 ? `<div class="student-integrity">${r.pasteAttempts} paste</div>` : '<div></div>'}
+    html += `<div style="padding:12px 0;border-bottom:1px solid var(--parchment-dark);">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
+        <div class="student-grade-cell ${gradeClass(r.grade)}" style="flex-shrink:0;">${r.grade}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green-deep);font-weight:bold;">Q${i+1}: ${r.questionText}...</div>
+        ${concept ? `<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);margin-left:auto;">${concept}</div>` : ''}
+        ${(r.pasteAttempts||0) > 0 ? `<div class="student-integrity" style="flex-shrink:0;">${r.pasteAttempts} paste</div>` : ''}
+      </div>
+      ${r.studentAnswer ? `<div style="font-size:13px;color:var(--ink);line-height:1.6;font-family:'Source Serif 4',serif;background:white;padding:10px 14px;border-left:3px solid var(--cream-rule);">${r.studentAnswer}</div>` : '<div style="font-size:12px;color:var(--green-light);font-style:italic;">No answer recorded</div>'}
     </div>`;
   });
 
