@@ -2035,27 +2035,37 @@ const DEFAULT_QUESTIONS = [
 /* ═══════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════ */
+// Bank version -- increment this to force a reset of cached localStorage bank data
+const BANK_VERSION = 'v3';
+if (localStorage.getItem('qt_bank_version') !== BANK_VERSION) {
+  localStorage.removeItem('qt_bank');
+  localStorage.setItem('qt_bank_version', BANK_VERSION);
+}
 let questionBank = JSON.parse(localStorage.getItem('qt_bank') || 'null') || [...DEFAULT_QUESTIONS,
   {
     "id": 20,
+    "type": "tchart",
     "subject": "VCE Sociology - Deviance",
-    "question": "Put the following examples of deviance into the correct category - formal or informal deviance: Murder, littering, speaking at the cinema during the movie, cheating on a test, drink driving, coughing without covering your mouth, punching someone in the face, yelling abuse at an umpire, hugging a stranger, downloading music illegally, spitting in public.",
+    "question": "Sort each of the following examples of deviance into the correct category - Formal Deviance or Informal Deviance.",
     "hint": "Formal deviance involves breaking a written law punishable by the legal system. Informal deviance breaks unspoken social rules but is not illegal.",
-    "modelAnswer": "Formal deviance (illegal acts punishable by law): murder, drink driving, punching someone in the face, downloading music illegally. Informal deviance (violates social norms but not laws): littering, speaking at the cinema, cheating on a test, coughing without covering your mouth, hugging a stranger, yelling abuse at an umpire, spitting in public.",
-    "beats": [
-      {
-        "text": "Murder, drink driving, punching someone identified as formal deviance",
-        "weight": 2
-      },
-      {
-        "text": "Speaking at cinema, cheating on a test, coughing without covering mouth identified as informal deviance",
-        "weight": 2
-      },
-      {
-        "text": "Correct explanation distinguishing formal (written law) from informal (unwritten norm)",
-        "weight": 2
-      }
-    ]
+    "tchartLeft": "Formal Deviance",
+    "tchartRight": "Informal Deviance",
+    "tchartItems": [
+      {"id":"tci_0","text":"Murder","correct":"left"},
+      {"id":"tci_1","text":"Littering","correct":"right"},
+      {"id":"tci_2","text":"Speaking at the cinema during a movie","correct":"right"},
+      {"id":"tci_3","text":"Cheating on a test","correct":"right"},
+      {"id":"tci_4","text":"Drink driving","correct":"left"},
+      {"id":"tci_5","text":"Coughing without covering your mouth","correct":"right"},
+      {"id":"tci_6","text":"Punching someone in the face","correct":"left"},
+      {"id":"tci_7","text":"Yelling abuse at an umpire","correct":"right"},
+      {"id":"tci_8","text":"Hugging a stranger","correct":"right"},
+      {"id":"tci_9","text":"Downloading music illegally","correct":"left"},
+      {"id":"tci_10","text":"Spitting in public","correct":"right"}
+    ],
+    "beats": [],
+    "modelAnswer": "",
+    "conceptId": "c3"
   },
   {
     "id": 21,
