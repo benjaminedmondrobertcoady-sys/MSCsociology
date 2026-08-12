@@ -589,7 +589,7 @@ body {
 
 /* ── MODAL ── */
 .modal-overlay {
-  display: none;
+  display: none !important;
   position: fixed;
   inset: 0;
   background: rgba(26,18,8,0.7);
@@ -598,7 +598,7 @@ body {
   justify-content: center;
   padding: 20px;
 }
-.modal-overlay.open { display: flex; }
+.modal-overlay.open { display: flex !important; }
 
 .modal-box {
   background: var(--parchment);
@@ -2325,23 +2325,37 @@ let quizActive = false; // set true when student is mid-question
 })();
 
 function closeIntegrityModal() {
-  document.getElementById('integrity-modal').classList.remove('open');
+  const modal = document.getElementById('integrity-modal');
+  modal.classList.remove('open');
+  modal.style.display = 'none';
+  // Ensure nothing got locked while the modal was open
+  textarea.disabled = false;
+  document.getElementById('btn-hint').disabled = false;
+  const q = activeQuiz && activeQuiz[currentSession.quizIndex];
+  if (q && q.type === 'tchart') {
+    updateSubmitFromTChart();
+  } else {
+    updateWordCount();
+  }
 }
 
 function recordIntegrityEvent(type) {
   if (!quizActive) return;
+  // Ignore if modal is already open (prevents cascade from modal stealing focus)
+  if (document.getElementById('integrity-modal').classList.contains('open')) return;
   if (type === 'tab') { tabSwitchCount++; }
   if (type === 'focus') { focusLossCount++; }
   updateIntegrityDisplay();
   // Show warning modal on first offence only
   if (!integrityWarningShown) {
     integrityWarningShown = true;
-    document.getElementById('integrity-modal').classList.add('open');
+    const modal = document.getElementById('integrity-modal');
+    modal.style.display = '';
+    modal.classList.add('open');
   }
 }
 
 function updateIntegrityDisplay() {
-  // Update quiz meta bar if visible
   const bar = document.getElementById('integrity-bar');
   if (bar) {
     const total = tabSwitchCount + focusLossCount;
@@ -2352,16 +2366,27 @@ function updateIntegrityDisplay() {
   }
 }
 
-// Page Visibility API - catches tab switching and minimising
+// Deduplicate visibility + blur -- they both fire for the same tab switch
+// Use a cooldown so only one event is recorded per switch
+let lastIntegrityEventTime = 0;
+
 document.addEventListener('visibilitychange', function() {
   if (document.visibilityState === 'hidden') {
-    recordIntegrityEvent('tab');
+    const now = Date.now();
+    if (now - lastIntegrityEventTime > 1000) {
+      lastIntegrityEventTime = now;
+      recordIntegrityEvent('tab');
+    }
   }
 });
 
-// Window blur - catches switching to another app or window
 window.addEventListener('blur', function() {
-  recordIntegrityEvent('focus');
+  // Only fire if visibilitychange didn't already catch this switch
+  const now = Date.now();
+  if (now - lastIntegrityEventTime > 1000) {
+    lastIntegrityEventTime = now;
+    recordIntegrityEvent('focus');
+  }
 });
 
 /* ═══════════════════════════════════════════
@@ -2484,6 +2509,11 @@ function beginQuiz() {
   tabSwitchCount = 0;
   focusLossCount = 0;
   integrityWarningShown = false;
+  // Ensure no modal overlay is blocking the quiz
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.classList.remove('open');
+    m.style.display = 'none';
+  });
   document.getElementById('town-sign').style.display = 'none';
   document.getElementById('quiz-panel').style.display = 'block';
   document.getElementById('meta-name').textContent = name;
@@ -2555,7 +2585,7 @@ async function submitAnswer() {
     }
   }
 
-  // Disable inputs during marking
+  // Disable inputs during processing
   textarea.disabled = true;
   document.getElementById('btn-submit').disabled = true;
   document.getElementById('btn-hint').disabled = true;
@@ -2563,55 +2593,37 @@ async function submitAnswer() {
   const scoringPanel = document.getElementById('scoring-panel');
   scoringPanel.style.display = 'block';
   scoringPanel.classList.add('visible');
-  document.getElementById('scoring-loading').style.display = 'flex';
-  document.getElementById('scoring-result').classList.add('hidden');
-
-  // Smooth scroll to scoring
+  document.getElementById('scoring-loading').style.display = 'none';
+  document.getElementById('scoring-result').classList.remove('hidden');
   scoringPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   if (isTChart) {
+    // Score T-chart locally -- rule based, no API needed
     const result = scoreTChart(q);
-    displayScore(result, q);
     currentSession.results.push({
       questionId: q.id,
       questionText: q.question.substring(0, 60),
-      grade: result.grade,
       hintUsed: currentSession.hintUsed,
-      pasteAttempts: 0
+      pasteAttempts: 0,
+      conceptId: q.conceptId || null
     });
-    saveProgressSnapshot();
   } else {
     const answer = textarea.value.trim();
-    try {
-      const result = await scoreWithClaude(q, answer);
-      displayScore(result, q);
-      currentSession.results.push({
-        questionId: q.id,
-        questionText: q.question.substring(0, 60),
-        grade: result.grade,
-        studentAnswer: answer,
-        hintUsed: currentSession.hintUsed,
-        pasteAttempts
-      });
-      saveProgressSnapshot();
-    } catch (err) {
-      const result = localScore(q, answer);
-      displayScore(result, q);
-      currentSession.results.push({
-        questionId: q.id,
-        questionText: q.question.substring(0, 60),
-        grade: result.grade || 'C',
-        studentAnswer: answer,
-        hintUsed: currentSession.hintUsed,
-        pasteAttempts
-      });
-      saveProgressSnapshot();
-    }
+    currentSession.results.push({
+      questionId: q.id,
+      questionText: q.question.substring(0, 60),
+      studentAnswer: answer,
+      hintUsed: currentSession.hintUsed,
+      pasteAttempts,
+      conceptId: q.conceptId || null
+    });
   }
 
+  saveProgressSnapshot();
   textarea.disabled = false;
   document.getElementById('btn-hint').disabled = false;
 }
+
 
 async function scoreWithClaude(question, studentAnswer) {
   const beatsText = question.beats.map((b, i) => `${i+1}. ${b.text}`).join('\n');
@@ -3689,14 +3701,12 @@ function buildViewToggle(group) {
   if (!toggle) return;
   toggle.innerHTML = '';
 
-  // Cohort button
   const cohortBtn = document.createElement('button');
   cohortBtn.className = 'dash-view-btn' + (activeDashView === 'cohort' ? ' active' : '');
   cohortBtn.textContent = 'Cohort';
   cohortBtn.onclick = () => { activeDashView = 'cohort'; renderDashboardBody(group); buildViewToggle(group); };
   toggle.appendChild(cohortBtn);
 
-  // Per-class buttons: derive from sessions in this group
   const classesInGroup = {};
   group.sessions.forEach(s => {
     const cid = s.classId || 'unassigned';
@@ -3714,19 +3724,9 @@ function buildViewToggle(group) {
   });
 }
 
-function gradeToNum(g) {
-  return { A: 5, B: 4, C: 3, D: 2, F: 1 }[g] || 0;
-}
-function numToGrade(n) {
-  if (n >= 4.5) return 'A';
-  if (n >= 3.5) return 'B';
-  if (n >= 2.5) return 'C';
-  if (n >= 1.5) return 'D';
-  return 'F';
-}
-function gradeClass(g) {
-  return { A: 'grade-a', B: 'grade-b', C: 'grade-c', D: 'grade-d', F: 'grade-f' }[g] || '';
-}
+function gradeToNum(g) { return { A:5,B:4,C:3,D:2,F:1 }[g] || 0; }
+function numToGrade(n) { return n>=4.5?'A':n>=3.5?'B':n>=2.5?'C':n>=1.5?'D':'F'; }
+function gradeClass(g) { return {A:'grade-a',B:'grade-b',C:'grade-c',D:'grade-d',F:'grade-f'}[g]||''; }
 
 function renderDashboard(group) {
   document.getElementById('dash-title').textContent = group.title;
@@ -3735,183 +3735,245 @@ function renderDashboard(group) {
   renderDashboardBody(group);
 }
 
+/* ── CARD COLOUR + ORDER PERSISTENCE ── */
+// Stored as: cardState[quizId][questionIndex][studentName] = { colour, order }
+let cardState = {};
+
+function loadCardState(quizId) {
+  if (cardState[quizId]) return;
+  try {
+    const saved = localStorage.getItem('qt_cards_' + quizId);
+    cardState[quizId] = saved ? JSON.parse(saved) : {};
+  } catch(e) { cardState[quizId] = {}; }
+}
+
+function saveCardState(quizId) {
+  try { localStorage.setItem('qt_cards_' + quizId, JSON.stringify(cardState[quizId])); } catch(e) {}
+  // Also save to Firebase
+  withDB(async (db, fs) => {
+    await fs.setDoc(fs.doc(db, 'qt_card_states', quizId), cardState[quizId]);
+  }).catch(() => {});
+}
+
+async function loadCardStateFromFirebase(quizId) {
+  try {
+    const result = await withDB(async (db, fs) => {
+      const snap = await fs.getDocs(fs.collection(db, 'qt_card_states'));
+      const doc = snap.docs.find(d => d.id === quizId);
+      return doc ? doc.data() : null;
+    });
+    if (result) cardState[quizId] = result;
+  } catch(e) {}
+}
+
+function getCardColour(quizId, qIdx, studentName) {
+  return (cardState[quizId] && cardState[quizId][qIdx] && cardState[quizId][qIdx][studentName])
+    ? (cardState[quizId][qIdx][studentName].colour || '')
+    : '';
+}
+
+function setCardColour(quizId, qIdx, studentName, colour) {
+  if (!cardState[quizId]) cardState[quizId] = {};
+  if (!cardState[quizId][qIdx]) cardState[quizId][qIdx] = {};
+  if (!cardState[quizId][qIdx][studentName]) cardState[quizId][qIdx][studentName] = {};
+  cardState[quizId][qIdx][studentName].colour = colour;
+  saveCardState(quizId);
+}
+
+function getCardOrder(quizId, qIdx, sessions) {
+  const saved = cardState[quizId] && cardState[quizId][qIdx];
+  if (!saved) return sessions.map(s => s.studentName);
+  const savedOrder = Object.keys(saved).sort((a,b) => {
+    const oa = saved[a] && saved[a].order !== undefined ? saved[a].order : 999;
+    const ob = saved[b] && saved[b].order !== undefined ? saved[b].order : 999;
+    return oa - ob;
+  });
+  // Merge: saved order first, then any new students not yet in saved
+  const allNames = sessions.map(s => s.studentName);
+  const ordered = savedOrder.filter(n => allNames.includes(n));
+  allNames.forEach(n => { if (!ordered.includes(n)) ordered.push(n); });
+  return ordered;
+}
+
+function saveCardOrder(quizId, qIdx, orderedNames) {
+  if (!cardState[quizId]) cardState[quizId] = {};
+  if (!cardState[quizId][qIdx]) cardState[quizId][qIdx] = {};
+  orderedNames.forEach((name, i) => {
+    if (!cardState[quizId][qIdx][name]) cardState[quizId][qIdx][name] = {};
+    cardState[quizId][qIdx][name].order = i;
+  });
+  saveCardState(quizId);
+}
+
+/* ── ACTIVE QUESTION INDEX ── */
+let activeDashQIdx = 0;
+let currentDashGroup = null;
+
 function renderDashboardBody(group) {
+  currentDashGroup = group;
   closeDrilldown();
 
-  // Filter sessions by active view
   let sessions = group.sessions;
   if (activeDashView !== 'cohort') {
     sessions = group.sessions.filter(s => (s.classId || 'unassigned') === activeDashView);
   }
-
   document.getElementById('dash-student-count').textContent = sessions.length + ' student' + (sessions.length !== 1 ? 's' : '');
 
+  loadCardState(group.quizId);
+  loadCardStateFromFirebase(group.quizId).then(() => renderCardGrid(group, sessions));
+
+  // Build question nav
+  const navWrap = document.getElementById('q-nav-wrap');
+  const nav = document.getElementById('q-nav');
+  nav.innerHTML = '';
+  navWrap.style.display = 'block';
+
+  // Get all unique questions across sessions
+  const allQIds = [];
+  sessions.forEach(s => (s.results || []).forEach(r => {
+    if (!allQIds.includes(r.questionId)) allQIds.push(r.questionId);
+  }));
+
+  if (allQIds.length === 0) {
+    document.getElementById('dash-body').innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--green-light);padding:20px 0;">No answers recorded yet for this session.</div>';
+    navWrap.style.display = 'none';
+    return;
+  }
+
+  allQIds.forEach((qid, idx) => {
+    const q = questionBank.find(x => x.id === qid);
+    const btn = document.createElement('button');
+    btn.className = 'q-nav-btn' + (idx === activeDashQIdx ? ' active' : '');
+    btn.textContent = 'Q' + (idx + 1);
+    btn.title = q ? q.question.substring(0, 60) + '...' : '';
+    btn.onclick = () => { activeDashQIdx = idx; renderDashboardBody(group); };
+    nav.appendChild(btn);
+  });
+
+  renderCardGrid(group, sessions);
+}
+
+function renderCardGrid(group, sessions) {
   const body = document.getElementById('dash-body');
 
-  // Find KCI set for this quiz
-  const kciSetId = group.sessions[0].kciSetId || activeSetId;
-  const kciSet = conceptSets.find(s => s.id === kciSetId);
+  // Get all unique question IDs from sessions
+  const allQIds = [];
+  sessions.forEach(s => (s.results || []).forEach(r => {
+    if (!allQIds.includes(r.questionId)) allQIds.push(r.questionId);
+  }));
 
-  // Build a filtered group for rendering
-  const filteredGroup = { ...group, sessions };
+  if (allQIds.length === 0) return;
+  const qIdx = Math.min(activeDashQIdx, allQIds.length - 1);
+  const qId = allQIds[qIdx];
+  const q = questionBank.find(x => x.id === qId);
 
+  // Question heading
   let html = '';
-
-  // -- KCI INDEX TABLE --
-  if (kciSet && kciSet.concepts.length > 0) {
-    const viewLabel = activeDashView === 'cohort' ? 'Cohort' : (sessions[0] && sessions[0].className) || activeDashView;
-    html += `<div style="margin-bottom:24px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--brass);text-transform:uppercase;margin-bottom:10px;">Key Concept Index - ${kciSet.name} - ${viewLabel}</div>
-      <table class="kci-table">
-        <thead><tr>
-          <th>Concept</th>
-          <th>Avg Grade</th>
-          <th>Students</th>
-          <th>Strength</th>
-        </tr></thead>
-        <tbody id="kci-dashboard-body"></tbody>
-      </table>
-    </div>`;
-  } else {
-    html += `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green-light);margin-bottom:16px;padding:10px 14px;background:var(--parchment-dark);border-left:3px solid var(--cream-rule);">No Key Concept Index linked. Go to Key Concept Index tab to create a concept set and tag questions.</div>`;
-  }
-
-  // -- PER-STUDENT OVERVIEW --
-  html += `<div style="margin-bottom:8px;">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--brass);text-transform:uppercase;margin-bottom:10px;">Student Overview</div>
-    <table class="kci-table">
-      <thead><tr><th>Student</th><th>Class</th><th>Overall</th><th>Integrity</th><th>Detail</th></tr></thead>
-      <tbody>`;
-
-  sessions.forEach(s => {
-    const grades = s.results.map(r => gradeToNum(r.grade));
-    const avg = grades.length ? grades.reduce((a,b) => a+b, 0) / grades.length : 0;
-    const avgGrade = numToGrade(avg);
-    const flags = (s.tabSwitches || 0) + (s.focusLosses || 0) + s.results.reduce((a,r) => a + (r.pasteAttempts || 0), 0);
-    const integrityCell = flags > 0
-      ? `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--burgundy);">${flags} flag${flags!==1?'s':''}</span>`
-      : `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--score-a);">Clean</span>`;
-    html += `<tr onclick="drilldownStudent('${s.studentName}', '${group.quizId}')">
-      <td>${s.studentName}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);">${s.className || 'Unassigned'}</td>
-      <td><span class="grade-pill ${gradeClass(avgGrade)}">${avgGrade}</span></td>
-      <td>${integrityCell}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green-light);cursor:pointer;">View</td>
-    </tr>`;
-  });
-  html += `</tbody></table></div>`;
-  body.innerHTML = html;
-
-  // Populate KCI table rows if set exists
-  if (kciSet) {
-    const tbody = document.getElementById('kci-dashboard-body');
-    if (tbody) {
-      kciSet.concepts.forEach(concept => {
-        // Gather all results across all students for this concept
-        const conceptResults = [];
-        sessions.forEach(s => {
-          s.results.forEach(r => {
-            if (r.conceptId === concept.id) conceptResults.push({ grade: r.grade, student: s.studentName });
-          });
-        });
-        if (conceptResults.length === 0) return;
-
-        const avgNum = conceptResults.reduce((a, r) => a + gradeToNum(r.grade), 0) / conceptResults.length;
-        const avgGrade = numToGrade(avgNum);
-        const pct = (avgNum - 1) / 4; // 0-1
-        const strengthLabel = pct >= 0.65 ? 'Strong' : pct >= 0.4 ? 'Moderate' : 'Weak';
-        const strengthClass = pct >= 0.65 ? 'strong' : pct >= 0.4 ? 'moderate' : 'weak';
-        const barClass = 'strength-' + strengthClass;
-        const uniqueStudents = [...new Set(conceptResults.map(r => r.student))].length;
-
-        const tr = document.createElement('tr');
-        tr.style.cursor = 'pointer';
-        tr.innerHTML = `
-          <td style="font-family:'Source Serif 4',serif;">${concept.name}</td>
-          <td><span class="grade-pill ${gradeClass(avgGrade)}">${avgGrade}</span></td>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${uniqueStudents}</td>
-          <td>
-            <div class="strength-bar-wrap"><div class="strength-bar ${barClass}" style="width:${Math.round(pct*100)}%"></div></div>
-            <span class="strength-label ${strengthClass}">${strengthLabel}</span>
-          </td>`;
-        tr.addEventListener('click', () => drilldownConcept(concept, filteredGroup));
-        tbody.appendChild(tr);
-      });
-    }
-  }
-}
-
-function drilldownConcept(concept, group) {
-  const panel = document.getElementById('dash-drilldown');
-  document.getElementById('drilldown-title').textContent = concept.name;
-  const body = document.getElementById('drilldown-body');
-
-  // Find all questions tagged to this concept in the active quiz
-  const taggedQIds = questionBank.filter(q => q.conceptId === concept.id).map(q => q.id);
-
-  let html = '';
-  group.sessions.forEach(s => {
-    const relevant = s.results.filter(r => r.conceptId === concept.id || taggedQIds.includes(r.questionId));
-    if (relevant.length === 0) return;
-    const avgNum = relevant.reduce((a, r) => a + gradeToNum(r.grade), 0) / relevant.length;
-    const avgGrade = numToGrade(avgNum);
-    const flags = (s.tabSwitches || 0) + (s.focusLosses || 0);
-    html += `<div class="student-row">
-      <div class="student-name-cell">${s.studentName}</div>
-      <div class="student-grade-cell ${gradeClass(avgGrade)}">${avgGrade}</div>
-      ${flags > 0 ? `<div class="student-integrity">${flags} flag${flags!==1?'s':''}</div>` : '<div></div>'}
-      <div style="font-size:12px;font-family:JetBrains Mono,monospace;color:var(--green-light);">${relevant.map(r => r.grade).join(', ')}</div>
-    </div>`;
-  });
-
-  body.innerHTML = html || '<div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--green-light);">No results for this concept yet.</div>';
-  panel.classList.add('open');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function drilldownStudent(name, quizId) {
-  const session = allSessions.find(s => s.studentName === name && s.quizId === quizId);
-  if (!session) return;
-  const panel = document.getElementById('dash-drilldown');
-  document.getElementById('drilldown-title').textContent = name;
-  const body = document.getElementById('drilldown-body');
-
-  let html = '';
-  session.results.forEach((r, i) => {
-    const q = questionBank.find(x => x.id === r.questionId);
-    const concept = q && q.conceptId ? (() => {
+  if (q) {
+    const concept = (() => {
       for (const set of conceptSets) {
         const c = set.concepts.find(c => c.id === q.conceptId);
         if (c) return c.name;
       } return null;
-    })() : null;
-    html += `<div style="padding:12px 0;border-bottom:1px solid var(--parchment-dark);">
-      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px;">
-        <div class="student-grade-cell ${gradeClass(r.grade)}" style="flex-shrink:0;">${r.grade}</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green-deep);font-weight:bold;">Q${i+1}: ${r.questionText}...</div>
-        ${concept ? `<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);margin-left:auto;">${concept}</div>` : ''}
-        ${(r.pasteAttempts||0) > 0 ? `<div class="student-integrity" style="flex-shrink:0;">${r.pasteAttempts} paste</div>` : ''}
-      </div>
-      ${r.studentAnswer ? `<div style="font-size:13px;color:var(--ink);line-height:1.6;font-family:'Source Serif 4',serif;background:white;padding:10px 14px;border-left:3px solid var(--cream-rule);">${r.studentAnswer}</div>` : '<div style="font-size:12px;color:var(--green-light);font-style:italic;">No answer recorded</div>'}
-    </div>`;
-  });
-
-  const totalFlags = (session.tabSwitches||0) + (session.focusLosses||0) + session.results.reduce((a,r)=>a+(r.pasteAttempts||0),0);
-  if (totalFlags > 0) {
-    html += `<div style="margin-top:12px;padding:10px 14px;background:#fdf0f0;border-left:3px solid var(--burgundy);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--burgundy);">
-      Integrity: ${session.tabSwitches||0} tab switch${(session.tabSwitches||0)!==1?'es':''} | ${session.focusLosses||0} focus loss${(session.focusLosses||0)!==1?'es':''} | ${session.results.reduce((a,r)=>a+(r.pasteAttempts||0),0)} paste attempt${session.results.reduce((a,r)=>a+(r.pasteAttempts||0),0)!==1?'s':''}
+    })();
+    html += `<div style="padding:14px 0 10px;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--green-deep);margin-bottom:4px;">${q.question}</div>
+      ${concept ? `<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--brass);letter-spacing:0.12em;text-transform:uppercase;">${concept}</div>` : ''}
     </div>`;
   }
 
-  body.innerHTML = html;
-  panel.classList.add('open');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  body.innerHTML = html + '<div class="answer-card-grid" id="card-grid"></div>';
+
+  // Get ordered student names
+  const orderedNames = getCardOrder(group.quizId, qIdx, sessions);
+  const grid = document.getElementById('card-grid');
+
+  orderedNames.forEach(studentName => {
+    const session = sessions.find(s => s.studentName === studentName);
+    if (!session) return;
+    const result = (session.results || []).find(r => r.questionId === qId);
+    const colour = getCardColour(group.quizId, qIdx, studentName);
+    const card = makeAnswerCard(studentName, result, colour, group.quizId, qIdx, session);
+    grid.appendChild(card);
+  });
+
+  initCardDrag(group.quizId, qIdx, sessions);
+}
+
+function makeAnswerCard(studentName, result, colour, quizId, qIdx, session) {
+  const card = document.createElement('div');
+  card.className = 'answer-card' + (colour ? ' card-' + colour : '');
+  card.dataset.student = studentName;
+  card.draggable = true;
+
+  const flags = (session.tabSwitches || 0) + (session.focusLosses || 0) +
+    (session.results || []).reduce((a,r) => a + (r.pasteAttempts||0), 0);
+
+  card.innerHTML = `
+    <div class="answer-card-header">
+      <div class="answer-card-name">${studentName}</div>
+      <div class="answer-card-colours">
+        <div class="colour-dot dot-green" title="Ready" onclick="setColour(this,'green','${quizId}',${qIdx},'${studentName.replace(/'/g,"\'")}')"></div>
+        <div class="colour-dot dot-yellow" title="Developing" onclick="setColour(this,'yellow','${quizId}',${qIdx},'${studentName.replace(/'/g,"\'")}')"></div>
+        <div class="colour-dot dot-pink" title="Needs support" onclick="setColour(this,'pink','${quizId}',${qIdx},'${studentName.replace(/'/g,"\'")}')"></div>
+        <div class="colour-dot dot-clear" title="Clear colour" onclick="setColour(this,'','${quizId}',${qIdx},'${studentName.replace(/'/g,"\'")}')"></div>
+      </div>
+    </div>
+    <div class="answer-card-body ${result && result.studentAnswer ? '' : 'no-answer'}">
+      ${result && result.studentAnswer ? result.studentAnswer : 'No answer recorded'}
+    </div>
+    ${flags > 0 ? `<div class="answer-card-integrity">${flags} integrity flag${flags!==1?'s':''}</div>` : ''}`;
+
+  return card;
+}
+
+function setColour(dotEl, colour, quizId, qIdx, studentName) {
+  const card = dotEl.closest('.answer-card');
+  card.className = 'answer-card' + (colour ? ' card-' + colour : '');
+  setCardColour(quizId, qIdx, studentName, colour);
+}
+
+/* ── CARD DRAG AND DROP ── */
+let draggedCard = null;
+
+function initCardDrag(quizId, qIdx, sessions) {
+  const grid = document.getElementById('card-grid');
+  if (!grid) return;
+
+  grid.addEventListener('dragstart', e => {
+    const card = e.target.closest('.answer-card');
+    if (!card) return;
+    draggedCard = card;
+    setTimeout(() => card.classList.add('dragging'), 0);
+  });
+
+  grid.addEventListener('dragend', e => {
+    const card = e.target.closest('.answer-card');
+    if (card) card.classList.remove('dragging');
+    draggedCard = null;
+    // Save the new order
+    const cards = [...grid.querySelectorAll('.answer-card')];
+    const order = cards.map(c => c.dataset.student);
+    saveCardOrder(quizId, qIdx, order);
+  });
+
+  grid.addEventListener('dragover', e => {
+    e.preventDefault();
+    const card = e.target.closest('.answer-card');
+    if (!card || card === draggedCard) return;
+    const rect = card.getBoundingClientRect();
+    const midX = rect.left + rect.width / 2;
+    if (e.clientX < midX) {
+      grid.insertBefore(draggedCard, card);
+    } else {
+      grid.insertBefore(draggedCard, card.nextSibling);
+    }
+  });
 }
 
 function closeDrilldown() {
-  document.getElementById('dash-drilldown').classList.remove('open');
+  // No longer used but kept for compatibility
 }
-
 /* ═══════════════════════════════════════════
    PATCH: save concept tag when adding question
    + save kci set when launching quiz
