@@ -221,6 +221,90 @@
   .us-toggle:hover{background:var(--gold);color:var(--navy-d);}
   .us-toggle[aria-pressed="true"]{background:var(--gold);color:var(--navy-d);}
 
+  /* ---------- Teacher Assessment button ---------- */
+  .ta-btn{margin-left:10px;padding:0 7px;height:26px;cursor:pointer;vertical-align:middle;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:#1a1a1a;border:1.5px solid #444;border-radius:0;
+    transition:background .15s,border-color .15s;}
+  .ta-btn:hover{background:#333;border-color:#888;}
+  .ta-btn img{height:16px;width:auto;display:block;filter:invert(1);}
+  /* TA overlay */
+  #taOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:8000;align-items:flex-start;justify-content:center;padding-top:40px;}
+  #taOverlay.open{display:flex;}
+  /* Swiss panel */
+  #taPanel{background:#fff;width:min(860px,96vw);max-height:calc(100vh - 80px);overflow-y:auto;
+    box-shadow:0 24px 80px rgba(0,0,0,.5);display:flex;flex-direction:column;}
+  /* Header bar */
+  #taHeader{background:#1a1a1a;color:#fff;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  #taHeaderLeft{display:flex;align-items:center;gap:16px;}
+  #taHeaderLogo{height:32px;width:auto;filter:invert(1);}
+  #taHeaderTitle{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#aaa;border-left:1px solid #444;padding-left:16px;line-height:1.3;}
+  #taHeaderTitle strong{display:block;color:#fff;font-size:0.85rem;letter-spacing:.08em;}
+  .ta-close{background:none;border:1px solid #444;color:#aaa;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;}
+  .ta-close:hover{border-color:#fff;color:#fff;}
+  /* Lock screen */
+  #taLock{padding:56px 24px;text-align:center;background:#f5f5f5;flex:1;}
+  #taLock p{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#222;font-size:0.8rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px;}
+  #taPwInput{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:1rem;padding:10px 16px;border:1.5px solid #222;border-radius:0;background:#fff;color:#111;letter-spacing:.2em;width:180px;text-align:center;outline:none;}
+  #taPwInput:focus{border-color:#000;box-shadow:0 0 0 2px rgba(0,0,0,.12);}
+  #taPwBtn{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:10px 20px;background:#1a1a1a;color:#fff;border:1.5px solid #1a1a1a;cursor:pointer;margin-left:8px;}
+  #taPwBtn:hover{background:#333;}
+  .ta-err{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#c00;font-size:0.72rem;letter-spacing:.06em;margin-top:12px;min-height:1.2em;text-transform:uppercase;}
+  /* Checklist body */
+  #taChecklist{display:none;flex:1;}
+  /* Rule strip */
+  .ta-rule{height:4px;background:#1a1a1a;flex-shrink:0;}
+  /* Tabs */
+  .ta-tabs{display:flex;border-bottom:1.5px solid #ddd;background:#f5f5f5;flex-shrink:0;}
+  .ta-tab{padding:12px 22px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:#666;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-1.5px;}
+  .ta-tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a;}
+  .ta-tab:hover:not(.active){color:#333;}
+  .ta-panel{display:none;}
+  .ta-panel.active{display:block;}
+  /* Table */
+  .ta-table{width:100%;border-collapse:collapse;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+  .ta-table thead{background:#f5f5f5;border-bottom:1.5px solid #1a1a1a;}
+  .ta-table th{padding:10px 6px;font-size:0.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#444;text-align:center;}
+  .ta-table th.n{text-align:left;padding-left:20px;min-width:160px;}
+  .ta-table th.note-th{text-align:left;}
+  .ta-table td{padding:0;border-bottom:1px solid #eee;text-align:center;vertical-align:middle;}
+  .ta-table td.n{text-align:left;padding:8px 8px 8px 20px;}
+  .ta-table td.note-td{text-align:left;padding:6px 12px 6px 4px;}
+  .ta-table tr:hover td{background:#fafafa;}
+  .ta-table td.n .fn{font-size:0.82rem;font-weight:700;color:#111;}
+  .ta-table td.n .ln{font-size:0.7rem;color:#888;margin-left:5px;letter-spacing:.02em;}
+  /* Checkboxes */
+  .ta-cb{width:17px;height:17px;border:1.5px solid #bbb;border-radius:0;cursor:pointer;appearance:none;-webkit-appearance:none;background:#fff;display:block;margin:0 auto;}
+  .ta-cb:checked{background:#1a1a1a;border-color:#1a1a1a;}
+  .ta-cb:checked::after{content:'';display:block;width:4px;height:8px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg);position:relative;top:1px;left:4px;}
+  /* Column icons */
+  .ta-col-head{display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .ta-col-lbl{font-size:0.58rem;color:#888;letter-spacing:.08em;text-transform:uppercase;}
+  .badge-a-ta{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;background:#222;color:#fff;font-size:9px;font-weight:800;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+  .badge-at-ta{display:inline-flex;align-items:center;justify-content:center;width:23px;height:17px;background:#555;color:#fff;font-size:9px;font-weight:800;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:-.01em;}
+  .elt-icon-ta{display:inline-block;width:20px;height:13px;border:1.5px solid #444;position:relative;}
+  .elt-icon-ta::before{content:'';position:absolute;top:3px;left:3px;right:3px;height:1px;background:#444;}
+  .elt-icon-ta::after{content:'';position:absolute;top:7px;left:3px;width:55%;height:1px;background:#444;}
+  /* Note button */
+  .note-btn{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;background:none;border:1px solid #ccc;color:#666;cursor:pointer;white-space:nowrap;}
+  .note-btn:hover{border-color:#1a1a1a;color:#1a1a1a;}
+  .note-btn.has-note{border-color:#1a1a1a;color:#1a1a1a;background:#f0f0f0;}
+  /* Note modal */
+  #noteModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;}
+  #noteModal.open{display:flex;}
+  #noteBox{background:#fff;width:min(480px,92vw);box-shadow:0 16px 60px rgba(0,0,0,.4);}
+  #noteBox .nb-head{background:#1a1a1a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+  #noteBox .nb-name{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+  #noteBox .nb-close{background:none;border:1px solid #555;color:#aaa;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;}
+  #noteBox .nb-close:hover{border-color:#fff;color:#fff;}
+  #noteBox .nb-body{padding:20px;}
+  #noteBox .nb-label{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:8px;}
+  #noteTextarea{width:100%;box-sizing:border-box;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.85rem;color:#111;border:1.5px solid #ccc;padding:10px 12px;resize:vertical;min-height:100px;outline:none;border-radius:0;}
+  #noteTextarea:focus{border-color:#1a1a1a;}
+  #noteSaveBtn{margin-top:12px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:8px 20px;background:#1a1a1a;color:#fff;border:none;cursor:pointer;width:100%;}
+  #noteSaveBtn:hover{background:#333;}
+  .nb-saved{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.62rem;color:#555;letter-spacing:.06em;text-align:center;margin-top:8px;min-height:1.1em;text-transform:uppercase;}
+
   /* Scholastic Mode shifts the page toward a warmer 1990s educational
      multimedia feel using Microsoft-era fonts, softer colours, bevels,
      and a brief CD-ROM style activation notice. */
@@ -533,6 +617,55 @@ body.us-mode .bulletin{
     <div class="m">Made by teachers <span>&#9671;</span> for teachers</div>
     <div class="d">A Resource for Thinking Classrooms
       <button id="usToggle" class="us-toggle" type="button" aria-pressed="false">&#10022; Scholastic Mode</button>
+      <button id="taBtn" class="ta-btn" type="button" aria-label="TA"><img src="ta-icon.png" alt=""></button>
+    </div>
+  </div>
+
+  <!-- Teacher Assessment Modal -->
+  <div id="taOverlay" role="dialog" aria-modal="true" aria-label="Teacher Assessment">
+    <div id="taPanel">
+      <div id="taHeader">
+        <div id="taHeaderLeft">
+          <img id="taHeaderLogo" src="ta-icon.png" alt="">
+          <div id="taHeaderTitle"><strong>Assessment Tracker</strong></div>
+        </div>
+        <button class="ta-close" id="taClose" type="button">&#10005; Close</button>
+      </div>
+      <div class="ta-rule"></div>
+      <div id="taLock">
+        <p>Staff access only</p>
+        <div>
+          <input type="password" id="taPwInput" placeholder="password" autocomplete="off">
+          <button type="button" id="taPwBtn">Enter</button>
+        </div>
+        <div class="ta-err" id="taErr"></div>
+      </div>
+      <div id="taChecklist">
+        <div class="ta-tabs">
+          <button class="ta-tab active" type="button" onclick="taSwitch('eal')">EAL Class</button>
+          <button class="ta-tab" type="button" onclick="taSwitch('eng1')">English Class 2</button>
+          <button class="ta-tab" type="button" onclick="taSwitch('eng2')">English Class 3</button>
+        </div>
+        <div id="ta-panel-eal" class="ta-panel active"></div>
+        <div id="ta-panel-eng1" class="ta-panel"></div>
+        <div id="ta-panel-eng2" class="ta-panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Per-student note modal -->
+  <div id="noteModal" role="dialog" aria-modal="true">
+    <div id="noteBox">
+      <div class="nb-head">
+        <span class="nb-name" id="noteModalName"></span>
+        <button class="nb-close" id="noteClose" type="button">&#10005; Close</button>
+      </div>
+      <div class="nb-body">
+        <div class="nb-label">Notes</div>
+        <textarea id="noteTextarea" placeholder="e.g. Make-up oral on 14 Aug. ELT 1 extension granted."></textarea>
+        <button type="button" id="noteSaveBtn">Save Note</button>
+        <div class="nb-saved" id="nbSaved"></div>
+      </div>
     </div>
   </div>
 
@@ -1353,6 +1486,197 @@ btn.addEventListener('click',()=>{
 
     renderDate();
   }
+})();
+</script>
+
+<script>
+/* ============================================================
+   TEACHER ASSESSMENT - password-gated checklist + notes
+   Password: puffin
+   ============================================================ */
+(function(){
+  var TA_PW = 'puffin';
+  var STORE_KEY = 'ta-checklist-v2';
+
+  var classes = {
+    eal: {
+      label: 'EAL Class',
+      students: [
+        ['Reza','RAHIMI'],['Sophia','CAYABYAB'],['Paula','CHATSUK'],
+        ['Miguel','DUNGCA'],['Jouie','ENDAYA'],['Jahan','HUSSAINI'],
+        ['Humayun','IBRAHIMI'],['Soma','JABARI'],['Altaf','JALANDARY'],
+        ['Kubra','KHADIM'],['Ty','KUNAVOHAILAGI'],['Hussain','MIRZAIE'],
+        ['Arzo','REHMATULLAH'],['Shibier','SAFARI'],['Sahiba','SHABIR'],
+        ['James','THIPPHAKHUN'],['Jay','THIPPHAKHUN']
+      ]
+    },
+    eng1: {
+      label: 'English Class 2',
+      students: [
+        ['Halla','ALSADY'],['Sohile','ASKANDARI'],['Archer','BENNETT'],
+        ['Ashlin','BERNALDO HANNEMANN'],['Max','BRADSHAW'],['Margareth','BRANDER'],
+        ['Mia','CAMPBELL'],['Charlie','DELLAR'],['Tayla','HAMDORF'],
+        ['Oliver','HAYES'],['Zoe','HOWARD'],['Ava','HUMPHRIES'],
+        ['Milla','LEE'],['Ella','LESLIE'],['Max','MANNES'],
+        ['Charlee','MARTIN'],['Aqil','POYA'],['Phoenix','SMITH'],
+        ['Cam','SYMENS'],['Ruby','TONZING'],['Hana','TRUONG'],['Bailey','WOODS']
+      ]
+    },
+    eng2: {
+      label: 'English Class 3',
+      students: [
+        ['Beni','ANGE BENIT'],['Morgan','BARNES'],['Jaxon','BARONE'],
+        ['Alexandra','BOORD'],['Claudia','COUROUPIS'],['Dom','DELUCA'],
+        ['Danika','GARNER'],['Karla','GODWIN'],['Tyler','GORDON'],
+        ['Jorja','HALL'],['Mia','HAND'],['Liam','HANSFORD'],
+        ['Cameron','HARDIE'],['Sophia','HIDALGO'],['Anthony','JOSLYN'],
+        ['Anastasia','MEIMETIS'],['Sienna','PLANY'],['Luke','ROGERS'],
+        ['Isabella','SHAH'],['Kayla','SMITH'],['Mansur','TAS']
+      ]
+    }
+  };
+
+  var cols = [
+    { id:'oral', icon:'<svg width="18" height="15" viewBox="0 0 20 17" fill="none"><rect x="1" y="1" width="18" height="12" rx="5" fill="#111" opacity="0.12" stroke="#333" stroke-width="1.5"/><path d="M5 14 L5 16 L9 14" fill="#333"/><circle cx="6.5" cy="7" r="1.2" fill="#333"/><circle cx="10" cy="7" r="1.2" fill="#333"/><circle cx="13.5" cy="7" r="1.2" fill="#333"/></svg>', label:'Oral' },
+    { id:'elt1', icon:'<span class="elt-icon-ta"></span>', label:'ELT 1' },
+    { id:'analysis', icon:'<span class="badge-a-ta">A</span>', label:'Analysis' },
+    { id:'at', icon:'<span class="badge-at-ta">AT</span>', label:'Assess. Task' }
+  ];
+
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){}
+  function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+  var built = {};
+  var currentNoteId = null;
+
+  function noteKey(classKey, idx){ return 'note-' + classKey + '-' + idx; }
+
+  function openNote(classKey, idx, firstName, lastName){
+    currentNoteId = noteKey(classKey, idx);
+    document.getElementById('noteModalName').textContent = firstName + ' ' + lastName;
+    document.getElementById('noteTextarea').value = state[currentNoteId] || '';
+    document.getElementById('nbSaved').textContent = '';
+    document.getElementById('noteModal').classList.add('open');
+    setTimeout(function(){ document.getElementById('noteTextarea').focus(); }, 60);
+  }
+
+  document.getElementById('noteSaveBtn').addEventListener('click', function(){
+    if(!currentNoteId) return;
+    var val = document.getElementById('noteTextarea').value.trim();
+    state[currentNoteId] = val;
+    save();
+    var btn = document.querySelector('[data-note-id="' + currentNoteId + '"]');
+    if(btn){
+      btn.classList.toggle('has-note', !!val);
+      btn.textContent = val ? 'Note \u2713' : 'Note';
+    }
+    document.getElementById('nbSaved').textContent = 'Saved.';
+    setTimeout(function(){
+      document.getElementById('noteModal').classList.remove('open');
+    }, 600);
+  });
+
+  document.getElementById('noteClose').addEventListener('click', function(){
+    document.getElementById('noteModal').classList.remove('open');
+  });
+  document.getElementById('noteModal').addEventListener('click', function(e){
+    if(e.target === this) this.classList.remove('open');
+  });
+  document.getElementById('noteTextarea').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)) document.getElementById('noteSaveBtn').click();
+  });
+
+  function buildClassTable(key){
+    if(built[key]) return;
+    built[key] = true;
+    var el = document.getElementById('ta-panel-' + key);
+    if(!el) return;
+    var cls = classes[key];
+    var html = '<table class="ta-table"><thead><tr><th class="n">Student</th>';
+    cols.forEach(function(c){
+      html += '<th><div class="ta-col-head">' + c.icon + '<span class="ta-col-lbl">' + c.label + '</span></div></th>';
+    });
+    html += '<th style="text-align:left;padding-left:8px;font-size:0.58rem;letter-spacing:.1em;color:#888;font-weight:700;text-transform:uppercase;">Notes</th>';
+    html += '</tr></thead><tbody>';
+    cls.students.forEach(function(s, i){
+      html += '<tr>';
+      html += '<td class="n"><span class="fn">' + s[0] + '</span><span class="ln">' + s[1] + '</span></td>';
+      cols.forEach(function(c){
+        var id = key + '-' + i + '-' + c.id;
+        html += '<td style="padding:6px 4px;"><input type="checkbox" class="ta-cb" data-id="' + id + '"' + (state[id] ? ' checked' : '') + '></td>';
+      });
+      var nk = noteKey(key, i);
+      var hasNote = !!(state[nk] && state[nk].trim());
+      html += '<td class="note-td"><button class="note-btn' + (hasNote ? ' has-note' : '') + '" data-note-id="' + nk + '" data-class="' + key + '" data-idx="' + i + '" type="button">' + (hasNote ? 'Note \u2713' : 'Note') + '</button></td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    el.innerHTML = html;
+
+    el.querySelectorAll('.ta-cb').forEach(function(cb){
+      cb.addEventListener('change', function(){
+        state[this.dataset.id] = this.checked;
+        save();
+      });
+    });
+    el.querySelectorAll('.note-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var k = this.dataset.class;
+        var idx = parseInt(this.dataset.idx, 10);
+        var s = classes[k].students[idx];
+        openNote(k, idx, s[0], s[1]);
+      });
+    });
+  }
+
+  window.taSwitch = function(key){
+    var keys = ['eal','eng1','eng2'];
+    document.querySelectorAll('.ta-tab').forEach(function(t, i){
+      t.classList.toggle('active', keys[i] === key);
+    });
+    document.querySelectorAll('.ta-panel').forEach(function(p){ p.classList.remove('active'); });
+    var panel = document.getElementById('ta-panel-' + key);
+    if(panel) panel.classList.add('active');
+    buildClassTable(key);
+  };
+
+  function unlock(){
+    document.getElementById('taLock').style.display = 'none';
+    document.getElementById('taChecklist').style.display = 'block';
+    buildClassTable('eal');
+  }
+
+  function tryPassword(){
+    var val = document.getElementById('taPwInput').value;
+    if(val === TA_PW){
+      document.getElementById('taErr').textContent = '';
+      unlock();
+    } else {
+      document.getElementById('taErr').textContent = 'Incorrect password.';
+      document.getElementById('taPwInput').value = '';
+    }
+  }
+
+  document.getElementById('taBtn').addEventListener('click', function(){
+    document.getElementById('taOverlay').classList.add('open');
+    document.getElementById('taLock').style.display = 'block';
+    document.getElementById('taChecklist').style.display = 'none';
+    document.getElementById('taPwInput').value = '';
+    document.getElementById('taErr').textContent = '';
+    setTimeout(function(){ document.getElementById('taPwInput').focus(); }, 80);
+  });
+
+  document.getElementById('taClose').addEventListener('click', function(){
+    document.getElementById('taOverlay').classList.remove('open');
+  });
+  document.getElementById('taOverlay').addEventListener('click', function(e){
+    if(e.target === this) this.classList.remove('open');
+  });
+  document.getElementById('taPwBtn').addEventListener('click', tryPassword);
+  document.getElementById('taPwInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') tryPassword();
+  });
 })();
 </script>
 

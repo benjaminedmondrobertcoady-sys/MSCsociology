@@ -1866,9 +1866,10 @@ body {
 
     <!-- TAB: CLASS DASHBOARD -->
     <div id="teacher-tab-dashboard" style="display:none;">
-      <div class="teacher-layout">
+      <div style="display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start;">
+
         <!-- LEFT: SESSION LIST -->
-        <div>
+        <div style="position:sticky;top:80px;">
           <div class="panel-card">
             <div class="panel-card-header">
               <span>Quiz Sessions</span>
@@ -1881,29 +1882,33 @@ body {
           </div>
         </div>
 
-        <!-- RIGHT: DASHBOARD VIEW -->
+        <!-- RIGHT: CARD GRID VIEW -->
         <div>
           <div class="panel-card" id="dash-main">
             <div class="panel-card-header">
               <span id="dash-title">Select a session to view results</span>
               <span id="dash-student-count" style="font-size:10px;opacity:0.7;"></span>
             </div>
-            <div style="padding:14px 16px 0;">
+            <div style="padding:8px 16px 0;">
               <div class="dash-view-toggle" id="dash-view-toggle"></div>
             </div>
-            <div id="dash-body" style="padding:20px;">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green-light);letter-spacing:0.08em;">Choose a quiz session from the left.</div>
+            <!-- QUESTION NAV + LEGEND -->
+            <div id="q-nav-wrap" style="padding:0 16px;display:none;">
+              <div class="q-nav" id="q-nav"></div>
+              <div class="grid-legend">
+                <div class="legend-item"><div class="legend-swatch green"></div>Ready</div>
+                <div class="legend-item"><div class="legend-swatch yellow"></div>Developing</div>
+                <div class="legend-item"><div class="legend-swatch pink"></div>Needs support</div>
+                <div style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green-light);letter-spacing:0.08em;">Drag cards to reorder</div>
+              </div>
             </div>
-          </div>
-          <!-- DRILL-DOWN -->
-          <div class="drilldown-panel" id="dash-drilldown">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-              <div class="drilldown-title" id="drilldown-title"></div>
-              <button class="btn-hint" onclick="closeDrilldown()" style="font-size:10px;padding:5px 12px;">Close</button>
+            <!-- CARD GRID -->
+            <div id="dash-body" style="padding:0 16px 20px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green-light);letter-spacing:0.08em;padding:20px 0;">Choose a quiz session from the left.</div>
             </div>
-            <div id="drilldown-body"></div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -2749,25 +2754,17 @@ function showResults() {
   if (tabSwitchCount > 0) intLines.push(`Tab switches: ${tabSwitchCount}`);
   if (focusLossCount > 0) intLines.push(`Focus losses: ${focusLossCount}`);
   if (totalPaste > 0) intLines.push(`Paste attempts: ${totalPaste}`);
-  intEl.style.display = intLines.length > 0 ? 'block' : 'none';
-  intEl.style.borderLeft = intLines.length > 0 ? '3px solid var(--burgundy)' : '';
-  intEl.style.color = intLines.length > 0 ? 'var(--burgundy)' : 'var(--green-mid)';
-  intEl.innerHTML = intLines.length > 0
-    ? '<strong>Integrity flags (visible to teacher):</strong> ' + intLines.join(' &nbsp;|&nbsp; ')
-    : '';
-
-  const bd = document.getElementById('results-breakdown');
-  bd.innerHTML = '';
-  currentSession.results.forEach((r, i) => {
-    const card = document.createElement('div');
-    card.className = 'result-card';
-    const gradeClass = 'grade-' + r.grade.toLowerCase();
-    card.innerHTML = `
-      <div class="result-card-q">Q${i+1}: ${r.questionText}…</div>
-      <div class="result-card-grade ${gradeClass}">${r.grade}</div>
-    `;
-    bd.appendChild(card);
-  });
+  const intEl = document.getElementById('integrity-summary');
+  if (intEl) {
+    if (intLines.length > 0) {
+      intEl.style.display = 'block';
+      intEl.style.borderLeft = '3px solid var(--burgundy)';
+      intEl.style.color = 'var(--burgundy)';
+      intEl.innerHTML = '<strong>Integrity flags (visible to teacher):</strong> ' + intLines.join(' &nbsp;|&nbsp; ');
+    } else {
+      intEl.style.display = 'none';
+    }
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -3825,6 +3822,11 @@ function renderDashboardBody(group) {
   // Build question nav
   const navWrap = document.getElementById('q-nav-wrap');
   const nav = document.getElementById('q-nav');
+  if (!nav || !navWrap) {
+    // DOM not ready yet -- retry after a short delay
+    setTimeout(() => renderDashboardBody(group), 100);
+    return;
+  }
   nav.innerHTML = '';
   navWrap.style.display = 'block';
 
