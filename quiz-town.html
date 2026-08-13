@@ -1877,6 +1877,7 @@ body {
             </div>
             <div id="dash-session-list" style="min-height:60px;"></div>
             <div style="padding:10px 16px;border-top:1px solid var(--cream-rule);">
+              <button class="btn-hint" onclick="seedTestData()" style="width:100%;text-align:center;font-size:10px;margin-bottom:6px;border-color:var(--brass);color:var(--brass);">Seed Test Data</button>
               <button class="btn-hint" onclick="clearAllSessions()" style="width:100%;text-align:center;font-size:10px;">Clear All Session Data</button>
             </div>
           </div>
@@ -3497,6 +3498,77 @@ async function loadAllSessions() {
     }
   }
   return sessions.sort((a,b) => b.timestamp - a.timestamp);
+}
+
+async function seedTestData() {
+  if (!confirm('This will inject 9 fake student sessions for the current active quiz. Use only for testing. Proceed?')) return;
+
+  const quizId = (currentQuizTitle || 'VCE_Sociology_-_Deviance:_Core_Concepts').replace(/\s+/g,'_').substring(0,30);
+  const kciSetId = localStorage.getItem('qt_active_kci_set') || null;
+
+  // Get question IDs from the active quiz
+  const qIds = (activeQuiz || []).map(q => q.id);
+  if (qIds.length === 0) { alert('No active quiz. Launch a quiz first.'); return; }
+
+  const students = [
+    { name: 'Sally Chen', tabSwitches: 0, focusLosses: 0 },
+    { name: 'Ralph Nguyen', tabSwitches: 2, focusLosses: 1 },
+    { name: 'Raquel Torres', tabSwitches: 0, focusLosses: 0 },
+    { name: 'Mia Kowalski', tabSwitches: 0, focusLosses: 0 },
+    { name: 'Tom Adeyemi', tabSwitches: 1, focusLosses: 0 },
+    { name: 'Miguel Santos', tabSwitches: 0, focusLosses: 0 },
+    { name: 'Bailey Smith', tabSwitches: 0, focusLosses: 0 },
+    { name: 'Jess Okafor', tabSwitches: 0, focusLosses: 2 },
+    { name: 'Naomi Park', tabSwitches: 0, focusLosses: 0 },
+  ];
+
+  // Sample answers per question -- varied quality
+  const sampleAnswers = [
+    // Strong
+    'Social norms are the shared rules and expectations that guide behaviour in society. Sociologists study deviance because when someone violates a norm it reveals how society enforces its values. The reaction to deviance -- whether formal punishment or social exclusion -- tells us more about the norms themselves than the act does.',
+    // Good
+    'Conformity means following the expected rules of a society, like wearing appropriate clothing or standing in a queue. Deviance is when someone acts outside those expectations. Both are part of social control because society uses norms and consequences to encourage conformity and discourage deviance.',
+    // Developing
+    'Social control is about how society keeps people in line. Laws are one example and so are social expectations. If someone breaks a norm people react and that reaction is what sociologists are most interested in.',
+    // Thin
+    'Deviance is when people do not follow the rules. Conformity is when they do. Social norms are the rules everyone is expected to follow in a society.',
+    // Strong different angle
+    'Sociologists are not really interested in the deviant act itself but in what it exposes about the society around it. When a norm is violated the social reaction -- outrage, punishment, exclusion -- makes visible the boundaries that normally go unspoken. This is why Durkheim argued deviance actually serves a function in affirming shared values.',
+  ];
+
+  for (let i = 0; i < students.length; i++) {
+    const student = students[i];
+    const results = qIds.map((qid, qIdx) => {
+      const q = questionBank.find(x => x.id === qid);
+      const answerIdx = (i + qIdx) % sampleAnswers.length;
+      return {
+        questionId: qid,
+        questionText: q ? q.question.substring(0, 60) : 'Question ' + (qIdx+1),
+        studentAnswer: sampleAnswers[answerIdx],
+        hintUsed: Math.random() > 0.7,
+        pasteAttempts: 0,
+        conceptId: q ? q.conceptId : null
+      };
+    });
+
+    const sessionData = {
+      quizId,
+      quizTitle: currentQuizTitle || 'VCE Sociology - Deviance: Core Concepts',
+      kciSetId,
+      studentName: student.name,
+      classId: 'unassigned',
+      className: 'Unassigned',
+      timestamp: Date.now() - (students.length - i) * 60000, // stagger timestamps
+      tabSwitches: student.tabSwitches,
+      focusLosses: student.focusLosses,
+      results
+    };
+
+    await saveSessionToFirebase(sessionData);
+  }
+
+  alert('9 test students seeded. Click Refresh to see them in the dashboard.');
+  refreshDashboard();
 }
 
 async function clearAllSessions() {
