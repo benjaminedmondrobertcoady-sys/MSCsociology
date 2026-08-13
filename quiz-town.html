@@ -2755,7 +2755,6 @@ function showResults() {
   if (tabSwitchCount > 0) intLines.push(`Tab switches: ${tabSwitchCount}`);
   if (focusLossCount > 0) intLines.push(`Focus losses: ${focusLossCount}`);
   if (totalPaste > 0) intLines.push(`Paste attempts: ${totalPaste}`);
-  const intEl = document.getElementById('integrity-summary');
   if (intEl) {
     if (intLines.length > 0) {
       intEl.style.display = 'block';
