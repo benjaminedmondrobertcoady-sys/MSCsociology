@@ -433,6 +433,8 @@ textarea.own:focus{outline:none;border-color:var(--navy);}
         <div class="et-instruction">Your teacher will read these. Your reasoning matters more than being right.</div>
       </div>
 
+    </div><!-- end panel-done -->
+
     </div><!-- end merger-section -->
 
     <!-- LION SECTION -->
@@ -444,7 +446,7 @@ textarea.own:focus{outline:none;border-color:var(--navy);}
         <div class="lo-badge">0.5 OHU</div>
       </div>
 
-      <div id="lion-q-pick">
+      <div id="lion-q-pick" style="display:block;">
         <div class="section-head">Choose your question</div>
         <div class="q-option" id="lqOpt1" onclick="selectLionQuestion(1)">
           <div class="q-num">Question 1 -- Camera Angles &amp; Spirituality</div>
@@ -639,6 +641,7 @@ function startActivity(){
   document.getElementById('nameScreen').style.display = 'none';
   document.getElementById('mainActivity').style.display = 'block';
   document.getElementById('resetBtn').style.display = '';
+  buildLionQPicker();
 }
 
 function selectQuestion(n){
@@ -842,18 +845,44 @@ let lionQ = null;
 let lionSelections = {loVerb:'',loIdea:'',lhOpener:'',lhIdea:'',luIdea:'',luStance:''};
 
 function switchFilm(film) {
-  document.getElementById('btn-merger').classList.toggle('film-btn-active', film==='merger');
-  document.getElementById('btn-lion').classList.toggle('film-btn-active', film==='lion');
-  document.getElementById('merger-section').style.display = film==='merger' ? 'block' : 'none';
-  document.getElementById('lion-section').style.display = film==='lion' ? 'block' : 'none';
-  if (film==='lion') buildLionQPicker();
+  // Toggle button styles
+  var bm = document.getElementById('btn-merger');
+  var bl = document.getElementById('btn-lion');
+  var ms = document.getElementById('merger-section');
+  var ls = document.getElementById('lion-section');
+
+  if (film === 'lion') {
+    bm.classList.remove('film-btn-active');
+    bm.style.background = '#f0e8d8';
+    bm.style.color = 'var(--navy)';
+    bl.classList.add('film-btn-active');
+    bl.style.background = 'var(--navy)';
+    bl.style.color = 'var(--cream)';
+    ms.style.display = 'none';
+    ls.style.display = 'block';
+  } else {
+    bl.classList.remove('film-btn-active');
+    bl.style.background = '#f0e8d8';
+    bl.style.color = 'var(--navy)';
+    bm.classList.add('film-btn-active');
+    bm.style.background = 'var(--navy)';
+    bm.style.color = 'var(--cream)';
+    ls.style.display = 'none';
+    ms.style.display = 'block';
+  }
 }
 
 function buildLionQPicker() {
-  if (document.getElementById('lq1-text').textContent) return;
-  document.getElementById('lq1-text').textContent = LION_QS[1].text;
-  document.getElementById('lq2-text').textContent = LION_QS[2].text;
-  document.getElementById('lq3-text').textContent = LION_QS[3].text;
+  var el1 = document.getElementById('lq1-text');
+  var el2 = document.getElementById('lq2-text');
+  var el3 = document.getElementById('lq3-text');
+  if (!el1) { console.log('lq1-text not found'); return; }
+  el1.textContent = LION_QS[1].text;
+  el2.textContent = LION_QS[2].text;
+  el3.textContent = LION_QS[3].text;
+  // Make sure the picker is visible
+  var picker = document.getElementById('lion-q-pick');
+  if (picker) picker.style.display = 'block';
 }
 
 function selectLionQuestion(n) {
