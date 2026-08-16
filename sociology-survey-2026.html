@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sociology — Learning Survey</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --parchment: #f5f0e8;
+    --ink: #1a1610;
+    --rule: #b8a98a;
+    --accent: #2c5f6e;
+    --accent-light: #e8f0f2;
+    --gold: #9a7c3a;
+    --danger: #8b2020;
+    --success: #2a5e3a;
+    --card: #fdfaf4;
+    --shadow: rgba(26,22,16,0.10);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 4px solid var(--gold);
+  }
+
+  header .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+
+  header .subtitle {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: #c8bfa8;
+    font-weight: 300;
+  }
+
+  /* ── Main ── */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* ── Preamble ── */
+  .preamble {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.95rem;
+    color: #1a2e33;
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1.5px solid var(--rule);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── Question card ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 2px 6px var(--shadow);
+  }
+
+  .q-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .q-text {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+    color: var(--ink);
+  }
+
+  .q-text em {
+    font-weight: 300;
+    font-style: italic;
+    color: #555;
+  }
+
+  /* ── Radio / Checkbox ── */
+  .options { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    cursor: pointer;
+    padding: 0.55rem 0.75rem;
+    border-radius: 5px;
+    border: 1.5px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .option-label:hover { background: var(--accent-light); border-color: var(--accent); }
+
+  .option-label input[type="radio"],
+  .option-label input[type="checkbox"] {
+    margin-top: 0.2rem;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+  }
+
+  .option-label.selected {
+    background: var(--accent-light);
+    border-color: var(--accent);
+  }
+
+  /* ── Other field ── */
+  .other-field {
+    margin-top: 0.5rem;
+    display: none;
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1.5px solid var(--rule);
+    border-radius: 5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.9rem;
+    background: #fff;
+    color: var(--ink);
+    resize: none;
+  }
+
+  .other-field:focus { outline: none; border-color: var(--accent); }
+
+  /* ── Text inputs ── */
+  input[type="text"],
+  textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid var(--rule);
+    border-radius: 5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.95rem;
+    background: #fff;
+    color: var(--ink);
+    transition: border-color 0.15s;
+    resize: vertical;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus { outline: none; border-color: var(--accent); }
+
+  textarea.long { min-height: 130px; }
+
+  /* ── Ranking ── */
+  .rank-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #fff;
+    border: 1.5px solid var(--rule);
+    border-radius: 5px;
+    padding: 0.55rem 0.85rem;
+    cursor: grab;
+    user-select: none;
+    font-size: 0.92rem;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .rank-item:active { cursor: grabbing; }
+  .rank-item.dragging { opacity: 0.5; box-shadow: 0 4px 14px var(--shadow); border-color: var(--accent); }
+  .rank-item.drag-over { border-color: var(--gold); background: var(--accent-light); }
+
+  .rank-handle {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    min-width: 1.4rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .rank-grip {
+    color: var(--rule);
+    font-size: 1rem;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .rank-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: #999;
+    margin-top: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Required marker ── */
+  .req { color: var(--danger); margin-left: 2px; }
+
+  /* ── Error state ── */
+  .q-card.error { border-color: var(--danger); }
+  .error-msg { color: var(--danger); font-size: 0.8rem; margin-top: 0.5rem; font-family: 'DM Mono', monospace; display: none; }
+  .q-card.error .error-msg { display: block; }
+
+  /* ── Submit ── */
+  .submit-zone {
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.9rem 2.5rem;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 3px 10px var(--shadow);
+  }
+
+  .submit-btn:hover { background: #1e4552; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+  .submit-note {
+    margin-top: 0.85rem;
+    font-size: 0.82rem;
+    color: #888;
+    font-style: italic;
+  }
+
+  /* ── Success screen ── */
+  #success-screen {
+    display: none;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  #success-screen .big-tick {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  #success-screen h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+    color: var(--success);
+  }
+
+  #success-screen p {
+    font-size: 0.95rem;
+    color: #555;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* ── Status banner ── */
+  #status-banner {
+    display: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  #status-banner.saving { background: #e8f0f2; color: var(--accent); border: 1px solid var(--accent); }
+  #status-banner.error { background: #fdeaea; color: var(--danger); border: 1px solid var(--danger); }
+
+  @media (max-width: 500px) {
+    main { padding: 1.5rem 1rem 4rem; }
+    .q-card { padding: 1rem 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Mildura Senior College &mdash; Term 3, 2026</div>
+  <h1>Sociology<br>Learning Survey</h1>
+  <div class="subtitle">How are you learning? Let's find out.</div>
+</header>
+
+<main>
+  <div id="form-body">
+
+    <div class="preamble">
+      This is not a test. There are no right or wrong answers. Your honest responses help your teacher understand how to teach this class better. It takes about 10 minutes. Please complete it individually and in silence.
+    </div>
+
+    <form id="survey-form" novalidate>
+
+      <!-- ── SECTION 1: After the Video ── -->
+      <div class="section">
+        <div class="section-label">Section 1</div>
+        <div class="section-title">After the Video</div>
+
+        <!-- Q1 -->
+        <div class="q-card" id="card-q1">
+          <div class="q-number">Question 1 <span class="req">*</span></div>
+          <div class="q-text">
+            Tania Lombrozo describes the <em>"illusion of explanatory depth"</em> — thinking you understand something until you try to explain it and realise you don't. Has this happened to you this term in Sociology?
+          </div>
+          <div class="options" id="q1-options">
+            <label class="option-label"><input type="radio" name="q1" value="Yes, more than once"> Yes, more than once</label>
+            <label class="option-label"><input type="radio" name="q1" value="Yes, once or twice"> Yes, once or twice</label>
+            <label class="option-label"><input type="radio" name="q1" value="I'm not sure"> I'm not sure</label>
+            <label class="option-label"><input type="radio" name="q1" value="No — I think I understand what I've been taught"> No — I think I understand what I've been taught</label>
+            <label class="option-label"><input type="radio" name="q1" value="No — because I haven't really tried to explain things to myself"> No — because I haven't really tried to explain things to myself</label>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="q-card" id="card-q2">
+          <div class="q-number">Question 2 <span class="req">*</span></div>
+          <div class="q-text">
+            Lombrozo argues that reaching for information outside your head — Google, AI, notes — before thinking for yourself can make learning harder. Honestly, when you don't understand something in Sociology, what do you do first?
+          </div>
+          <div class="options" id="q2-options">
+            <label class="option-label"><input type="radio" name="q2" value="I try to work it out from what I already know"> I try to work it out from what I already know</label>
+            <label class="option-label"><input type="radio" name="q2" value="I re-read my notes"> I re-read my notes</label>
+            <label class="option-label"><input type="radio" name="q2" value="I search Google or use AI"> I search Google or use AI</label>
+            <label class="option-label"><input type="radio" name="q2" value="I ask someone else"> I ask someone else</label>
+            <label class="option-label"><input type="radio" name="q2" value="I don't do anything — I let it go"> I don't do anything — I let it go</label>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="q-card" id="card-q3">
+          <div class="q-number">Question 3 <span class="req">*</span></div>
+          <div class="q-text">
+            The video suggests that explaining things to yourself is one of the most powerful ways to learn. Which of the following comes closest to how you approached EduQuest activities?
+          </div>
+          <div class="options" id="q3-options">
+            <label class="option-label"><input type="radio" name="q3" value="I tried to reason through each question before attempting an answer"> I tried to reason through each question before attempting an answer</label>
+            <label class="option-label"><input type="radio" name="q3" value="I made attempts and used the feedback to adjust my thinking"> I made attempts and used the feedback to adjust my thinking</label>
+            <label class="option-label"><input type="radio" name="q3" value="I tried to find the right answer as quickly as possible"> I tried to find the right answer as quickly as possible</label>
+            <label class="option-label"><input type="radio" name="q3" value="I found ways to get through the activity without really engaging with it"> I found ways to get through the activity without really engaging with it</label>
+            <label class="option-label" id="q3-other-label"><input type="radio" name="q3" value="Other"> Other</label>
+            <textarea id="q3-other-text" class="other-field" placeholder="Please describe..." rows="2"></textarea>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+      </div>
+
+      <!-- ── SECTION 2: Background ── -->
+      <div class="section">
+        <div class="section-label">Section 2</div>
+        <div class="section-title">Background</div>
+
+        <!-- Q4 -->
+        <div class="q-card" id="card-q4">
+          <div class="q-number">Question 4 <span class="req">*</span></div>
+          <div class="q-text">Which school did you attend before MSC?</div>
+          <div class="options" id="q4-options">
+            <label class="option-label"><input type="radio" name="q4" value="Irymple Secondary College"> Irymple Secondary College</label>
+            <label class="option-label"><input type="radio" name="q4" value="Chaffey Secondary College"> Chaffey Secondary College</label>
+            <label class="option-label"><input type="radio" name="q4" value="Merbein P–10 College"> Merbein P–10 College</label>
+            <label class="option-label"><input type="radio" name="q4" value="St Joseph's College"> St Joseph's College</label>
+            <label class="option-label"><input type="radio" name="q4" value="Mildura Christian College"> Mildura Christian College</label>
+            <label class="option-label"><input type="radio" name="q4" value="Henderson College"> Henderson College</label>
+            <label class="option-label"><input type="radio" name="q4" value="Trinity Lutheran College"> Trinity Lutheran College</label>
+            <label class="option-label"><input type="radio" name="q4" value="Ouyen P–12 College"> Ouyen P–12 College</label>
+            <label class="option-label"><input type="radio" name="q4" value="Robinvale College"> Robinvale College</label>
+            <label class="option-label"><input type="radio" name="q4" value="International school"> International school</label>
+            <label class="option-label" id="q4-other-label"><input type="radio" name="q4" value="Other"> Other</label>
+            <textarea id="q4-other-text" class="other-field" placeholder="Please name your school..." rows="2"></textarea>
+          </div>
+          <div class="error-msg">Please select your previous school.</div>
+        </div>
+
+      </div>
+
+      <!-- ── SECTION 3: How You Learn ── -->
+      <div class="section">
+        <div class="section-label">Section 3</div>
+        <div class="section-title">How You Learn</div>
+
+        <!-- Q5 — Ranking -->
+        <div class="q-card" id="card-q5">
+          <div class="q-number">Question 5 <span class="req">*</span></div>
+          <div class="q-text">Rank the following from what you want <strong>most</strong> to <strong>least</strong> from your time in class. Drag to reorder.</div>
+          <ul class="rank-list" id="rank-q5">
+            <li class="rank-item" draggable="true" data-value="To understand the content deeply enough to use it in assessments">
+              <span class="rank-handle">1</span><span class="rank-grip">⠿</span>To understand the content deeply enough to use it in assessments
+            </li>
+            <li class="rank-item" draggable="true" data-value="To get through class without too much difficulty">
+              <span class="rank-handle">2</span><span class="rank-grip">⠿</span>To get through class without too much difficulty
+            </li>
+            <li class="rank-item" draggable="true" data-value="To engage with fun and interesting activities">
+              <span class="rank-handle">3</span><span class="rank-grip">⠿</span>To engage with fun and interesting activities
+            </li>
+            <li class="rank-item" draggable="true" data-value="To copy down information I can study later at home">
+              <span class="rank-handle">4</span><span class="rank-grip">⠿</span>To copy down information I can study later at home
+            </li>
+            <li class="rank-item" draggable="true" data-value="I'm not sure what I want from class">
+              <span class="rank-handle">5</span><span class="rank-grip">⠿</span>I'm not sure what I want from class
+            </li>
+          </ul>
+          <div class="rank-hint">Drag items up or down to rank them.</div>
+          <div class="error-msg">Please rank the options.</div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="q-card" id="card-q6">
+          <div class="q-number">Question 6 <span class="req">*</span></div>
+          <div class="q-text">When you feel stuck on a concept in class, what do you usually do?</div>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q6" value="Ask the teacher"> Ask the teacher</label>
+            <label class="option-label"><input type="radio" name="q6" value="Ask a peer"> Ask a peer</label>
+            <label class="option-label"><input type="radio" name="q6" value="Try to work it out myself"> Try to work it out myself</label>
+            <label class="option-label"><input type="radio" name="q6" value="Wait and hope it makes sense later"> Wait and hope it makes sense later</label>
+            <label class="option-label"><input type="radio" name="q6" value="Switch off"> Switch off</label>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="q-card" id="card-q7">
+          <div class="q-number">Question 7 <span class="req">*</span></div>
+          <div class="q-text">When you receive feedback on your work, what do you usually do next?</div>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q7" value="Re-read my work and try to improve it"> Re-read my work and try to improve it</label>
+            <label class="option-label"><input type="radio" name="q7" value="Note the feedback but don't act on it"> Note the feedback but don't act on it</label>
+            <label class="option-label"><input type="radio" name="q7" value="Feel discouraged"> Feel discouraged</label>
+            <label class="option-label"><input type="radio" name="q7" value="Feel motivated"> Feel motivated</label>
+            <label class="option-label"><input type="radio" name="q7" value="Depends on the feedback"> Depends on the feedback</label>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+      </div>
+
+      <!-- ── SECTION 4: EduQuest ── -->
+      <div class="section">
+        <div class="section-label">Section 4</div>
+        <div class="section-title">EduQuest</div>
+
+        <!-- Q8 — Ranking -->
+        <div class="q-card" id="card-q8">
+          <div class="q-number">Question 8 <span class="req">*</span></div>
+          <div class="q-text">Rank the EduQuest activities from <strong>most</strong> to <strong>least</strong> useful or engaging. Drag to reorder.</div>
+          <ul class="rank-list" id="rank-q8">
+            <li class="rank-item" draggable="true" data-value="Deviant or Illegal"><span class="rank-handle">1</span><span class="rank-grip">⠿</span>Deviant or Illegal</li>
+            <li class="rank-item" draggable="true" data-value="Folkways or Mores"><span class="rank-handle">2</span><span class="rank-grip">⠿</span>Folkways or Mores</li>
+            <li class="rank-item" draggable="true" data-value="How Serious Is It"><span class="rank-handle">3</span><span class="rank-grip">⠿</span>How Serious Is It</li>
+            <li class="rank-item" draggable="true" data-value="Order Restored"><span class="rank-handle">4</span><span class="rank-grip">⠿</span>Order Restored</li>
+            <li class="rank-item" draggable="true" data-value="Positive Deviants"><span class="rank-handle">5</span><span class="rank-grip">⠿</span>Positive Deviants</li>
+            <li class="rank-item" draggable="true" data-value="Social Control Theory"><span class="rank-handle">6</span><span class="rank-grip">⠿</span>Social Control Theory</li>
+          </ul>
+          <div class="rank-hint">Drag items up or down to rank them.</div>
+          <div class="error-msg">Please rank the activities.</div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="q-card" id="card-q9">
+          <div class="q-number">Question 9 <span class="req">*</span></div>
+          <div class="q-text">Why did you place your top-ranked activity first?</div>
+          <textarea id="q9" name="q9" class="long" placeholder="Write your answer here..."></textarea>
+          <div class="error-msg">Please write a response.</div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="q-card" id="card-q10">
+          <div class="q-number">Question 10 <span class="req">*</span></div>
+          <div class="q-text">Why did you place your bottom-ranked activity last?</div>
+          <textarea id="q10" name="q10" class="long" placeholder="Write your answer here..."></textarea>
+          <div class="error-msg">Please write a response.</div>
+        </div>
+
+        <!-- Q11 -->
+        <div class="q-card" id="card-q11">
+          <div class="q-number">Question 11 <span class="req">*</span></div>
+          <div class="q-text">When an EduQuest activity showed you that you'd got something wrong, how did you feel?</div>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q11" value="Motivated to try again"> Motivated to try again</label>
+            <label class="option-label"><input type="radio" name="q11" value="Frustrated"> Frustrated</label>
+            <label class="option-label"><input type="radio" name="q11" value="Embarrassed"> Embarrassed</label>
+            <label class="option-label"><input type="radio" name="q11" value="Indifferent"> Indifferent</label>
+            <label class="option-label"><input type="radio" name="q11" value="It depended on the activity"> It depended on the activity</label>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+      </div>
+
+      <!-- ── SECTION 5: Notebook Task ── -->
+      <div class="section">
+        <div class="section-label">Section 5</div>
+        <div class="section-title">The Notebook Task</div>
+
+        <!-- Q12 -->
+        <div class="q-card" id="card-q12">
+          <div class="q-number">Question 12 <span class="req">*</span></div>
+          <div class="q-text">
+            <strong>Without opening your notebook</strong>, describe one idea or concept from Sociology this term that you feel you actually understand. Write at least three sentences.
+          </div>
+          <textarea id="q12" name="q12" style="min-height:160px;" placeholder="Write your answer here — notebook closed."></textarea>
+          <div class="error-msg">Please write at least three sentences.</div>
+        </div>
+
+      </div>
+
+      <!-- ── SECTION 6: Support and Resources ── -->
+      <div class="section">
+        <div class="section-label">Section 6</div>
+        <div class="section-title">Support and Resources</div>
+
+        <!-- Q13 -->
+        <div class="q-card" id="card-q13">
+          <div class="q-number">Question 13 <span class="req">*</span></div>
+          <div class="q-text">Are you aware there is a Wednesday morning study session available for Sociology and English at MSC?</div>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q13" value="Yes"> Yes</label>
+            <label class="option-label"><input type="radio" name="q13" value="No"> No</label>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+        <!-- Q14 -->
+        <div class="q-card" id="card-q14">
+          <div class="q-number">Question 14 <span class="req">*</span></div>
+          <div class="q-text">If you are aware of it, why don't you attend?</div>
+          <div class="options" id="q14-options">
+            <label class="option-label"><input type="radio" name="q14" value="I see another teacher at that time"> I see another teacher at that time</label>
+            <label class="option-label"><input type="radio" name="q14" value="I stay home to rest"> I stay home to rest</label>
+            <label class="option-label"><input type="radio" name="q14" value="I have trouble getting to school on Wednesday mornings"> I have trouble getting to school on Wednesday mornings</label>
+            <label class="option-label"><input type="radio" name="q14" value="I didn't know about it"> I didn't know about it</label>
+            <label class="option-label" id="q14-other-label"><input type="radio" name="q14" value="Other"> Other</label>
+            <textarea id="q14-other-text" class="other-field" placeholder="Please describe..." rows="2"></textarea>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+        <!-- Q15 -->
+        <div class="q-card" id="card-q15">
+          <div class="q-number">Question 15 <span class="req">*</span></div>
+          <div class="q-text">Are you aware that study materials and coursework are available on Google Classroom?</div>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q15" value="Yes, and I use it regularly"> Yes, and I use it regularly</label>
+            <label class="option-label"><input type="radio" name="q15" value="Yes, but I rarely use it"> Yes, but I rarely use it</label>
+            <label class="option-label"><input type="radio" name="q15" value="I knew but forgot"> I knew but forgot</label>
+            <label class="option-label"><input type="radio" name="q15" value="No"> No</label>
+          </div>
+          <div class="error-msg">Please select an answer.</div>
+        </div>
+
+      </div>
+
+      <!-- ── SECTION 7: Open ── -->
+      <div class="section">
+        <div class="section-label">Section 7</div>
+        <div class="section-title">Open Response</div>
+
+        <!-- Q16 -->
+        <div class="q-card" id="card-q16">
+          <div class="q-number">Question 16</div>
+          <div class="q-text">Is there anything else you'd like your teacher to know about how this class is working for you — or not working? <em>(Optional)</em></div>
+          <textarea id="q16" name="q16" class="long" placeholder="Write your answer here, or leave blank."></textarea>
+        </div>
+
+      </div>
+
+      <div class="submit-zone">
+        <button type="submit" class="submit-btn" id="submit-btn">Submit Survey</button>
+        <div id="status-banner"></div>
+        <p class="submit-note">Your response is saved securely and only visible to your teacher.</p>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Success screen -->
+  <div id="success-screen">
+    <div class="big-tick">✓</div>
+    <h2>Response submitted.</h2>
+    <p>Thank you. Your teacher will review your responses. You can close this tab.</p>
+  </div>
+
+</main>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
+    authDomain: "edquesthermes-d0d7a.firebaseapp.com",
+    projectId: "edquesthermes-d0d7a",
+    storageBucket: "edquesthermes-d0d7a.appspot.com",
+    messagingSenderId: "29558718923",
+    appId: "1:29558718923:web:585463b020a394d49bb64e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ── Drag-to-rank ──
+  function initRanking(listId) {
+    const list = document.getElementById(listId);
+    let dragged = null;
+
+    list.querySelectorAll('.rank-item').forEach(item => {
+      item.addEventListener('dragstart', () => {
+        dragged = item;
+        setTimeout(() => item.classList.add('dragging'), 0);
+      });
+      item.addEventListener('dragend', () => {
+        item.classList.remove('dragging');
+        list.querySelectorAll('.rank-item').forEach(i => i.classList.remove('drag-over'));
+        updateHandles(list);
+      });
+      item.addEventListener('dragover', e => {
+        e.preventDefault();
+        list.querySelectorAll('.rank-item').forEach(i => i.classList.remove('drag-over'));
+        if (item !== dragged) item.classList.add('drag-over');
+      });
+      item.addEventListener('drop', e => {
+        e.preventDefault();
+        if (item !== dragged) {
+          const items = [...list.querySelectorAll('.rank-item')];
+          const draggedIdx = items.indexOf(dragged);
+          const targetIdx = items.indexOf(item);
+          if (draggedIdx < targetIdx) list.insertBefore(dragged, item.nextSibling);
+          else list.insertBefore(dragged, item);
+        }
+      });
+    });
+  }
+
+  function updateHandles(list) {
+    list.querySelectorAll('.rank-item').forEach((item, i) => {
+      item.querySelector('.rank-handle').textContent = i + 1;
+    });
+  }
+
+  function getRankValues(listId) {
+    return [...document.getElementById(listId).querySelectorAll('.rank-item')]
+      .map(item => item.dataset.value);
+  }
+
+  initRanking('rank-q5');
+  initRanking('rank-q8');
+
+  // ── Radio highlight ──
+  document.querySelectorAll('.option-label').forEach(label => {
+    label.addEventListener('click', () => {
+      const name = label.querySelector('input')?.name;
+      if (name) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+          r.closest('.option-label')?.classList.remove('selected');
+        });
+      }
+      label.classList.add('selected');
+    });
+  });
+
+  // ── Other field reveal ──
+  function setupOther(radioName, otherId, textId) {
+    document.querySelectorAll(`input[name="${radioName}"]`).forEach(r => {
+      r.addEventListener('change', () => {
+        const textEl = document.getElementById(textId);
+        if (r.value === 'Other' && r.checked) {
+          textEl.style.display = 'block';
+          textEl.required = true;
+        } else {
+          textEl.style.display = 'none';
+          textEl.required = false;
+        }
+      });
+    });
+  }
+
+  setupOther('q3', 'q3-other-label', 'q3-other-text');
+  setupOther('q4', 'q4-other-label', 'q4-other-text');
+  setupOther('q14', 'q14-other-label', 'q14-other-text');
+
+  // ── Validation ──
+  function getRadio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : null;
+  }
+
+  function validate() {
+    let valid = true;
+    const errors = [];
+
+    const radioFields = ['q1','q2','q3','q6','q7','q11','q13','q14','q15'];
+    // q4 handled separately below
+    radioFields.forEach(name => {
+      const card = document.getElementById(`card-${name}`);
+      const val = getRadio(name);
+      if (!val) {
+        card.classList.add('error');
+        errors.push(name);
+        valid = false;
+      } else {
+        card.classList.remove('error');
+        // check Other text
+        if (val === 'Other') {
+          const textId = `${name}-other-text`;
+          const textEl = document.getElementById(textId);
+          if (textEl && !textEl.value.trim()) {
+            card.classList.add('error');
+            errors.push(name + '-other');
+            valid = false;
+          }
+        }
+      }
+    });
+
+    // Q4 radio
+    const q4val = getRadio('q4');
+    const card4 = document.getElementById('card-q4');
+    if (!q4val) {
+      card4.classList.add('error');
+      errors.push('q4');
+      valid = false;
+    } else {
+      card4.classList.remove('error');
+      if (q4val === 'Other') {
+        const textEl = document.getElementById('q4-other-text');
+        if (textEl && !textEl.value.trim()) {
+          card4.classList.add('error');
+          errors.push('q4-other');
+          valid = false;
+        }
+      }
+    }
+
+    // Q9 Q10 textarea
+    ['q9','q10'].forEach(id => {
+      const el = document.getElementById(id);
+      const card = document.getElementById(`card-${id}`);
+      if (!el.value.trim()) { card.classList.add('error'); valid = false; }
+      else card.classList.remove('error');
+    });
+
+    // Q12 — three sentences min (rough check)
+    const q12 = document.getElementById('q12');
+    const card12 = document.getElementById('card-q12');
+    const sentences = q12.value.trim().split(/[.!?]+/).filter(s => s.trim().length > 0);
+    if (sentences.length < 3) {
+      card12.classList.add('error');
+      valid = false;
+    } else {
+      card12.classList.remove('error');
+    }
+
+    if (!valid && errors.length) {
+      const firstCard = document.getElementById(`card-${errors[0]}`);
+      if (firstCard) firstCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    return valid;
+  }
+
+  // ── Submit ──
+  document.getElementById('survey-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const btn = document.getElementById('submit-btn');
+    const banner = document.getElementById('status-banner');
+    btn.disabled = true;
+    banner.className = 'saving';
+    banner.style.display = 'block';
+    banner.textContent = 'Saving your response…';
+
+    const q3val = getRadio('q3');
+    const q14val = getRadio('q14');
+
+    const payload = {
+      timestamp: serverTimestamp(),
+      survey: 'sociology_term3_2026',
+      q1_illusion_of_depth: getRadio('q1'),
+      q2_when_stuck_first: getRadio('q2'),
+      q3_eduquest_approach: q3val === 'Other'
+        ? 'Other: ' + document.getElementById('q3-other-text').value.trim()
+        : q3val,
+      q4_previous_school: getRadio('q4') === 'Other'
+        ? 'Other: ' + document.getElementById('q4-other-text').value.trim()
+        : getRadio('q4'),
+      q5_class_wants_ranking: getRankValues('rank-q5'),
+      q6_when_stuck_in_class: getRadio('q6'),
+      q7_feedback_response: getRadio('q7'),
+      q8_eduquest_ranking: getRankValues('rank-q8'),
+      q9_top_activity_reason: document.getElementById('q9').value.trim(),
+      q10_bottom_activity_reason: document.getElementById('q10').value.trim(),
+      q11_wrong_answer_feeling: getRadio('q11'),
+      q12_notebook_recall: document.getElementById('q12').value.trim(),
+      q13_wednesday_aware: getRadio('q13'),
+      q14_wednesday_reason: q14val === 'Other'
+        ? 'Other: ' + document.getElementById('q14-other-text').value.trim()
+        : q14val,
+      q15_google_classroom_aware: getRadio('q15'),
+      q16_open: document.getElementById('q16').value.trim(),
+    };
+
+    try {
+      await addDoc(collection(db, 'sociology_survey_2026'), payload);
+      document.getElementById('form-body').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error(err);
+      banner.className = 'error';
+      banner.textContent = 'Something went wrong. Please try again or tell your teacher.';
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sociology Survey — Results</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --parchment: #f5f0e8;
+    --ink: #1a1610;
+    --rule: #b8a98a;
+    --accent: #2c5f6e;
+    --accent-light: #e8f0f2;
+    --gold: #9a7c3a;
+    --danger: #8b2020;
+    --success: #2a5e3a;
+    --card: #fdfaf4;
+    --highlight: #fffbe6;
+    --shadow: rgba(26,22,16,0.10);
+  }
+
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Login screen ── */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  .login-box {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 2.5rem 2rem;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 16px var(--shadow);
+  }
+
+  .login-box .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .login-box h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .login-box input[type="password"] {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid var(--rule);
+    border-radius: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+    background: #fff;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+
+  .login-box input[type="password"]:focus { outline: none; border-color: var(--accent); }
+
+  .login-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.7rem 2rem;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.15s;
+  }
+
+  .login-btn:hover { background: #1e4552; }
+
+  .login-error {
+    color: var(--danger);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    margin-top: 0.75rem;
+    display: none;
+  }
+
+  /* ── Main results screen ── */
+  #results-screen { display: none; }
+
+  header {
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 4px solid var(--gold);
+  }
+
+  header .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .header-meta {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #c8bfa8;
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── Controls bar ── */
+  .controls {
+    background: var(--card);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .controls label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-right: 0.3rem;
+  }
+
+  .controls select, .controls input[type="text"] {
+    padding: 0.4rem 0.65rem;
+    border: 1.5px solid var(--rule);
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .export-btn {
+    margin-left: auto;
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.15s;
+  }
+
+  .export-btn:hover { background: #7a6228; }
+
+  /* ── Main content ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+
+  /* ── Summary strip ── */
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .summary-tile {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 1rem 1.2rem;
+    box-shadow: 0 2px 6px var(--shadow);
+  }
+
+  .summary-tile .tile-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  .summary-tile .tile-value {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* ── Student cards ── */
+  .student-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 9px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px var(--shadow);
+    overflow: hidden;
+  }
+
+  .student-card-header {
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .student-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .student-school {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .student-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: #999;
+    margin-left: auto;
+  }
+
+  .card-body {
+    padding: 1.25rem 1.5rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  /* ── Answer rows ── */
+  .answer-group {
+    border-bottom: 1px solid #ede8dc;
+    padding-bottom: 0.85rem;
+  }
+
+  .answer-group:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .answer-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.25rem;
+  }
+
+  .answer-value {
+    font-size: 0.92rem;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .answer-value.highlight {
+    background: var(--highlight);
+    border-left: 3px solid var(--gold);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0 4px 4px 0;
+    font-style: italic;
+  }
+
+  .answer-value.long-text {
+    background: #f9f6ef;
+    border: 1px solid #e0d8c8;
+    border-radius: 4px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+  }
+
+  /* Ranking display */
+  .rank-display {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .rank-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+  }
+
+  .rank-pos {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    min-width: 1.2rem;
+    text-align: right;
+  }
+
+  /* ── Irymple flag ── */
+  .irymple-flag {
+    background: #fdeaea;
+    border: 1px solid #c88;
+    color: var(--danger);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+  }
+
+  /* ── Loading / empty ── */
+  #loading-msg, #empty-msg {
+    text-align: center;
+    padding: 4rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: #aaa;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 500px) {
+    main { padding: 1.25rem 1rem 3rem; }
+    .card-body { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="eyebrow">Teacher Access</div>
+    <h1>Sociology Survey<br>Results</h1>
+    <input type="password" id="password-input" placeholder="Enter password" autofocus>
+    <button class="login-btn" id="login-btn">View Results</button>
+    <div class="login-error" id="login-error">Incorrect password.</div>
+  </div>
+</div>
+
+<!-- ── Results ── -->
+<div id="results-screen">
+  <header>
+    <div class="eyebrow">Mildura Senior College &mdash; Term 3, 2026</div>
+    <h1>Sociology — Learning Survey Results</h1>
+    <div class="header-meta">
+      <span id="response-count">Loading...</span>
+      <span id="last-updated"></span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <label>Filter school:</label>
+    <input type="text" id="filter-school" placeholder="e.g. Irymple">
+    <label>Sort by:</label>
+    <select id="sort-by">
+      <option value="time">Time submitted</option>
+      <option value="school">Previous school</option>
+    </select>
+    <button class="export-btn" id="export-btn">Export CSV</button>
+  </div>
+
+  <main>
+    <div class="summary-strip" id="summary-strip"></div>
+    <div id="loading-msg">Loading responses...</div>
+    <div id="empty-msg" style="display:none;">No responses yet.</div>
+    <div id="cards-container"></div>
+  </main>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
+    authDomain: "edquesthermes-d0d7a.firebaseapp.com",
+    projectId: "edquesthermes-d0d7a",
+    storageBucket: "edquesthermes-d0d7a.appspot.com",
+    messagingSenderId: "29558718923",
+    appId: "1:29558718923:web:585463b020a394d49bb64e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const PASSWORD = 'puffin';
+  let allResponses = [];
+
+  // ── Login ──
+  function tryLogin() {
+    const val = document.getElementById('password-input').value;
+    if (val === PASSWORD) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('results-screen').style.display = 'block';
+      loadResults();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+      document.getElementById('password-input').value = '';
+      document.getElementById('password-input').focus();
+    }
+  }
+
+  document.getElementById('login-btn').addEventListener('click', tryLogin);
+  document.getElementById('password-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryLogin();
+  });
+
+  // ── Load ──
+  async function loadResults() {
+    try {
+      const q = query(collection(db, 'sociology_survey_2026'), orderBy('timestamp', 'asc'));
+      const snapshot = await getDocs(q);
+      allResponses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      document.getElementById('loading-msg').style.display = 'none';
+      if (allResponses.length === 0) {
+        document.getElementById('empty-msg').style.display = 'block';
+      } else {
+        renderAll(allResponses);
+      }
+    } catch (err) {
+      document.getElementById('loading-msg').textContent = 'Error loading results: ' + err.message;
+    }
+  }
+
+  // ── Render ──
+  function renderAll(responses) {
+    document.getElementById('response-count').textContent = responses.length + ' response' + (responses.length !== 1 ? 's' : '');
+    if (responses.length > 0 && responses[responses.length-1].timestamp) {
+      const last = responses[responses.length-1].timestamp.toDate();
+      document.getElementById('last-updated').textContent = 'Last: ' + last.toLocaleString('en-AU');
+    }
+
+    renderSummary(responses);
+    renderCards(responses);
+  }
+
+  function renderSummary(responses) {
+    const strip = document.getElementById('summary-strip');
+    strip.innerHTML = '';
+
+    const irymple = responses.filter(r => (r.q4_previous_school || '').toLowerCase().includes('irymple')).length;
+    const topWant = modeOf(responses.map(r => r.q5_class_wants_ranking?.[0]).filter(Boolean));
+    const topEduquest = modeOf(responses.map(r => r.q8_eduquest_ranking?.[0]).filter(Boolean));
+    const outsource = responses.filter(r => r.q2_when_stuck_first === 'I search Google or use AI').length;
+
+    const tiles = [
+      { label: 'Responses', value: responses.length },
+      { label: 'From Irymple', value: irymple },
+      { label: 'Top class want', value: topWant || '—' },
+      { label: 'Top EduQuest', value: topEduquest || '—' },
+      { label: 'Google / AI first', value: outsource },
+    ];
+
+    tiles.forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'summary-tile';
+      el.innerHTML = `<div class="tile-label">${t.label}</div><div class="tile-value">${t.value}</div>`;
+      strip.appendChild(el);
+    });
+  }
+
+  function modeOf(arr) {
+    if (!arr.length) return null;
+    const freq = {};
+    arr.forEach(v => freq[v] = (freq[v] || 0) + 1);
+    return Object.entries(freq).sort((a,b) => b[1]-a[1])[0][0];
+  }
+
+  function renderCards(responses) {
+    const container = document.getElementById('cards-container');
+    container.innerHTML = '';
+
+    responses.forEach((r, i) => {
+      const isIrymple = (r.q4_previous_school || '').toLowerCase().includes('irymple');
+      const ts = r.timestamp ? r.timestamp.toDate().toLocaleString('en-AU') : 'Unknown time';
+
+      const card = document.createElement('div');
+      card.className = 'student-card';
+      card.dataset.school = (r.q4_previous_school || '').toLowerCase();
+
+      card.innerHTML = `
+        <div class="student-card-header">
+          <span class="student-number">Response ${i + 1}</span>
+          <span class="student-school">${r.q4_previous_school || 'School not provided'}</span>
+          ${isIrymple ? '<span class="irymple-flag">Irymple</span>' : ''}
+          <span class="student-time">${ts}</span>
+        </div>
+        <div class="card-body">
+
+          <div class="answer-group">
+            <div class="answer-label">After the video — Illusion of explanatory depth</div>
+            <div class="answer-value">${r.q1_illusion_of_depth || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">When stuck — what do you do first?</div>
+            <div class="answer-value">${r.q2_when_stuck_first || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">EduQuest approach</div>
+            <div class="answer-value">${r.q3_eduquest_approach || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">What they want most from class (ranked)</div>
+            <div class="answer-value">
+              ${renderRanking(r.q5_class_wants_ranking)}
+            </div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">When stuck in class</div>
+            <div class="answer-value">${r.q6_when_stuck_in_class || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Response to feedback</div>
+            <div class="answer-value">${r.q7_feedback_response || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">EduQuest activity ranking</div>
+            <div class="answer-value">
+              ${renderRanking(r.q8_eduquest_ranking)}
+            </div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Why top activity ranked first</div>
+            <div class="answer-value long-text">${r.q9_top_activity_reason || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Why bottom activity ranked last</div>
+            <div class="answer-value long-text">${r.q10_bottom_activity_reason || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Feeling when shown wrong in EduQuest</div>
+            <div class="answer-value">${r.q11_wrong_answer_feeling || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Notebook recall (no notes open)</div>
+            <div class="answer-value highlight">${r.q12_notebook_recall || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Aware of Wednesday sessions</div>
+            <div class="answer-value">${r.q13_wednesday_aware || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Wednesday non-attendance reason</div>
+            <div class="answer-value">${r.q14_wednesday_reason || '—'}</div>
+          </div>
+
+          <div class="answer-group">
+            <div class="answer-label">Google Classroom awareness</div>
+            <div class="answer-value">${r.q15_google_classroom_aware || '—'}</div>
+          </div>
+
+          ${r.q16_open ? `
+          <div class="answer-group">
+            <div class="answer-label">Open response</div>
+            <div class="answer-value long-text">${r.q16_open}</div>
+          </div>` : ''}
+
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  function renderRanking(arr) {
+    if (!arr || !arr.length) return '<span style="color:#aaa">—</span>';
+    return '<div class="rank-display">' +
+      arr.map((item, i) =>
+        `<div class="rank-row"><span class="rank-pos">${i+1}.</span> ${item}</div>`
+      ).join('') +
+      '</div>';
+  }
+
+  // ── Filter ──
+  document.getElementById('filter-school').addEventListener('input', function() {
+    const val = this.value.toLowerCase().trim();
+    const filtered = val ? allResponses.filter(r => (r.q4_previous_school || '').toLowerCase().includes(val)) : allResponses;
+    document.getElementById('cards-container').innerHTML = '';
+    renderAll(filtered);
+  });
+
+  // ── Sort ──
+  document.getElementById('sort-by').addEventListener('change', function() {
+    let sorted = [...allResponses];
+    if (this.value === 'school') {
+      sorted.sort((a,b) => (a.q4_previous_school || '').localeCompare(b.q4_previous_school || ''));
+    } else {
+      sorted.sort((a,b) => {
+        const ta = a.timestamp?.toMillis() || 0;
+        const tb = b.timestamp?.toMillis() || 0;
+        return ta - tb;
+      });
+    }
+    document.getElementById('cards-container').innerHTML = '';
+    renderAll(sorted);
+  });
+
+  // ── CSV Export ──
+  document.getElementById('export-btn').addEventListener('click', () => {
+    if (!allResponses.length) return;
+
+    const headers = [
+      'Timestamp','Previous School','Q1 Illusion of Depth','Q2 When Stuck First',
+      'Q3 EduQuest Approach','Q5 Class Wants (1st)','Q5 Class Wants (2nd)',
+      'Q6 When Stuck in Class','Q7 Feedback Response',
+      'Q8 EduQuest Top','Q8 EduQuest Bottom',
+      'Q9 Top Activity Reason','Q10 Bottom Activity Reason',
+      'Q11 Wrong Answer Feeling','Q12 Notebook Recall',
+      'Q13 Wednesday Aware','Q14 Wednesday Reason',
+      'Q15 Google Classroom','Q16 Open'
+    ];
+
+    const rows = allResponses.map(r => [
+      r.timestamp ? r.timestamp.toDate().toLocaleString('en-AU') : '',
+      r.q4_previous_school || '',
+      r.q1_illusion_of_depth || '',
+      r.q2_when_stuck_first || '',
+      r.q3_eduquest_approach || '',
+      r.q5_class_wants_ranking?.[0] || '',
+      r.q5_class_wants_ranking?.[1] || '',
+      r.q6_when_stuck_in_class || '',
+      r.q7_feedback_response || '',
+      r.q8_eduquest_ranking?.[0] || '',
+      r.q8_eduquest_ranking?.[r.q8_eduquest_ranking.length-1] || '',
+      r.q9_top_activity_reason || '',
+      r.q10_bottom_activity_reason || '',
+      r.q11_wrong_answer_feeling || '',
+      r.q12_notebook_recall || '',
+      r.q13_wednesday_aware || '',
+      r.q14_wednesday_reason || '',
+      r.q15_google_classroom_aware || '',
+      r.q16_open || ''
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`));
+
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sociology-survey-results.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+</body>
+</html>
