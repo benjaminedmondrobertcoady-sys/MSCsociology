@@ -721,11 +721,12 @@ body.us-mode .bulletin{
   }
   #calPopover .pop-tag{
     display:inline-block;font-size:.62rem;font-weight:bold;letter-spacing:.08em;
-    text-transform:uppercase;padding:2px 7px;border-radius:2px;margin-top:5px;
-    border:1px solid currentColor;
+    text-transform:uppercase;padding:3px 9px;border-radius:10px;margin-top:6px;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
   }
-  #calPopover .pop-tag.elt{ color:#256b3f;border-color:#256b3f; }
-  #calPopover .pop-tag.at{ color:#8b2020;border-color:#8b2020; }
+  #calPopover .pop-tag.elt{ background:#e8f4ed;color:#256b3f; }
+  #calPopover .pop-tag.at{ background:#fdf3e3;color:#8a5a00; }
+  #calPopover .pop-tag.topic{ background:#eef2fb;color:#2255aa; }
   #calScrim{
     display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:9998;
   }
@@ -2128,10 +2129,12 @@ btn.addEventListener('click',()=>{
       },
       '2026-7-31': {
         eng:{name:'AT1: Analytical Response to Set Text (Film)',desc:'Term 3 Week 8. Students produce an analytical response to The Merger. Outcome 1: Reading and Exploring Texts.',type:'at'},
-        soc:{name:'AT2: Moral Panic News Report',desc:'Term 3 Week 8. Creation of a moral panic as presented in the media. Outcome 1: Deviance.',type:'at'}
+        soc:{name:'AT2: Moral Panic News Report',desc:'Term 3 Week 8. Creation of a moral panic as presented in the media. Outcome 1: Deviance.',type:'at'},
+        eng2:{name:'New Topic Begins: Exploring Argument',desc:'From this week, the focus shifts to Outcome 2. Students begin analysing how argument and persuasive language work in contemporary media texts.',type:'topic'}
       },
       '2026-8-7': {
-        eng:{name:'ELT 1: Annotations on a Persuasive Text',desc:'Term 3 Week 9. Annotate tone, audience, language features and persuasive techniques in a real media text.',type:'elt'}
+        eng:{name:'ELT 1: Annotations on a Persuasive Text',desc:'Term 3 Week 9. Annotate tone, audience, language features and persuasive techniques in a real media text.',type:'elt'},
+        soc:{name:'New Topic Begins: Crime',desc:'Term 3 Week 9. Outcome 2 begins. Introduction to crime in Australia: categories, patterns, data, and the significance of class, gender, age and ethnicity.',type:'topic'}
       },
       '2026-9-5': {
         eng:{name:'ELT 2: Practice Essay (Media Manipulation)',desc:'Term 4 Week 1. Practice analysis essay: how media manipulates audiences. Leads into Assessment Task Three.',type:'elt'}
@@ -2217,27 +2220,30 @@ btn.addEventListener('click',()=>{
     var popBody = document.getElementById('popBody');
     var popClose = document.getElementById('popClose');
 
+    function tagLabel(type){
+      if(type==='elt') return 'Essential Learning Task';
+      if(type==='at') return 'Assessment Task';
+      if(type==='topic') return 'New Topic Begins';
+      return type||'';
+    }
+
+    function subjectBlock(cls, icon, label, item){
+      return '<div class="pop-subject">'
+        +'<div class="pop-subject-head '+cls+'">'+icon+' '+label+'</div>'
+        +'<div class="pop-task-name">'+item.name+'</div>'
+        +'<div class="pop-task-desc">'+item.desc+'</div>'
+        +'<span class="pop-tag '+(item.type||'')+'">'+tagLabel(item.type)+'</span>'
+        +'</div>';
+    }
+
     function openPop(key, dateLabel){
       var mark = MARKS[key];
       if(!mark) return;
       popDate.textContent = dateLabel;
       var html = '';
-      if(mark.eng){
-        html += '<div class="pop-subject">'
-          +'<div class="pop-subject-head eng">&#128216; VCE English</div>'
-          +'<div class="pop-task-name">'+mark.eng.name+'</div>'
-          +'<div class="pop-task-desc">'+mark.eng.desc+'</div>'
-          +'<span class="pop-tag '+(mark.eng.type||'')+'">'+(mark.eng.type==='elt'?'ELT':'Assessment Task')+'</span>'
-          +'</div>';
-      }
-      if(mark.soc){
-        html += '<div class="pop-subject">'
-          +'<div class="pop-subject-head soc">&#128217; VCE Sociology</div>'
-          +'<div class="pop-task-name">'+mark.soc.name+'</div>'
-          +'<div class="pop-task-desc">'+mark.soc.desc+'</div>'
-          +'<span class="pop-tag '+(mark.soc.type||'')+'">'+(mark.soc.type==='elt'?'ELT':'Assessment Task')+'</span>'
-          +'</div>';
-      }
+      if(mark.eng)  html += subjectBlock('eng','&#128216;','VCE English', mark.eng);
+      if(mark.eng2) html += subjectBlock('eng','&#128216;','VCE English', mark.eng2);
+      if(mark.soc)  html += subjectBlock('soc','&#128217;','VCE Sociology', mark.soc);
       popBody.innerHTML = html;
       popover.classList.add('open');
       scrim.classList.add('open');
