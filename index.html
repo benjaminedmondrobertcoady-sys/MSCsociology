@@ -2368,7 +2368,7 @@ btn.addEventListener('click',()=>{
     };
     var app;
     try { app = appMod.getApp('ta'); } catch(e){ app = appMod.initializeApp(firebaseConfig, 'ta'); }
-    db = fsMod.getFirestore(app);
+    db = fsMod.initializeFirestore(app, { experimentalForceLongPolling: true, useFetchStreams: false });
     dbReady = true;
     fsMod.getDoc(fsMod.doc(db, 'ta_checklist', 'state')).then(function(snap){
       if(snap.exists()){ Object.assign(state, snap.data()); }
