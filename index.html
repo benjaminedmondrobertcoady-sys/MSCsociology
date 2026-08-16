@@ -2210,6 +2210,7 @@ btn.addEventListener('click',()=>{
     renderDate();
 
     /* --- Calendar popover --- */
+    setTimeout(function(){
     var popover = document.getElementById('calPopover');
     var scrim = document.getElementById('calScrim');
     var popDate = document.getElementById('popDate');
@@ -2262,6 +2263,7 @@ btn.addEventListener('click',()=>{
       var dateLabel = months[parseInt(parts[1])] + ' ' + d + ', ' + parts[0];
       openPop(key, dateLabel);
     });
+    }, 0); // end setTimeout — ensures popover DOM exists
   }
 })();
 </script>
