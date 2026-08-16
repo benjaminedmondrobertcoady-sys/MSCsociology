@@ -435,14 +435,24 @@
   function tryLogin() {
     const val = document.getElementById('password-input').value;
     if (val === PASSWORD) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('results-screen').style.display = 'block';
-      loadResults();
+      sessionStorage.setItem('sr_auth', '1');
+      showResults();
     } else {
       document.getElementById('login-error').style.display = 'block';
       document.getElementById('password-input').value = '';
       document.getElementById('password-input').focus();
     }
+  }
+
+  function showResults() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('results-screen').style.display = 'block';
+    loadResults();
+  }
+
+  // Auto-login if already authenticated this session
+  if (sessionStorage.getItem('sr_auth') === '1') {
+    showResults();
   }
 
   document.getElementById('login-btn').addEventListener('click', tryLogin);
