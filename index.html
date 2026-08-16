@@ -50,12 +50,12 @@
 
   /* ---------- top virtue strip ---------- */
   .virtue{
-    background:linear-gradient(90deg,var(--violet-d),var(--navy));color:var(--gold);
+    background:linear-gradient(90deg,#f0c040,#e8a820);color:#2a1a00;
     font-size:0.78rem;letter-spacing:.08em;padding:5px 14px;display:flex;justify-content:space-between;align-items:center;
     border-bottom:2px solid var(--gold-d);
   }
-  .virtue .m span{color:#fff;}
-  .virtue .d{color:#cdd8f0;font-style:italic;}
+  .virtue .m span{color:#5a3800;}
+  .virtue .d{color:#3a2400;font-style:italic;}
 
   /* ---------- masthead ---------- */
   .masthead{
@@ -222,12 +222,12 @@
   .us-toggle[aria-pressed="true"]{background:var(--gold);color:var(--navy-d);}
 
   /* ---------- Teacher Assessment button ---------- */
-  .ta-btn{margin-left:10px;padding:0 7px;height:26px;cursor:pointer;vertical-align:middle;
+  .ta-btn{margin-left:10px;padding:0 7px;height:26px;cursor:pointer;vertical-align:middle;background:transparent !important;border-color:rgba(0,0,0,0.25) !important;
     display:inline-flex;align-items:center;justify-content:center;
     background:#1a1a1a;border:1.5px solid #444;border-radius:0;
     transition:background .15s,border-color .15s;}
   .ta-btn:hover{background:#333;border-color:#888;}
-  .ta-btn img{height:16px;width:auto;display:block;filter:invert(1);}
+  .ta-btn img{height:22px;width:auto;display:block;}
   /* TA overlay */
   #taOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:8000;align-items:flex-start;justify-content:center;padding-top:40px;}
   #taOverlay.open{display:flex;}
@@ -629,7 +629,10 @@ body.us-mode .bulletin{
           <img id="taHeaderLogo" src="ta-icon.png" alt="">
           <div id="taHeaderTitle"><strong>Assessment Tracker</strong></div>
         </div>
-        <button class="ta-close" id="taClose" type="button">&#10005; Close</button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a href="sociology-survey-results.html" target="_blank" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#d8a93a;text-decoration:none;border:1px solid #444;padding:4px 10px;white-space:nowrap;">&#128202; Survey Results</a>
+          <button class="ta-close" id="taClose" type="button">&#10005; Close</button>
+        </div>
       </div>
       <div class="ta-rule"></div>
       <div id="taLock">
@@ -1504,10 +1507,10 @@ btn.addEventListener('click',()=>{
 /* ============================================================
    TEACHER ASSESSMENT - password-gated checklist + notes
    Password: puffin
+   Data: Firebase Firestore — collection: ta_checklist, doc: state
    ============================================================ */
 (function(){
   var TA_PW = 'puffin';
-  var STORE_KEY = 'ta-checklist-v2';
 
   var classes = {
     eal: {
@@ -1554,9 +1557,56 @@ btn.addEventListener('click',()=>{
     { id:'at', icon:'<span class="badge-at-ta">AT</span>', label:'Assess. Task' }
   ];
 
+  /* ── Firebase Firestore state ── */
+  var db = null;
+  var dbReady = false;
   var state = {};
-  try { state = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){}
-  function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+  /* Debounced Firestore write — batches rapid checkbox changes */
+  var writeTimer = null;
+  function save(){
+    if(!dbReady || !db) return;
+    clearTimeout(writeTimer);
+    writeTimer = setTimeout(function(){
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js').then(function(fsMod){
+        fsMod.setDoc(fsMod.doc(db, 'ta_checklist', 'state'), state).catch(function(e){
+          console.warn('TA save error', e);
+        });
+      });
+    }, 600);
+  }
+
+  /* Load Firebase and pull saved state */
+  Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
+  ]).then(function(mods){
+    var appMod = mods[0]; var fsMod = mods[1];
+    var firebaseConfig = {
+      apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
+      authDomain: "edquesthermes-d0d7a.firebaseapp.com",
+      projectId: "edquesthermes-d0d7a",
+      storageBucket: "edquesthermes-d0d7a.appspot.com",
+      messagingSenderId: "29558718923",
+      appId: "1:29558718923:web:585463b020a394d49bb64e"
+    };
+    var app;
+    try { app = appMod.getApp('ta'); } catch(e){ app = appMod.initializeApp(firebaseConfig, 'ta'); }
+    db = fsMod.getFirestore(app);
+    dbReady = true;
+    fsMod.getDoc(fsMod.doc(db, 'ta_checklist', 'state')).then(function(snap){
+      if(snap.exists()){ Object.assign(state, snap.data()); }
+      /* Re-render any already-open tables with the loaded state */
+      Object.keys(built).forEach(function(k){
+        if(built[k]){
+          built[k] = false;
+          var el = document.getElementById('ta-panel-' + k);
+          if(el) el.innerHTML = '';
+          buildClassTable(k);
+        }
+      });
+    }).catch(function(e){ console.warn('TA load error', e); });
+  });
 
   var built = {};
   var currentNoteId = null;
