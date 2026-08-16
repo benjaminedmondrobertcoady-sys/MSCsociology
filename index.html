@@ -2203,7 +2203,11 @@ btn.addEventListener('click',()=>{
       }
     }
 
-    function nextView(){ view=(view+1)%3; renderDate(); }
+    function nextView(e){
+      if(e.target.closest('.marked')) return;
+      if(e.target.closest('.month-nav')) return;
+      view=(view+1)%3; renderDate();
+    }
 
     dateGadget.addEventListener('click', nextView);
     dateGadget.addEventListener('keydown', function(ev){
