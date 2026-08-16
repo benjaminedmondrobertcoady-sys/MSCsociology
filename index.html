@@ -549,6 +549,21 @@ body.us-mode .bulletin{
     cursor:pointer;
     font-variant:small-caps;
   }
+  .puzzle-hint-wrap{margin-top:8px;}
+  .puzzle-hint-toggle{
+    width:100%;text-align:left;font-family:inherit;font-size:.7rem;font-weight:bold;
+    color:var(--navy);background:var(--cream-d);padding:5px 8px;
+    border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;
+    cursor:pointer;font-variant:small-caps;letter-spacing:.04em;
+  }
+  .puzzle-hint-toggle:hover{background:var(--gold);}
+  .puzzle-hint-body{
+    background:#fff;border:1px solid var(--rule);padding:8px 10px;
+    font-size:.72rem;line-height:1.5;color:#3a3520;
+  }
+  .puzzle-hint-body p{margin-bottom:6px;}
+  .puzzle-hint-body p:last-child{margin-bottom:0;}
+
   .puzzle-note{
     margin-top:7px;
     font-size:.72rem;
@@ -1140,6 +1155,15 @@ body.us-mode .bulletin{
             <button id="puzzleShuffle" type="button">Shuffle</button>
           </div>
           <div class="puzzle-note" id="puzzleNote" style="display:none;"></div>
+          <div class="puzzle-hint-wrap">
+            <button class="puzzle-hint-toggle" id="puzzleHintToggle" type="button">&#9660; How to solve it</button>
+            <div class="puzzle-hint-body" id="puzzleHintBody" style="display:none;">
+              <p><strong>Step 1.</strong> Solve the top row. Get the two top tiles into position together using a rotation trick rather than sliding them in directly.</p>
+              <p><strong>Step 2.</strong> Solve the left column of the remaining two rows. Same idea.</p>
+              <p><strong>Step 3.</strong> The bottom-right 2x2 block will now solve itself in a few moves.</p>
+              <p>Never try to fix everything at once. Work top-to-bottom, left-to-right, one section at a time.</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1967,6 +1991,16 @@ btn.addEventListener('click',()=>{
 
     shuffleBtn.addEventListener('click', shufflePuzzle);
     shufflePuzzle();
+
+    var hintToggle = document.getElementById('puzzleHintToggle');
+    var hintBody = document.getElementById('puzzleHintBody');
+    if(hintToggle && hintBody){
+      hintToggle.addEventListener('click', function(){
+        var open = hintBody.style.display !== 'none';
+        hintBody.style.display = open ? 'none' : 'block';
+        hintToggle.textContent = (open ? '\u25bc' : '\u25b2') + ' How to solve it';
+      });
+    }
   }
 
   /* ---------- Date Gadget ---------- */
