@@ -669,25 +669,67 @@ body.us-mode .bulletin{
   .month-grid span.both{
     background:linear-gradient(135deg,#2255aa 50%,#cc6600 50%);
   }
-  .month-grid span.marked .cal-tip{
+  /* Calendar popover */
+  #calPopover{
     display:none;
-    position:absolute;
-    bottom:calc(100% + 4px);
-    left:50%;
-    transform:translateX(-50%);
-    background:#1a1a1a;
-    color:#fff;
-    font-size:.6rem;
-    line-height:1.4;
-    padding:5px 7px;
-    border-radius:3px;
-    white-space:pre-line;
-    width:140px;
+    position:fixed;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    background:#fffaf0;
+    border:2px solid var(--navy);
+    border-radius:4px;
+    box-shadow:0 8px 32px rgba(0,0,0,.45);
+    width:min(420px,90vw);
+    max-height:80vh;
+    overflow-y:auto;
     z-index:9999;
-    text-align:left;
-    pointer-events:none;
+    font-family:Georgia,'Times New Roman',serif;
   }
-  .month-grid span.marked:hover .cal-tip{ display:block; }
+  #calPopover.open{ display:block; }
+  #calPopover .pop-head{
+    background:var(--navy);
+    color:#fff;
+    padding:12px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  #calPopover .pop-date{
+    font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;opacity:.8;
+  }
+  #calPopover .pop-close{
+    background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;
+    padding:0 4px;line-height:1;
+  }
+  #calPopover .pop-body{ padding:14px 16px 16px; }
+  #calPopover .pop-subject{
+    margin-bottom:14px;
+  }
+  #calPopover .pop-subject:last-child{ margin-bottom:0; }
+  #calPopover .pop-subject-head{
+    font-size:.7rem;font-weight:bold;letter-spacing:.12em;text-transform:uppercase;
+    padding:4px 8px;margin-bottom:8px;border-radius:2px;color:#fff;
+  }
+  #calPopover .pop-subject-head.eng{ background:#2255aa; }
+  #calPopover .pop-subject-head.soc{ background:#cc6600; }
+  #calPopover .pop-task-name{
+    font-size:.95rem;font-weight:bold;color:var(--navy);margin-bottom:4px;
+  }
+  #calPopover .pop-task-desc{
+    font-size:.78rem;line-height:1.5;color:#3a3520;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
+  #calPopover .pop-tag{
+    display:inline-block;font-size:.62rem;font-weight:bold;letter-spacing:.08em;
+    text-transform:uppercase;padding:2px 7px;border-radius:2px;margin-top:5px;
+    border:1px solid currentColor;
+  }
+  #calPopover .pop-tag.elt{ color:#256b3f;border-color:#256b3f; }
+  #calPopover .pop-tag.at{ color:#8b2020;border-color:#8b2020; }
+  #calScrim{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:9998;
+  }
+  #calScrim.open{ display:block; }
   .month-nav{
     display:flex;justify-content:space-between;align-items:center;
     margin-top:10px;
@@ -2068,15 +2110,36 @@ btn.addEventListener('click',()=>{
 
     /* Marked dates: key = YYYY-M-D (0-based month) */
     var MARKS = {
-      '2026-6-13': {eng:'AT2: Oral Presentation\nPoint of View'},
-      '2026-7-3':  {eng:'ELT 1: Annotations', soc:'ELT: Theories of Deviance'},
-      '2026-7-10': {soc:'AT1: Deviance Key Concept Test'},
-      '2026-7-17': {eng:'ELT 2: Essay Plan &\nPractice Essay (The Merger)'},
-      '2026-7-24': {soc:'ELT: Moral Panic\nplanning proforma'},
-      '2026-7-31': {eng:'AT1: Analytical Response\nto Text (Film)', soc:'AT2: Moral Panic News Report'},
-      '2026-8-7':  {eng:'ELT 1: Annotations on\npersuasive text'},
-      '2026-9-5':  {eng:'ELT 2: Practice Essay\n(media manipulation)'},
-      '2026-9-26': {eng:'AT3: Analysis of\nPersuasive Texts', soc:'ELT + AT3: Crime Case Scenario'}
+      '2026-6-13': {
+        eng:{name:'AT2: Oral Presentation of a Point of View',desc:'Construct a point of view text for oral presentation. Outcome 2: Exploring Argument.',type:'at'}
+      },
+      '2026-7-3': {
+        eng:{name:'ELT 1: Annotations',desc:'Term 3 Week 4. Annotate key film techniques and language features in The Merger. ELT = Essential Learning Task.',type:'elt'},
+        soc:{name:'ELT: Theories of Deviance',desc:'Term 3 Week 4. Written response covering functionalism (Durkheim), social bonds (Hirschi), labelling (Becker), and positive deviance.',type:'elt'}
+      },
+      '2026-7-10': {
+        soc:{name:'AT1: Deviance Key Concept Test',desc:'Term 3 Week 5. Test on definitions, concepts and theories relating to Deviance. Outcome 1.',type:'at'}
+      },
+      '2026-7-17': {
+        eng:{name:'ELT 2: Essay Plan & Practice Essay',desc:'Term 3 Week 6. Essay plan and practice essay on The Merger. Prepares for Assessment Task One.',type:'elt'}
+      },
+      '2026-7-24': {
+        soc:{name:'ELT: Moral Panic Planning Proforma',desc:'Term 3 Week 7. Planning document for the Moral Panic News Report. Stanley Cohen framework.',type:'elt'}
+      },
+      '2026-7-31': {
+        eng:{name:'AT1: Analytical Response to Set Text (Film)',desc:'Term 3 Week 8. Students produce an analytical response to The Merger. Outcome 1: Reading and Exploring Texts.',type:'at'},
+        soc:{name:'AT2: Moral Panic News Report',desc:'Term 3 Week 8. Creation of a moral panic as presented in the media. Outcome 1: Deviance.',type:'at'}
+      },
+      '2026-8-7': {
+        eng:{name:'ELT 1: Annotations on a Persuasive Text',desc:'Term 3 Week 9. Annotate tone, audience, language features and persuasive techniques in a real media text.',type:'elt'}
+      },
+      '2026-9-5': {
+        eng:{name:'ELT 2: Practice Essay (Media Manipulation)',desc:'Term 4 Week 1. Practice analysis essay: how media manipulates audiences. Leads into Assessment Task Three.',type:'elt'}
+      },
+      '2026-9-26': {
+        eng:{name:'AT3: Analysis of Persuasive Texts',desc:'Term 4 Week 4. Written analysis of the ways written and visual language and argument are used to persuade. Outcome 2.',type:'at'},
+        soc:{name:'ELT + AT3: Crime Case Scenario',desc:"Term 4 Week 4. You Be the Judge: analyse a criminal case study covering risk factors, aims of punishment and sentencing laws. Notes and table included as part of the task. Outcome 2: Crime.",type:'at'}
+      }
     };
 
     function makeBigDate(){
@@ -2106,10 +2169,8 @@ btn.addEventListener('click',()=>{
         if(mark){
           var hasEng=!!mark.eng, hasSoc=!!mark.soc;
           cls += (cls?' ':'') + 'marked ' + (hasEng&&hasSoc?'both':hasEng?'eng':'soc');
-          var tip = '';
-          if(mark.eng) tip += '\ud83d\udcd8 '+mark.eng;
-          if(mark.soc) tip += (tip?'\n':'')+'\ud83d\udcd9 '+mark.soc;
-          html += '<span class="'+cls.trim()+'">'+d+'<span class="cal-tip">'+tip+'</span></span>';
+          /* tip handled by popover */
+          html += '<span class="'+cls.trim()+'" data-key="'+key+'">'+d+'</span>';
         } else {
           html += '<span class="'+cls.trim()+'">'+d+'</span>';
         }
@@ -2147,6 +2208,60 @@ btn.addEventListener('click',()=>{
     });
 
     renderDate();
+
+    /* --- Calendar popover --- */
+    var popover = document.getElementById('calPopover');
+    var scrim = document.getElementById('calScrim');
+    var popDate = document.getElementById('popDate');
+    var popBody = document.getElementById('popBody');
+    var popClose = document.getElementById('popClose');
+
+    function openPop(key, dateLabel){
+      var mark = MARKS[key];
+      if(!mark) return;
+      popDate.textContent = dateLabel;
+      var html = '';
+      if(mark.eng){
+        html += '<div class="pop-subject">'
+          +'<div class="pop-subject-head eng">&#128216; VCE English</div>'
+          +'<div class="pop-task-name">'+mark.eng.name+'</div>'
+          +'<div class="pop-task-desc">'+mark.eng.desc+'</div>'
+          +'<span class="pop-tag '+(mark.eng.type||'')+'">'+(mark.eng.type==='elt'?'ELT':'Assessment Task')+'</span>'
+          +'</div>';
+      }
+      if(mark.soc){
+        html += '<div class="pop-subject">'
+          +'<div class="pop-subject-head soc">&#128217; VCE Sociology</div>'
+          +'<div class="pop-task-name">'+mark.soc.name+'</div>'
+          +'<div class="pop-task-desc">'+mark.soc.desc+'</div>'
+          +'<span class="pop-tag '+(mark.soc.type||'')+'">'+(mark.soc.type==='elt'?'ELT':'Assessment Task')+'</span>'
+          +'</div>';
+      }
+      popBody.innerHTML = html;
+      popover.classList.add('open');
+      scrim.classList.add('open');
+    }
+
+    function closePop(){
+      popover.classList.remove('open');
+      scrim.classList.remove('open');
+    }
+
+    popClose.addEventListener('click', closePop);
+    scrim.addEventListener('click', closePop);
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePop(); });
+
+    /* delegate click on grid */
+    dateCard.addEventListener('click', function(e){
+      var span = e.target.closest ? e.target.closest('.marked') : null;
+      if(!span) return;
+      e.stopPropagation();
+      var key = span.getAttribute('data-key');
+      var d = span.textContent.trim();
+      var parts = key.split('-');
+      var dateLabel = months[parseInt(parts[1])] + ' ' + d + ', ' + parts[0];
+      openPop(key, dateLabel);
+    });
   }
 })();
 </script>
@@ -2389,5 +2504,13 @@ btn.addEventListener('click',()=>{
 })();
 </script>
 
+  <div id="calScrim"></div>
+  <div id="calPopover" role="dialog" aria-modal="true" aria-label="Assessment date details">
+    <div class="pop-head">
+      <span class="pop-date" id="popDate"></span>
+      <button class="pop-close" id="popClose" type="button" aria-label="Close">&#10005;</button>
+    </div>
+    <div class="pop-body" id="popBody"></div>
+  </div>
 </body>
 </html>
