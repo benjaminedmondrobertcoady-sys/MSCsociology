@@ -1107,18 +1107,18 @@ body.us-mode .bulletin{
 
     <!-- RIGHT SIDEBAR -->
     <aside class="sidebar right">
+      <div class="gadget date-gadget" id="dateGadget" role="button" tabindex="0" aria-label="EduQuest date gadget. Click to change view.">
+        <div class="date-card" id="dateCard"></div>
+        <div class="date-hint">click to turn the page</div>
+      </div>
+
       <div class="gadget wordle-gadget">
         <div class="gadget-bar">&#129383; Word of the Day</div>
         <div class="wordle-wrap" id="wordleWrap"></div>
       </div>
 
-      <div class="gadget flag-gadget">
-        <div class="gadget-bar">&#127988; Flag of the Day</div>
-        <div class="flag-wrap" id="flagWrap"></div>
-      </div>
-
       <div class="gadget spiro-gadget">
-        <div class="gadget-bar">&#11835; Spirograph</div>
+        <div class="gadget-bar">Spirograph</div>
         <div class="spiro-wrap">
           <canvas id="spiroCanvas" width="180" height="180"></canvas>
           <div class="spiro-controls">
@@ -1131,7 +1131,8 @@ body.us-mode .bulletin{
       </div>
 
       <div class="gadget puzzle-gadget">
-        <img src="puzzle-corner-title.png" alt="" style="width:100%;display:block;min-height:0;" onerror="this.style.display='none'">
+        <img src="puzzle-corner-title.png" alt="" style="width:100%;display:block;min-height:0;" onerror="this.style.display='none';document.getElementById('puzzleBarFallback').style.display='block'">
+        <div class="gadget-bar" id="puzzleBarFallback" style="display:none;">&#129513; Puzzle Corner</div>
         <div class="puzzle-wrap">
           <div class="puzzle-board" id="puzzleBoard" aria-label="Sliding picture puzzle"></div>
           <div class="puzzle-tools">
@@ -1142,10 +1143,6 @@ body.us-mode .bulletin{
         </div>
       </div>
 
-      <div class="gadget date-gadget" id="dateGadget" role="button" tabindex="0" aria-label="EduQuest date gadget. Click to change view.">
-        <div class="date-card" id="dateCard"></div>
-        <div class="date-hint">click to turn the page</div>
-      </div>
     </aside>
 
   </div>
