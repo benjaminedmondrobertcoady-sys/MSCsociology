@@ -760,13 +760,14 @@
   }
 
   function validate() {
+    // Only radio buttons are required — no text content policing, no ranking enforcement
     let valid = true;
     const errors = [];
 
-    const radioFields = ['q1','q2','q3','q6','q7','q11','q13','q14','q15'];
-    // q4 handled separately below
+    const radioFields = ['q1','q2','q3','q4','q6','q7','q11','q13','q14','q15'];
     radioFields.forEach(name => {
       const card = document.getElementById(`card-${name}`);
+      if (!card) return;
       const val = getRadio(name);
       if (!val) {
         card.classList.add('error');
@@ -774,56 +775,8 @@
         valid = false;
       } else {
         card.classList.remove('error');
-        // check Other text
-        if (val === 'Other') {
-          const textId = `${name}-other-text`;
-          const textEl = document.getElementById(textId);
-          if (textEl && !textEl.value.trim()) {
-            card.classList.add('error');
-            errors.push(name + '-other');
-            valid = false;
-          }
-        }
       }
     });
-
-    // Q4 radio
-    const q4val = getRadio('q4');
-    const card4 = document.getElementById('card-q4');
-    if (!q4val) {
-      card4.classList.add('error');
-      errors.push('q4');
-      valid = false;
-    } else {
-      card4.classList.remove('error');
-      if (q4val === 'Other') {
-        const textEl = document.getElementById('q4-other-text');
-        if (textEl && !textEl.value.trim()) {
-          card4.classList.add('error');
-          errors.push('q4-other');
-          valid = false;
-        }
-      }
-    }
-
-    // Q9 Q10 textarea
-    ['q9','q10'].forEach(id => {
-      const el = document.getElementById(id);
-      const card = document.getElementById(`card-${id}`);
-      if (!el.value.trim()) { card.classList.add('error'); valid = false; }
-      else card.classList.remove('error');
-    });
-
-    // Q12 — three sentences min (rough check)
-    const q12 = document.getElementById('q12');
-    const card12 = document.getElementById('card-q12');
-    const sentences = q12.value.trim().split(/[.!?]+/).filter(s => s.trim().length > 0);
-    if (sentences.length < 3) {
-      card12.classList.add('error');
-      valid = false;
-    } else {
-      card12.classList.remove('error');
-    }
 
     if (!valid && errors.length) {
       const firstCard = document.getElementById(`card-${errors[0]}`);
