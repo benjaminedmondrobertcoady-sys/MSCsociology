@@ -2210,7 +2210,7 @@ btn.addEventListener('click',()=>{
     renderDate();
 
     /* --- Calendar popover --- */
-    setTimeout(function(){
+    setTimeout(function(months){
     var popover = document.getElementById('calPopover');
     var scrim = document.getElementById('calScrim');
     var popDate = document.getElementById('popDate');
@@ -2253,7 +2253,8 @@ btn.addEventListener('click',()=>{
     document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePop(); });
 
     /* delegate click on grid */
-    dateCard.addEventListener('click', function(e){
+    var dc = document.getElementById('dateCard');
+    if(dc) dc.addEventListener('click', function(e){
       var span = e.target.closest ? e.target.closest('.marked') : null;
       if(!span) return;
       e.stopPropagation();
@@ -2263,7 +2264,7 @@ btn.addEventListener('click',()=>{
       var dateLabel = months[parseInt(parts[1])] + ' ' + d + ', ' + parts[0];
       openPop(key, dateLabel);
     });
-    }, 0); // end setTimeout — ensures popover DOM exists
+    }, 0, months); // end setTimeout — ensures popover DOM exists
   }
 })();
 </script>
