@@ -841,9 +841,11 @@
     const btn = document.getElementById('submit-btn');
     const banner = document.getElementById('status-banner');
     btn.disabled = true;
+    btn.textContent = '⏳ Submitting…';
+    btn.style.background = '#555';
     banner.className = 'saving';
     banner.style.display = 'block';
-    banner.textContent = 'Saving your response…';
+    banner.textContent = 'Saving your response — please wait…';
 
     const q3val = getRadio('q3');
     const q14val = getRadio('q14');
@@ -883,8 +885,10 @@
     } catch (err) {
       console.error(err);
       banner.className = 'error';
-      banner.textContent = 'Something went wrong. Please try again or tell your teacher.';
+      banner.textContent = '⚠️ Something went wrong — your response was not saved. Please try again or tell your teacher.';
       btn.disabled = false;
+      btn.textContent = 'Try Again';
+      btn.style.background = '';
     }
   });
 </script>
