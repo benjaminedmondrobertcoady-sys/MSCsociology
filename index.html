@@ -657,6 +657,49 @@ body.us-mode .bulletin{
     border:1px solid var(--gold-d);
     font-weight:bold;
   }
+  .month-grid span.marked{
+    position:relative;
+    cursor:default;
+    font-weight:bold;
+    border-radius:50%;
+    color:#fff;
+  }
+  .month-grid span.eng{ background:#2255aa; }
+  .month-grid span.soc{ background:#cc6600; }
+  .month-grid span.both{
+    background:linear-gradient(135deg,#2255aa 50%,#cc6600 50%);
+  }
+  .month-grid span.marked .cal-tip{
+    display:none;
+    position:absolute;
+    bottom:calc(100% + 4px);
+    left:50%;
+    transform:translateX(-50%);
+    background:#1a1a1a;
+    color:#fff;
+    font-size:.6rem;
+    line-height:1.4;
+    padding:5px 7px;
+    border-radius:3px;
+    white-space:pre-line;
+    width:140px;
+    z-index:9999;
+    text-align:left;
+    pointer-events:none;
+  }
+  .month-grid span.marked:hover .cal-tip{ display:block; }
+  .month-nav{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:10px;
+  }
+  .month-nav button{
+    background:none;border:none;cursor:pointer;
+    font-size:.8rem;color:var(--navy);font-weight:bold;padding:2px 6px;
+  }
+  .month-nav button:hover{ color:var(--gold-d); }
+  .month-nav-title{
+    font-weight:bold;color:var(--green);font-size:.82rem;letter-spacing:.05em;
+  }
   .origin-title{
     margin-top:18px;
     font-size:.95rem;
@@ -2009,17 +2052,32 @@ btn.addEventListener('click',()=>{
   if(dateGadget && dateCard){
     var view = 0;
     var now = new Date();
+    var calYear = now.getFullYear();
+    var calMonth = now.getMonth();
     var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     var dayOrigins = [
-      {symbol:'\u2600\ufe0f', old:'Old English: Sunnand\u00e6g', text:'Sunday is the Sun\u2019s day. Its name comes from Old English Sunnand\u00e6g, following an older Roman tradition of naming days after heavenly bodies.'},
-      {symbol:'\ud83c\udf19', old:'Old English: M\u014dnand\u00e6g', text:'Monday is the Moon\u2019s day. Its name comes from Old English M\u014dnand\u00e6g, meaning the day of the Moon.'},
-      {symbol:'\u2694\ufe0f', old:'Old English: T\u012bwesd\u00e6g', text:'Tuesday is Tiw\u2019s day. Tiw, or T\u00fdr, was a Germanic and Norse god associated with law, courage and war.'},
-      {symbol:'\ud83e\uddd9', old:'Old English: W\u014ddnesd\u00e6g', text:'Wednesday is Woden\u2019s day. Woden is the Old English name for Odin, a god linked with wisdom, poetry and wandering.'},
-      {symbol:'\ud83d\udd28', old:'Old English: \u00deúnresd\u00e6g', text:'Thursday is Thor\u2019s day. It comes from Old English \u00deúnresd\u00e6g, the day of the thunder god.'},
-      {symbol:'\ud83c\udf38', old:'Old English: Fr\u012bged\u00e6g', text:'Friday is Frigg\u2019s day. The name comes from Old English Fr\u012bged\u00e6g, linked to the goddess Frigg and later often associated with Freyja.'},
-      {symbol:'\ud83e\ude90', old:'Latin: dies Saturni', text:'Saturday is Saturn\u2019s day. It is the English weekday that still keeps the Roman god Saturn\u2019s name most directly.'}
+      {symbol:'\u2600\ufe0f', old:'Old English: Sunnand\u00e6g', text:'Sunday is the Sun\u2019s day.'},
+      {symbol:'\ud83c\udf19', old:'Old English: M\u014dnand\u00e6g', text:'Monday is the Moon\u2019s day.'},
+      {symbol:'\u2694\ufe0f', old:'Old English: T\u012bwesd\u00e6g', text:'Tuesday is Tiw\u2019s day. Tiw was a Germanic god of law and war.'},
+      {symbol:'\ud83e\uddd9', old:'Old English: W\u014ddnesd\u00e6g', text:'Wednesday is Woden\u2019s day. Woden is the Old English name for Odin.'},
+      {symbol:'\ud83d\udd28', old:'Old English: \u00deurresd\u00e6g', text:'Thursday is Thor\u2019s day, the thunder god.'},
+      {symbol:'\ud83c\udf38', old:'Old English: Fr\u012bged\u00e6g', text:'Friday is Frigg\u2019s day, linked to the goddess Frigg.'},
+      {symbol:'\ud83e\ude90', old:'Latin: dies Saturni', text:'Saturday keeps the Roman god Saturn\u2019s name most directly.'}
     ];
+
+    /* Marked dates: key = YYYY-M-D (0-based month) */
+    var MARKS = {
+      '2026-6-13': {eng:'AT2: Oral Presentation\nPoint of View'},
+      '2026-7-3':  {eng:'ELT 1: Annotations', soc:'ELT: Theories of Deviance'},
+      '2026-7-10': {soc:'AT1: Deviance Key Concept Test'},
+      '2026-7-17': {eng:'ELT 2: Essay Plan &\nPractice Essay (The Merger)'},
+      '2026-7-24': {soc:'ELT: Moral Panic\nplanning proforma'},
+      '2026-7-31': {eng:'AT1: Analytical Response\nto Text (Film)', soc:'AT2: Moral Panic News Report'},
+      '2026-8-7':  {eng:'ELT 1: Annotations on\npersuasive text'},
+      '2026-9-5':  {eng:'ELT 2: Practice Essay\n(media manipulation)'},
+      '2026-9-26': {eng:'AT3: Analysis of\nPersuasive Texts', soc:'ELT + AT3: Crime Case Scenario'}
+    };
 
     function makeBigDate(){
       return '<div class="date-month">' + months[now.getMonth()] + '</div>' +
@@ -2028,45 +2086,64 @@ btn.addEventListener('click',()=>{
     }
 
     function makeMonthGrid(){
-      var year = now.getFullYear();
-      var month = now.getMonth();
+      var year = calYear, month = calMonth;
       var first = new Date(year, month, 1);
       var last = new Date(year, month + 1, 0);
-      var start = first.getDay(); /* Sunday based */
+      var start = first.getDay();
       var labels = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-      var html = '<div class="month-title">' + months[month] + ' ' + year + '</div><div class="month-grid">';
-      for(var h=0; h<labels.length; h++) html += '<span class="head">' + labels[h] + '</span>';
-      for(var b=0; b<start; b++) html += '<span></span>';
-      for(var d=1; d<=last.getDate(); d++){
-        html += '<span class="' + (d === now.getDate() ? 'today' : '') + '">' + d + '</span>';
+      var html = '<div class="month-nav">' +
+        '<button id="calPrev" type="button">&#9664;</button>' +
+        '<span class="month-nav-title">' + months[month] + ' ' + year + '</span>' +
+        '<button id="calNext" type="button">&#9654;</button>' +
+        '</div><div class="month-grid">';
+      for(var h=0;h<labels.length;h++) html += '<span class="head">'+labels[h]+'</span>';
+      for(var b=0;b<start;b++) html += '<span></span>';
+      for(var d=1;d<=last.getDate();d++){
+        var key = year+'-'+month+'-'+d;
+        var mark = MARKS[key];
+        var isToday = (d===now.getDate() && month===now.getMonth() && year===now.getFullYear());
+        var cls = isToday ? 'today' : '';
+        if(mark){
+          var hasEng=!!mark.eng, hasSoc=!!mark.soc;
+          cls += (cls?' ':'') + 'marked ' + (hasEng&&hasSoc?'both':hasEng?'eng':'soc');
+          var tip = '';
+          if(mark.eng) tip += '\ud83d\udcd8 '+mark.eng;
+          if(mark.soc) tip += (tip?'\n':'')+'\ud83d\udcd9 '+mark.soc;
+          html += '<span class="'+cls.trim()+'">'+d+'<span class="cal-tip">'+tip+'</span></span>';
+        } else {
+          html += '<span class="'+cls.trim()+'">'+d+'</span>';
+        }
       }
       html += '</div>';
       return html;
     }
 
     function makeOrigin(){
-      var origin = dayOrigins[now.getDay()];
-      return '<div class="origin-title">' + days[now.getDay()] + '</div>' +
-             '<div class="origin-symbol">' + origin.symbol + '</div>' +
-             '<div class="origin-text">' + origin.text + '</div>' +
-             '<div class="origin-old">' + origin.old + '</div>';
+      var o = dayOrigins[now.getDay()];
+      return '<div class="origin-title">'+days[now.getDay()]+'</div>' +
+             '<div class="origin-symbol">'+o.symbol+'</div>' +
+             '<div class="origin-text">'+o.text+'</div>' +
+             '<div class="origin-old">'+o.old+'</div>';
     }
 
     function renderDate(){
-      dateCard.innerHTML = view === 0 ? makeBigDate() : view === 1 ? makeMonthGrid() : makeOrigin();
+      dateCard.innerHTML = view===0 ? makeBigDate() : view===1 ? makeMonthGrid() : makeOrigin();
+      if(view===1){
+        var prev=document.getElementById('calPrev'), next=document.getElementById('calNext');
+        if(prev) prev.addEventListener('click',function(e){
+          e.stopPropagation(); calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderDate();
+        });
+        if(next) next.addEventListener('click',function(e){
+          e.stopPropagation(); calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderDate();
+        });
+      }
     }
 
-    function nextView(){
-      view = (view + 1) % 3;
-      renderDate();
-    }
+    function nextView(){ view=(view+1)%3; renderDate(); }
 
     dateGadget.addEventListener('click', nextView);
     dateGadget.addEventListener('keydown', function(ev){
-      if(ev.key === 'Enter' || ev.key === ' '){
-        ev.preventDefault();
-        nextView();
-      }
+      if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); nextView(); }
     });
 
     renderDate();
