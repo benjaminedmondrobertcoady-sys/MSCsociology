@@ -656,39 +656,26 @@
 
 </main>
 
-<!-- Firestore REST (no WebSocket) -->
-<script>
-  const FIRESTORE_URL = 'https://firestore.googleapis.com/v1/projects/edquesthermes-d0d7a/databases/(default)/documents/sociology_survey_2026';
-  const API_KEY = 'AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4';
+<!-- Firebase SDK with long-polling to avoid WebSocket issues -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, enableNetwork } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  function toFirestoreValue(val) {
-    if (val === null || val === undefined) return { nullValue: null };
-    if (typeof val === 'boolean') return { booleanValue: val };
-    if (typeof val === 'number') return { integerValue: String(val) };
-    if (Array.isArray(val)) return { arrayValue: { values: val.map(toFirestoreValue) } };
-    return { stringValue: String(val) };
-  }
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
+    authDomain: "edquesthermes-d0d7a.firebaseapp.com",
+    projectId: "edquesthermes-d0d7a",
+    storageBucket: "edquesthermes-d0d7a.appspot.com",
+    messagingSenderId: "29558718923",
+    appId: "1:29558718923:web:585463b020a394d49bb64e"
+  };
 
-  function toFirestoreFields(obj) {
-    const fields = {};
-    for (const [k, v] of Object.entries(obj)) {
-      fields[k] = toFirestoreValue(v);
-    }
-    return fields;
-  }
+  const app = initializeApp(firebaseConfig);
+  const db = initializeFirestore(app, { experimentalForceLongPolling: true, useFetchStreams: false });
 
   async function saveToFirestore(payload) {
-    const body = { fields: toFirestoreFields(payload) };
-    const res = await fetch(FIRESTORE_URL + '?key=' + API_KEY, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(err);
-    }
-    return res.json();
+    await addDoc(collection(db, 'sociology_survey_2026'), { ...payload, timestamp: serverTimestamp() });
   }
 
   // ── Drag-to-rank ──
@@ -822,7 +809,7 @@
     const q14val = getRadio('q14');
 
     const payload = {
-      timestamp: new Date().toISOString(),
+      // timestamp added by saveToFirestore
       survey: 'sociology_term3_2026',
       q1_illusion_of_depth: getRadio('q1'),
       q2_when_stuck_first: getRadio('q2'),
