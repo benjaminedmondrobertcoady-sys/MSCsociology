@@ -222,11 +222,11 @@
   .us-toggle[aria-pressed="true"]{background:var(--gold);color:var(--navy-d);}
 
   /* ---------- Teacher Assessment button ---------- */
-  .ta-btn{margin-left:10px;padding:0 7px;height:26px;cursor:pointer;vertical-align:middle;background:transparent !important;border-color:rgba(0,0,0,0.25) !important;
+  .ta-btn{margin-left:10px;padding:2px 4px;height:28px;cursor:pointer;vertical-align:middle;
     display:inline-flex;align-items:center;justify-content:center;
-    background:#1a1a1a;border:1.5px solid #444;border-radius:0;
-    transition:background .15s,border-color .15s;}
-  .ta-btn:hover{background:#333;border-color:#888;}
+    background:transparent;border:none;border-radius:3px;
+    transition:background .15s;}
+  .ta-btn:hover{background:rgba(0,0,0,0.12);}
   .ta-btn img{height:22px;width:auto;display:block;}
   /* TA overlay */
   #taOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:8000;align-items:flex-start;justify-content:center;padding-top:40px;}
@@ -415,6 +415,72 @@ body.us-mode .bulletin{
     .bulletin-track{position:relative;top:auto;left:auto;display:block;padding:7px 12px;transform:none;white-space:normal;}
     .bulletin-track.run{animation:none;}
   }
+
+  /* ---------- Wordle gadget ---------- */
+  .wordle-wrap{padding:10px 8px 12px;}
+  .wordle-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:8px;}
+  .wordle-cell{
+    aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+    font-family:Georgia,'Times New Roman',serif;font-size:1.05rem;font-weight:bold;
+    border:2px solid var(--rule);background:#fff;color:var(--ink);
+    text-transform:uppercase;transition:background .25s,border-color .25s,color .25s;
+  }
+  .wordle-cell.correct{background:#256b3f;border-color:#256b3f;color:#fff;}
+  .wordle-cell.present{background:#d8a93a;border-color:#d8a93a;color:#fff;}
+  .wordle-cell.absent{background:#5a5040;border-color:#5a5040;color:#fff;}
+  .wordle-cell.active-row{border-color:var(--navy);}
+  .wordle-input-row{display:flex;gap:5px;margin-bottom:7px;}
+  .wordle-input{
+    flex:1;padding:5px 6px;border:2px solid var(--rule);border-radius:0;
+    font-family:Georgia,'Times New Roman',serif;font-size:0.9rem;
+    text-transform:uppercase;background:#fff;color:var(--ink);letter-spacing:.1em;
+  }
+  .wordle-input:focus{outline:none;border-color:var(--navy);}
+  .wordle-go{
+    font-family:inherit;font-size:.72rem;font-weight:bold;color:var(--navy);
+    background:var(--cream-d);padding:4px 9px;border:2px solid;
+    border-color:#fff var(--gold-d) var(--gold-d) #fff;cursor:pointer;font-variant:small-caps;
+  }
+  .wordle-go:hover{background:var(--gold);}
+  .wordle-msg{font-size:.72rem;color:#3a3520;min-height:1.1em;text-align:center;font-style:italic;}
+
+
+  /* ---------- Spirograph ---------- */
+  .spiro-wrap{padding:8px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  #spiroCanvas{border:2px solid var(--rule);background:#1a1610;display:block;width:100%;height:auto;}
+  .spiro-controls{width:100%;}
+  .spiro-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:0.65rem;
+    font-family:'DM Mono',monospace;color:var(--gold-d);font-weight:bold;letter-spacing:.05em;}
+  .spiro-row label{display:flex;align-items:center;gap:5px;width:100%;}
+  .spiro-row input[type=range]{flex:1;accent-color:var(--gold-d);}
+  .spiro-wipe{
+    width:100%;margin-top:4px;font-family:inherit;font-size:.72rem;font-weight:bold;
+    color:var(--navy);background:var(--cream-d);padding:5px;
+    border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;
+    cursor:pointer;font-variant:small-caps;
+  }
+  .spiro-wipe:hover{background:var(--gold);}
+
+  /* ---------- Flag of the Day ---------- */
+  .flag-wrap{padding:10px 8px 12px;}
+  .flag-display{
+    width:100%;aspect-ratio:3/2;margin-bottom:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:4rem;line-height:1;
+    border:2px solid var(--rule);background:#fff;
+  }
+  .flag-options{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px;}
+  .flag-option{
+    font-family:Georgia,'Times New Roman',serif;font-size:0.72rem;font-weight:bold;
+    color:var(--navy);background:var(--cream-d);padding:6px 4px;
+    border:2px solid;border-color:#fff var(--gold-d) var(--gold-d) #fff;
+    cursor:pointer;text-align:center;line-height:1.3;
+  }
+  .flag-option:hover{background:var(--gold);}
+  .flag-option.correct{background:#256b3f;color:#fff;border-color:#256b3f;cursor:default;}
+  .flag-option.wrong{background:#8b2020;color:#fff;border-color:#8b2020;cursor:default;}
+  .flag-option.disabled{opacity:0.5;cursor:default;}
+  .flag-msg{font-size:.72rem;color:#3a3520;min-height:1.1em;text-align:center;font-style:italic;}
 
   /* ---------- Right sidebar gadgets: Puzzle Corner + Date Desk ---------- */
   .gadget{
@@ -617,7 +683,7 @@ body.us-mode .bulletin{
     <div class="m">Made by teachers <span>&#9671;</span> for teachers</div>
     <div class="d">A Resource for Thinking Classrooms
       <button id="usToggle" class="us-toggle" type="button" aria-pressed="false">&#10022; Scholastic Mode</button>
-      <button id="taBtn" class="ta-btn" type="button" aria-label="TA"><img src="ta-icon.png" alt=""></button>
+      <button id="taBtn" class="ta-btn" type="button" aria-label="TA"><img src="data:image/png;base64,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" alt=""></button>
     </div>
   </div>
 
@@ -626,7 +692,7 @@ body.us-mode .bulletin{
     <div id="taPanel">
       <div id="taHeader">
         <div id="taHeaderLeft">
-          <img id="taHeaderLogo" src="ta-icon.png" alt="">
+          <img id="taHeaderLogo" src="data:image/png;base64,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" alt="">
           <div id="taHeaderTitle"><strong>Assessment Tracker</strong></div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -1041,15 +1107,38 @@ body.us-mode .bulletin{
 
     <!-- RIGHT SIDEBAR -->
     <aside class="sidebar right">
+      <div class="gadget wordle-gadget">
+        <div class="gadget-bar">&#129383; Word of the Day</div>
+        <div class="wordle-wrap" id="wordleWrap"></div>
+      </div>
+
+      <div class="gadget flag-gadget">
+        <div class="gadget-bar">&#127988; Flag of the Day</div>
+        <div class="flag-wrap" id="flagWrap"></div>
+      </div>
+
+      <div class="gadget spiro-gadget">
+        <div class="gadget-bar">&#11835; Spirograph</div>
+        <div class="spiro-wrap">
+          <canvas id="spiroCanvas" width="180" height="180"></canvas>
+          <div class="spiro-controls">
+            <div class="spiro-row"><label>R <input type="range" id="spiroR" min="30" max="80" value="60"></label></div>
+            <div class="spiro-row"><label>r <input type="range" id="spiro_r" min="5" max="50" value="25"></label></div>
+            <div class="spiro-row"><label>d <input type="range" id="spiroD" min="1" max="80" value="40"></label></div>
+            <button class="spiro-wipe" id="spiroWipe" type="button">Wipe</button>
+          </div>
+        </div>
+      </div>
+
       <div class="gadget puzzle-gadget">
-        <div class="gadget-bar">&#129513; Puzzle Corner</div>
+        <img src="puzzle-corner-title.png" alt="Puzzle Corner" style="width:100%;display:block;">
         <div class="puzzle-wrap">
           <div class="puzzle-board" id="puzzleBoard" aria-label="Sliding picture puzzle"></div>
           <div class="puzzle-tools">
             <span id="puzzleMoves">Moves: 0</span>
             <button id="puzzleShuffle" type="button">Shuffle</button>
           </div>
-          <div class="puzzle-note" id="puzzleNote">Picture file: <b>puzzle.jpg</b></div>
+          <div class="puzzle-note" id="puzzleNote" style="display:none;"></div>
         </div>
       </div>
 
@@ -1221,16 +1310,16 @@ document.addEventListener('DOMContentLoaded', eqRender);
    ============================================================ */
 (function(){
   var BULLETINS = [
-    "\ud83c\udf31 Planet Watch: Across 71 countries and 100 territories, scientists have identified about 64,000 square miles of climate-resilient coral reef.",
-    "\ud83c\udf31 Planet Watch: In Mozambique, 61 white rhinos have been moved to Zinave National Park as part of a major wildlife restoration effort.",
-    "\ud83c\udf31 Planet Watch: In Zinave National Park, Mozambique, relocated rhinos have begun producing calves, turning reintroduction into recovery.",
-    "\ud83c\udf31 Planet Watch: In Ealing, west London, beavers at Paradise Fields are slowing Costons Brook with dams that help reduce local flooding.",
-    "\ud83c\udf31 Planet Watch: In Britain, beaver kits have appeared from Ealing to the Cairngorms as a species once extinct there continues its return.",
-    "\ud83c\udf31 Planet Watch: On Australia's east coast, humpback whales have rebounded from a few hundred survivors to tens of thousands after whaling ended.",
-    "\ud83c\udf31 Planet Watch: In Malawi's Liwonde National Park, cheetahs returned after decades away and the population has grown since reintroduction.",
-    "\ud83c\udf31 Planet Watch: In the Red Sea, scientists are studying heat-tolerant coral communities that may hold clues for reef survival.",
-    "\ud83c\udf31 Planet Watch: In Costa Rica, forest cover has recovered dramatically after decades of conservation, reforestation and protected-area work.",
-    "\ud83c\udf31 Planet Watch: In the Netherlands, wildlife bridges and green corridors help animals cross roads and reconnect fragmented habitats.",
+    "\ud83c\udf31 Planet Watch: In April 2026, wind and solar overtook gas to generate 22% of global electricity for the first time ever.",
+    "\ud83c\udf31 Planet Watch: Brazil's Atlantic Forest recorded its lowest deforestation since monitoring began in 1985, down 40% in a single year.",
+    "\ud83c\udf31 Planet Watch: In April 2026, 100 eastern barred bandicoots were released onto Phillip Island after the species was declared extinct in the wild in 1991.",
+    "\ud83c\udf31 Planet Watch: Green turtles, once hunted nearly to extinction, have recovered so strongly that the IUCN downgraded their status from endangered to least concern.",
+    "\ud83c\udf31 Planet Watch: In 2025, wind and solar produced 30% of the EU's electricity, overtaking coal, oil and gas combined for the first time.",
+    "\ud83c\udf31 Planet Watch: Norway reached 97% electric vehicle sales in 2025, with EVs now outnumbering diesel cars on the road.",
+    "\ud83c\udf31 Planet Watch: Lithuania jumped from 15% to 50% renewable electricity in five years through major investment in solar and wind.",
+    "\ud83c\udf31 Planet Watch: A global turning point for mangrove forests was recorded in 2026, with restoration outpacing loss in key regions.",
+    "\ud83c\udf31 Planet Watch: A new France-sized marine reserve was established in 2026, one of the largest ocean protections in history.",
+    "\ud83c\udf31 Planet Watch: Mountain gorillas in Rwanda's Volcanoes National Park continue to increase in number after decades of conservation work.",
 
     "\ud83d\udd2d Space Desk: ESA's Euclid telescope has captured a visible-light mosaic of the Milky Way's centre showing more than 60 million stars.",
     "\ud83d\udd2d Space Desk: NASA's Hubble mosaic of Andromeda maps hundreds of millions of stars in our nearest large galactic neighbour.",
@@ -1268,12 +1357,16 @@ document.addEventListener('DOMContentLoaded', eqRender);
     "\ud83c\udf0d World Desk: In Spain's Andalusia, Iberian lynx numbers have risen after years of breeding, release and habitat protection.",
     "\ud83c\udf0d World Desk: In Mongolia, Przewalski's horses have returned to the steppe after once disappearing from the wild.",
 
-    "\ud83d\udca1 Innovation Watch: In Switzerland, engineers are storing energy by lifting heavy blocks and releasing them later to generate power.",
-    "\ud83d\udca1 Innovation Watch: In Morocco, the Noor solar complex near Ouarzazate turns desert sunlight into electricity.",
-    "\ud83d\udca1 Innovation Watch: In Norway, electric ferries carry passengers through fjords with far less engine noise and local air pollution.",
-    "\ud83d\udca1 Innovation Watch: In the Netherlands, floating farms and water-smart architecture test ways to live with rising seas.",
-    "\ud83d\udca1 Innovation Watch: In India, solar canals generate electricity while reducing water evaporation from irrigation channels.",
-    "\ud83d\udca1 Innovation Watch: In Australia, scientists are testing seagrass and seaweed restoration to support marine life and store carbon.",
+    "\ud83c\udfac Culture Desk: Generation Z is now the most frequent cinema-going demographic, averaging seven theatre visits a year and spending more per trip than any older generation.",
+    "\ud83c\udfac Culture Desk: 87% of Gen Z reported seeing at least one film in theatres in the past year, surpassing millennials, Gen X and baby boomers.",
+    "\ud83c\udfac Culture Desk: Gen Z describes cinema as a social gathering rather than an escape, often pairing a film with dining or another activity before or after.",
+
+    "\ud83d\udca1 Innovation Watch: Scientists have developed an artificial photosynthesis system that turns sunlight into fuel without batteries, adapting automatically to changing light.",
+    "\ud83d\udca1 Innovation Watch: A new stainless steel developed in 2026 could replace titanium in green hydrogen production, cutting material costs by roughly 40 times.",
+    "\ud83d\udca1 Innovation Watch: France banned PFAS forever chemicals in 2026, prohibiting cosmetics, clothing and other products where safer alternatives exist.",
+    "\ud83d\udca1 Innovation Watch: A malaria vaccine developed at Oxford costs around $4 per dose, stays stable for two years, and has now been rolled out across 20 nations.",
+    "\ud83d\udca1 Innovation Watch: Buildings, vehicles and devices are being redesigned as energy storage systems that feed power back to the grid rather than just consume it.",
+    "\ud83d\udca1 Innovation Watch: Passive cooling materials embedded in paints and roof tiles can lower surface temperatures without using any electricity.",
     "\ud83d\udca1 Innovation Watch: In Japan, bullet trains continue showing how fast transport can move huge numbers of people efficiently.",
     "\ud83d\udca1 Innovation Watch: In Finland, deep geological storage is being developed to isolate nuclear waste far underground.",
 
@@ -1353,6 +1446,453 @@ btn.addEventListener('click',()=>{
    The Date Desk cycles through: big date, month grid, day-name origin.
    ============================================================ */
 (function(){
+  /* ---------- Spirograph ---------- */
+  (function(){
+    var canvas = document.getElementById('spiroCanvas');
+    if(!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    var cx = W/2, cy = H/2;
+    var animId = null;
+    var t = 0;
+    var COLOURS = ['#d8a93a','#2c7d84','#e8c97a','#5852a8','#b9a878','#8091d6','#f3ead0'];
+    var colIdx = 0;
+    var tick = 0;
+
+    function getVals(){
+      var R = parseInt(document.getElementById('spiroR').value);
+      var r = parseInt(document.getElementById('spiro_r').value);
+      var d = parseInt(document.getElementById('spiroD').value);
+      if(r >= R) r = R - 1;
+      return {R:R, r:r, d:d};
+    }
+
+    function spiroPoint(t, R, r, d){
+      return {
+        x: cx + (R - r) * Math.cos(t) + d * Math.cos((R - r) / r * t),
+        y: cy + (R - r) * Math.sin(t) - d * Math.sin((R - r) / r * t)
+      };
+    }
+
+    function draw(){
+      var v = getVals();
+      var step = 0.05;
+      var p1 = spiroPoint(t, v.R, v.r, v.d);
+      var p2 = spiroPoint(t + step, v.R, v.r, v.d);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.strokeStyle = COLOURS[colIdx % COLOURS.length];
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      t += step;
+      tick++;
+      if(tick % 80 === 0) colIdx++;
+      animId = requestAnimationFrame(draw);
+    }
+
+    function restart(){
+      if(animId) cancelAnimationFrame(animId);
+      ctx.clearRect(0, 0, W, H);
+      t = 0; tick = 0; colIdx = 0;
+      draw();
+    }
+
+    ['spiroR','spiro_r','spiroD'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('input', restart);
+    });
+    var wipeBtn = document.getElementById('spiroWipe');
+    if(wipeBtn) wipeBtn.addEventListener('click', restart);
+
+    draw();
+  })();
+
+  /* ---------- Flag of the Day ---------- */
+  (function(){
+    var COUNTRIES = [
+      {name:'Australia',flag:'\ud83c\udde6\ud83c\uddfa'},
+      {name:'Japan',flag:'\ud83c\uddef\ud83c\uddf5'},
+      {name:'Brazil',flag:'\ud83c\udde7\ud83c\uddf7'},
+      {name:'France',flag:'\ud83c\uddeb\ud83c\uddf7'},
+      {name:'Germany',flag:'\ud83c\udde9\ud83c\uddea'},
+      {name:'Italy',flag:'\ud83c\uddee\ud83c\uddf9'},
+      {name:'Canada',flag:'\ud83c\udde8\ud83c\udde6'},
+      {name:'Mexico',flag:'\ud83c\uddf2\ud83c\uddfd'},
+      {name:'India',flag:'\ud83c\uddee\ud83c\uddf3'},
+      {name:'China',flag:'\ud83c\udde8\ud83c\uddf3'},
+      {name:'South Korea',flag:'\ud83c\uddf0\ud83c\uddf7'},
+      {name:'Argentina',flag:'\ud83c\udde6\ud83c\uddf7'},
+      {name:'Spain',flag:'\ud83c\uddea\ud83c\uddf8'},
+      {name:'Portugal',flag:'\ud83c\uddf5\ud83c\uddf9'},
+      {name:'Nigeria',flag:'\ud83c\uddf3\ud83c\uddec'},
+      {name:'South Africa',flag:'\ud83c\uddff\ud83c\udde6'},
+      {name:'Egypt',flag:'\ud83c\uddea\ud83c\uddec'},
+      {name:'Kenya',flag:'\ud83c\uddf0\ud83c\uddea'},
+      {name:'Morocco',flag:'\ud83c\uddf2\ud83c\udde6'},
+      {name:'Ghana',flag:'\ud83c\uddec\ud83c\udded'},
+      {name:'Norway',flag:'\ud83c\uddf3\ud83c\uddf4'},
+      {name:'Sweden',flag:'\ud83c\uddf8\ud83c\uddea'},
+      {name:'Denmark',flag:'\ud83c\udde9\ud83c\uddf0'},
+      {name:'Finland',flag:'\ud83c\uddeb\ud83c\uddee'},
+      {name:'Netherlands',flag:'\ud83c\uddf3\ud83c\uddf1'},
+      {name:'Belgium',flag:'\ud83c\udde7\ud83c\uddea'},
+      {name:'Switzerland',flag:'\ud83c\udde8\ud83c\udded'},
+      {name:'Austria',flag:'\ud83c\udde6\ud83c\uddf9'},
+      {name:'Poland',flag:'\ud83c\uddf5\ud83c\uddf1'},
+      {name:'Greece',flag:'\ud83c\uddec\ud83c\uddf7'},
+      {name:'Turkey',flag:'\ud83c\uddf9\ud83c\uddf7'},
+      {name:'Saudi Arabia',flag:'\ud83c\uddf8\ud83c\udde6'},
+      {name:'Iran',flag:'\ud83c\uddee\ud83c\uddf7'},
+      {name:'Pakistan',flag:'\ud83c\uddf5\ud83c\uddf0'},
+      {name:'Bangladesh',flag:'\ud83c\udde7\ud83c\udde9'},
+      {name:'Vietnam',flag:'\ud83c\uddfb\ud83c\uddf3'},
+      {name:'Thailand',flag:'\ud83c\uddf9\ud83c\udded'},
+      {name:'Indonesia',flag:'\ud83c\uddee\ud83c\udde9'},
+      {name:'Philippines',flag:'\ud83c\uddf5\ud83c\udded'},
+      {name:'New Zealand',flag:'\ud83c\uddf3\ud83c\uddff'},
+      {name:'Peru',flag:'\ud83c\uddf5\ud83c\uddea'},
+      {name:'Colombia',flag:'\ud83c\udde8\ud83c\uddf4'},
+      {name:'Chile',flag:'\ud83c\udde8\ud83c\uddf1'},
+      {name:'Venezuela',flag:'\ud83c\uddfb\ud83c\uddea'},
+      {name:'Cuba',flag:'\ud83c\udde8\ud83c\uddfa'},
+      {name:'Ukraine',flag:'\ud83c\uddfa\ud83c\udde6'},
+      {name:'Romania',flag:'\ud83c\uddf7\ud83c\uddf4'},
+      {name:'Hungary',flag:'\ud83c\udded\ud83c\uddfa'},
+      {name:'Czech Republic',flag:'\ud83c\udde8\ud83c\uddff'},
+      {name:'Croatia',flag:'\ud83c\udded\ud83c\uddf7'},
+      {name:'Serbia',flag:'\ud83c\uddf7\ud83c\uddf8'},
+      {name:'Slovakia',flag:'\ud83c\uddf8\ud83c\uddf0'},
+      {name:'Bulgaria',flag:'\ud83c\udde7\ud83c\uddec'},
+      {name:'Algeria',flag:'\ud83c\udde9\ud83c\uddff'},
+      {name:'Ethiopia',flag:'\ud83c\uddea\ud83c\uddf9'},
+      {name:'Tanzania',flag:'\ud83c\uddf9\ud83c\uddff'},
+      {name:'Uganda',flag:'\ud83c\uddfa\ud83c\uddec'},
+      {name:'Cameroon',flag:'\ud83c\udde8\ud83c\uddf2'},
+      {name:'Senegal',flag:'\ud83c\uddf8\ud83c\uddf3'},
+      {name:'Iraq',flag:'\ud83c\uddee\ud83c\uddf6'},
+      {name:'Jordan',flag:'\ud83c\uddef\ud83c\uddf4'},
+      {name:'UAE',flag:'\ud83c\udde6\ud83c\uddea'},
+      {name:'Israel',flag:'\ud83c\uddee\ud83c\uddf1'},
+      {name:'Kazakhstan',flag:'\ud83c\uddf0\ud83c\uddff'},
+      {name:'Uzbekistan',flag:'\ud83c\uddfa\ud83c\uddff'},
+      {name:'Afghanistan',flag:'\ud83c\udde6\ud83c\uddeb'},
+      {name:'Nepal',flag:'\ud83c\uddf3\ud83c\uddf5'},
+      {name:'Sri Lanka',flag:'\ud83c\uddf1\ud83c\uddf0'},
+      {name:'Myanmar',flag:'\ud83c\uddf2\ud83c\uddf2'},
+      {name:'Cambodia',flag:'\ud83c\uddf0\ud83c\udded'},
+      {name:'Mongolia',flag:'\ud83c\uddf2\ud83c\uddf3'},
+      {name:'Ecuador',flag:'\ud83c\uddea\ud83c\udde8'},
+      {name:'Bolivia',flag:'\ud83c\udde7\ud83c\uddf4'},
+      {name:'Paraguay',flag:'\ud83c\uddf5\ud83c\uddfe'},
+      {name:'Uruguay',flag:'\ud83c\uddfa\ud83c\uddfe'},
+      {name:'Costa Rica',flag:'\ud83c\udde8\ud83c\uddf7'},
+      {name:'Panama',flag:'\ud83c\uddf5\ud83c\udde6'},
+      {name:'Jamaica',flag:'\ud83c\uddef\ud83c\uddf2'},
+      {name:'Trinidad and Tobago',flag:'\ud83c\uddf9\ud83c\uddf9'},
+      {name:'Iceland',flag:'\ud83c\uddee\ud83c\uddf8'},
+      {name:'Ireland',flag:'\ud83c\uddee\ud83c\uddea'},
+      {name:'Scotland',flag:'\ud83c\dff4\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f'},
+      {name:'Wales',flag:'\ud83c\dff4\udb40\udc67\udb40\udc62\udb40\udc77\udb40\udc6c\udb40\udc73\udb40\udc7f'},
+      {name:'Luxembourg',flag:'\ud83c\uddf1\ud83c\uddfa'},
+      {name:'Malta',flag:'\ud83c\uddf2\ud83c\uddf9'},
+      {name:'Cyprus',flag:'\ud83c\udde8\ud83c\uddfe'},
+      {name:'Latvia',flag:'\ud83c\uddf1\ud83c\uddfb'},
+      {name:'Lithuania',flag:'\ud83c\uddf1\ud83c\uddf9'},
+      {name:'Estonia',flag:'\ud83c\uddea\ud83c\uddea'},
+      {name:'Slovenia',flag:'\ud83c\uddf8\ud83c\uddee'},
+      {name:'North Macedonia',flag:'\ud83c\uddf2\ud83c\uddf0'},
+      {name:'Albania',flag:'\ud83c\udde6\ud83c\uddf1'},
+      {name:'Bosnia',flag:'\ud83c\udde7\ud83c\udde6'},
+      {name:'Moldova',flag:'\ud83c\uddf2\ud83c\udde9'},
+      {name:'Belarus',flag:'\ud83c\udde7\ud83c\uddfe'},
+      {name:'Georgia',flag:'\ud83c\uddec\ud83c\uddea'},
+      {name:'Armenia',flag:'\ud83c\udde6\ud83c\uddf2'},
+      {name:'Azerbaijan',flag:'\ud83c\udde6\ud83c\uddff'},
+      {name:'Mozambique',flag:'\ud83c\uddf2\ud83c\uddff'},
+      {name:'Zambia',flag:'\ud83c\uddff\ud83c\uddf2'},
+      {name:'Zimbabwe',flag:'\ud83c\uddff\ud83c\uddfc'},
+      {name:'Malawi',flag:'\ud83c\uddf2\ud83c\uddfc'},
+      {name:'Rwanda',flag:'\ud83c\uddf7\ud83c\uddfc'},
+      {name:'Somalia',flag:'\ud83c\uddf8\ud83c\uddf4'},
+      {name:'Sudan',flag:'\ud83c\uddf8\ud83c\udde9'},
+      {name:'Libya',flag:'\ud83c\uddf1\ud83c\uddfe'},
+      {name:'Tunisia',flag:'\ud83c\uddf9\ud83c\uddf3'},
+      {name:'Ivory Coast',flag:'\ud83c\udde8\ud83c\uddee'},
+      {name:'Mali',flag:'\ud83c\uddf2\ud83c\uddf1'},
+      {name:'Burkina Faso',flag:'\ud83c\udde7\ud83c\uddeb'},
+      {name:'Niger',flag:'\ud83c\uddf3\ud83c\uddea'},
+      {name:'Chad',flag:'\ud83c\uddf9\ud83c\udde9'},
+      {name:'Bhutan',flag:'\ud83c\udde7\ud83c\uddf9'},
+      {name:'Laos',flag:'\ud83c\uddf1\ud83c\udde6'},
+      {name:'Timor-Leste',flag:'\ud83c\uddf9\ud83c\uddf1'},
+      {name:'Papua New Guinea',flag:'\ud83c\uddf5\ud83c\uddec'},
+      {name:'Fiji',flag:'\ud83c\uddeb\ud83c\uddef'},
+      {name:'Samoa',flag:'\ud83c\uddfc\ud83c\uddf8'},
+      {name:'Tonga',flag:'\ud83c\uddf9\ud83c\uddf4'},
+      {name:'Palau',flag:'\ud83c\uddf5\ud83c\uddfc'},
+      {name:'Maldives',flag:'\ud83c\uddf2\ud83c\uddfb'},
+      {name:'Seychelles',flag:'\ud83c\uddf8\ud83c\udde8'},
+      {name:'Mauritius',flag:'\ud83c\uddf2\ud83c\uddfa'},
+      {name:'Bahrain',flag:'\ud83c\udde7\ud83c\udded'},
+      {name:'Qatar',flag:'\ud83c\uddf6\ud83c\udde6'},
+      {name:'Kuwait',flag:'\ud83c\uddf0\ud83c\uddfc'},
+      {name:'Oman',flag:'\ud83c\uddf4\ud83c\uddf2'},
+      {name:'Yemen',flag:'\ud83c\uddfe\ud83c\uddea'},
+      {name:'Syria',flag:'\ud83c\uddf8\ud83c\uddfe'},
+      {name:'Lebanon',flag:'\ud83c\uddf1\ud83c\udde7'},
+      {name:'Kyrgyzstan',flag:'\ud83c\uddf0\ud83c\uddec'},
+      {name:'Tajikistan',flag:'\ud83c\uddf9\ud83c\uddef'},
+      {name:'Turkmenistan',flag:'\ud83c\uddf9\ud83c\uddf2'}
+    ];
+
+    var wrap = document.getElementById('flagWrap');
+    if(!wrap) return;
+
+    var today = new Date();
+    var dayNum = Math.floor(today / 86400000);
+    var correct = COUNTRIES[dayNum % COUNTRIES.length];
+
+    // Pick 3 wrong options
+    function shuffle(arr){ return arr.slice().sort(function(){ return Math.random()-0.5; }); }
+    var others = shuffle(COUNTRIES.filter(function(c){ return c.name !== correct.name; })).slice(0,3);
+    var options = shuffle([correct].concat(others));
+
+    // Flag display
+    var flagEl = document.createElement('div');
+    flagEl.className = 'flag-display';
+    flagEl.textContent = correct.flag;
+    wrap.appendChild(flagEl);
+
+    // Options
+    var grid = document.createElement('div');
+    grid.className = 'flag-options';
+    var answered = false;
+
+    options.forEach(function(opt){
+      var btn = document.createElement('button');
+      btn.className = 'flag-option';
+      btn.type = 'button';
+      btn.textContent = opt.name;
+      btn.addEventListener('click', function(){
+        if(answered) return;
+        answered = true;
+        var isCorrect = opt.name === correct.name;
+        btn.classList.add(isCorrect ? 'correct' : 'wrong');
+        if(!isCorrect){
+          grid.querySelectorAll('.flag-option').forEach(function(b){
+            if(b.textContent === correct.name) b.classList.add('correct');
+          });
+        }
+        grid.querySelectorAll('.flag-option').forEach(function(b){
+          if(!b.classList.contains('correct') && !b.classList.contains('wrong'))
+            b.classList.add('disabled');
+        });
+        msg.textContent = isCorrect ? 'Correct!' : 'Better luck tomorrow.';
+      });
+      grid.appendChild(btn);
+    });
+    wrap.appendChild(grid);
+
+    var msg = document.createElement('div');
+    msg.className = 'flag-msg';
+    wrap.appendChild(msg);
+  })();
+
+  /* ---------- Wordle ---------- */
+  (function(){
+    var WORDS = ['about','above','abuse','actor','acute','admit','adopt','adult','after','again',
+      'agent','agree','ahead','alarm','album','alert','alike','align','alive','alley','allow',
+      'alone','along','alter','angel','anger','angle','angry','anime','annex','antic','anvil',
+      'apart','apple','apply','apron','arena','argue','arise','armor','aroma','arose','array',
+      'aside','asked','atlas','attic','audio','audit','aunty','avail','avoid','awake','award',
+      'aware','awful','basic','basis','batch','beach','beard','beast','began','begin','being',
+      'below','bench','berry','birth','black','blade','blame','bland','blank','blast','blaze',
+      'bleak','blend','bless','blind','block','blood','bloom','blown','blues','blunt','board',
+      'boost','booth','bound','boxer','brain','brand','brave','bread','break','breed','brick',
+      'bride','brief','bring','brisk','broke','brook','brown','brush','build','built','bunch',
+      'burnt','buyer','cabin','camel','candy','carry','catch','cause','chain','chair','chaos',
+      'charm','chart','chase','cheap','check','cheek','cheer','chess','chest','chief','child',
+      'china','choir','chunk','civic','civil','claim','clash','class','clean','clear','clerk',
+      'click','cliff','climb','cling','close','cloth','cloud','clown','coach','coast','cobra',
+      'comet','comic','coral','corps','costs','couch','count','court','cover','crack','craft',
+      'crane','crash','crazy','cream','creek','crime','crisp','cross','crowd','cruel','crush',
+      'crust','curve','cycle','daily','dance','dated','debut','decor','delay','delta','dense',
+      'depot','depth','derby','devil','digit','disco','ditch','diver','dizzy','dodge','doing',
+      'doubt','dough','draft','drain','drama','drank','drawl','drawn','dream','dress','drift',
+      'drink','drive','drove','druid','dryer','duchy','dully','dummy','dunce','duped','dwelt',
+      'eagle','early','earth','eight','elect','elite','ember','empty','enemy','enjoy','enter',
+      'entry','envoy','epoch','equal','error','essay','ethic','event','every','exact','exist',
+      'extra','fable','faced','faith','false','fancy','faint','fatal','fault','feast','fence',
+      'fetch','fever','field','fifth','fifty','fight','final','first','fixed','fjord','flame',
+      'flank','flash','flask','fleet','flesh','flick','fling','float','flood','floor','flora',
+      'flour','flown','fluid','flush','focus','foggy','folio','force','forge','forth','forum',
+      'found','frame','frank','fraud','fresh','front','frost','froze','fruit','fully','funky',
+      'funny','gauge','given','glade','gland','glare','glass','gloom','gloss','glove','going',
+      'grace','grade','grain','grand','grant','grasp','grass','grave','graze','great','greed',
+      'green','greet','grief','grill','grind','groan','gross','group','grove','grown','gruff',
+      'guard','guide','guild','guile','guise','gusto','haiku','happy','harsh','haste','haven',
+      'heard','heart','heavy','hence','herbs','heron','hints','hippo','hoist','holly','homer',
+      'honey','honor','house','human','humor','hurry','hyena','ideal','idiom','image','imply',
+      'inane','index','indie','infer','inner','input','inter','irony','issue','ivory','japan',
+      'jazzy','jelly','joker','judge','juice','juicy','jumbo','jumpy','kanji','karma','knack',
+      'kneel','knife','knock','known','label','lance','large','laser','latch','later','laugh',
+      'layer','leapt','learn','lease','least','leave','legal','lemon','level','light','limit',
+      'linen','liner','lingo','lists','lively','locus','lodge','logic','loose','lover','lower',
+      'loyal','lucid','lucky','lunar','lyric','magic','major','maker','manor','maple','march',
+      'match','mayor','media','mercy','merit','metal','metro','micro','might','minor','minus',
+      'mixed','mocha','model','monks','month','moral','motif','mount','mouse','mouth','moved',
+      'movie','muddy','music','naive','navel','nerve','night','ninja','noble','noise','north',
+      'noted','novel','nurse','nymph','occur','ocean','offer','often','oiled','olive','onset',
+      'opera','orbit','order','other','ought','outer','oxide','ozone','paint','panel','paper',
+      'party','pasta','patch','pause','peach','pearl','penny','perch','piano','piece','pilot',
+      'pinch','pitch','pixel','pizza','place','plain','plane','plant','plate','plaza','plead',
+      'pluck','plumb','plume','plump','plunge','point','poker','polar','posed','power','press',
+      'price','pride','prime','print','prior','probe','prone','proof','prose','proud','prove',
+      'psalm','pupil','purse','query','quest','queue','quick','quiet','quirk','quota','quote',
+      'rabbi','radar','radio','raise','rally','ranch','range','rapid','ratio','razor','reach',
+      'react','ready','realm','recon','refer','reign','relax','remix','repay','reply','rerun',
+      'reset','resin','retro','retry','rider','ridge','right','rigid','risky','rival','river',
+      'robin','robot','rocky','rouge','rough','round','route','royal','rugby','ruled','ruler',
+      'rusty','safer','saint','salad','sauce','scale','scamp','scene','scent','scope','score',
+      'scout','scuba','sedan','seize','sense','serum','seven','shade','shaft','shake','shaky',
+      'shall','shame','shape','share','shark','sharp','sheer','sheet','shelf','shell','shift',
+      'shine','shiny','shirt','shock','shore','short','shout','shown','sight','silly','since',
+      'sixth','sixty','sized','skill','skimp','skull','slant','slate','slave','sleek','sleep',
+      'sleet','slept','slice','slide','slime','slope','sloth','slump','small','smart','smash',
+      'smell','smile','smite','smoke','snack','snake','snare','sneak','solve','sonic','sorry',
+      'south','space','spark','speak','spear','speck','speed','spend','spire','spite','spoke',
+      'spook','sport','spray','squad','stack','staff','stage','stain','stair','stake','stale',
+      'stall','stand','stark','start','stash','state','stays','steam','steep','steer','stern',
+      'stick','stiff','still','stock','stoic','stone','stood','storm','story','stout','stove',
+      'strap','straw','stray','strip','stuck','study','style','sugar','suite','sunny','super',
+      'surge','swamp','swear','sweep','sweet','swept','swift','sword','swore','sworn','swung',
+      'table','taunt','teach','tense','terms','theft','their','theme','there','these','thick',
+      'thing','think','third','thorn','those','three','threw','throw','tiger','tight','timer',
+      'tired','title','today','token','tonal','topic','total','touch','tough','tower','toxic',
+      'trace','track','trade','trail','train','trait','tramp','trash','treat','trend','trial',
+      'tribe','trick','tried','troop','trout','truce','truly','trunk','trust','truth','tulip',
+      'tuner','tunic','tweak','twice','twist','ultra','uncle','under','unify','union','unity',
+      'until','upper','upset','urban','usual','utter','valid','value','valve','vault','vigor',
+      'viral','visor','visit','vista','vital','vivid','vocal','voice','voter','wagon','waste',
+      'watch','water','weary','weave','wedge','weigh','weird','whole','wield','witch','witty',
+      'woods','world','worry','worst','worth','would','wrath','write','wrote','yacht','yearn',
+      'young','youth','zebra','zesty','zippy','zombi','zonal'];
+
+    var wrap = document.getElementById('wordleWrap');
+    if(!wrap) return;
+
+    var MAX_GUESSES = 6;
+    var today = new Date();
+    var dayKey = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+    var dayNum = Math.floor(today / 86400000);
+    var TARGET = WORDS[dayNum % WORDS.length].toUpperCase();
+
+    var guesses = [];
+    var currentGuess = '';
+    var gameOver = false;
+
+    // Build grid
+    var grid = document.createElement('div');
+    grid.className = 'wordle-grid';
+    // 6 rows x 5 cols
+    for(var r=0;r<MAX_GUESSES;r++){
+      for(var c=0;c<5;c++){
+        var cell = document.createElement('div');
+        cell.className = 'wordle-cell';
+        cell.id = 'wc-'+r+'-'+c;
+        grid.appendChild(cell);
+      }
+    }
+    wrap.appendChild(grid);
+
+    // Input row
+    var inputRow = document.createElement('div');
+    inputRow.className = 'wordle-input-row';
+    var input = document.createElement('input');
+    input.className = 'wordle-input';
+    input.maxLength = 5;
+    input.placeholder = 'GUESS';
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    var goBtn = document.createElement('button');
+    goBtn.className = 'wordle-go';
+    goBtn.type = 'button';
+    goBtn.textContent = 'Go';
+    inputRow.appendChild(input);
+    inputRow.appendChild(goBtn);
+    wrap.appendChild(inputRow);
+
+    var msg = document.createElement('div');
+    msg.className = 'wordle-msg';
+    wrap.appendChild(msg);
+
+    var keyEls = {};
+
+    function colorGuess(guess){
+      var result = ['absent','absent','absent','absent','absent'];
+      var targetArr = TARGET.split('');
+      var guessArr = guess.split('');
+      // First pass: correct
+      for(var i=0;i<5;i++){
+        if(guessArr[i]===targetArr[i]){ result[i]='correct'; targetArr[i]=null; guessArr[i]=null; }
+      }
+      // Second pass: present
+      for(var i=0;i<5;i++){
+        if(guessArr[i]===null) continue;
+        var idx = targetArr.indexOf(guessArr[i]);
+        if(idx!==-1){ result[i]='present'; targetArr[idx]=null; }
+      }
+      return result;
+    }
+
+    function renderGuess(rowIdx, guess, colors){
+      for(var c=0;c<5;c++){
+        var cell = document.getElementById('wc-'+rowIdx+'-'+c);
+        cell.textContent = guess[c];
+        cell.className = 'wordle-cell ' + colors[c];
+      }
+    }
+
+    function updateKeyboard(guess, colors){
+      var priority = {correct:3, present:2, absent:1};
+      for(var i=0;i<5;i++){
+        var k = guess[i];
+        var btn = keyEls[k];
+        if(!btn) continue;
+        var cur = btn.dataset.state || '';
+        if((priority[colors[i]]||0) > (priority[cur]||0)){
+          btn.className = 'wordle-key ' + colors[i];
+          btn.dataset.state = colors[i];
+        }
+      }
+    }
+
+    function submit(){
+      if(gameOver) return;
+      var guess = input.value.toUpperCase().replace(/[^A-Z]/g,'');
+      if(guess.length !== 5){ msg.textContent = 'Five letters needed.'; return; }
+      msg.textContent = '';
+      var colors = colorGuess(guess);
+      var rowIdx = guesses.length;
+      renderGuess(rowIdx, guess.split(''), colors);
+      updateKeyboard(guess.split(''), colors);
+      guesses.push(guess);
+      input.value = '';
+      if(guess === TARGET){
+        msg.textContent = 'Solved in ' + guesses.length + '!';
+        gameOver = true; input.disabled = true; goBtn.disabled = true;
+      } else if(guesses.length >= MAX_GUESSES){
+        msg.textContent = 'The word was ' + TARGET + '.';
+        gameOver = true; input.disabled = true; goBtn.disabled = true;
+      }
+    }
+
+    goBtn.addEventListener('click', submit);
+    input.addEventListener('keydown', function(e){ if(e.key==='Enter') submit(); });
+    input.focus();
+  })();
+
   /* ---------- Sliding Puzzle ---------- */
   var board = document.getElementById('puzzleBoard');
   var movesEl = document.getElementById('puzzleMoves');
@@ -1398,7 +1938,7 @@ btn.addEventListener('click',()=>{
               movesEl.textContent = 'Moves: ' + moves;
               renderPuzzle();
               if(tiles.join(',') === solvedTiles().join(',')){
-                document.getElementById('puzzleNote').innerHTML = 'Solved! Replace <b>puzzle.jpg</b> any time for a new picture.';
+                document.getElementById('puzzleNote').innerHTML = 'Solved! &#10003;';
               }
             }
           });
@@ -1411,7 +1951,7 @@ btn.addEventListener('click',()=>{
       tiles = solvedTiles();
       moves = 0;
       movesEl.textContent = 'Moves: 0';
-      document.getElementById('puzzleNote').innerHTML = 'Picture file: <b>puzzle.jpg</b>';
+      document.getElementById('puzzleNote').innerHTML = '';
 
       var empty = size*size-1;
       for(var step=0; step<120; step++){
