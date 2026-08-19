@@ -1546,6 +1546,15 @@ btn.addEventListener('click',()=>{
 })();
 </script>
 
+<div id="calScrim"></div>
+<div id="calPopover" role="dialog" aria-modal="true" aria-label="Assessment date details">
+  <div class="pop-head">
+    <span class="pop-date" id="popDate"></span>
+    <button class="pop-close" id="popClose" type="button" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="pop-body" id="popBody"></div>
+</div>
+
 <script>
 /* ============================================================
    EDUQUEST RIGHT SIDEBAR GADGETS
@@ -2217,7 +2226,7 @@ btn.addEventListener('click',()=>{
     renderDate();
 
     /* --- Calendar popover --- */
-    setTimeout(function(months){
+    (function(){
     var popover = document.getElementById('calPopover');
     var scrim = document.getElementById('calScrim');
     var popDate = document.getElementById('popDate');
@@ -2274,7 +2283,7 @@ btn.addEventListener('click',()=>{
       var dateLabel = months[parseInt(parts[1])] + ' ' + d + ', ' + parts[0];
       openPop(key, dateLabel);
     });
-    }, 0, months); // end setTimeout — ensures popover DOM exists
+    })(); // popover IIFE: elements now exist above this script
   }
 })();
 </script>
@@ -2517,13 +2526,5 @@ btn.addEventListener('click',()=>{
 })();
 </script>
 
-  <div id="calScrim"></div>
-  <div id="calPopover" role="dialog" aria-modal="true" aria-label="Assessment date details">
-    <div class="pop-head">
-      <span class="pop-date" id="popDate"></span>
-      <button class="pop-close" id="popClose" type="button" aria-label="Close">&#10005;</button>
-    </div>
-    <div class="pop-body" id="popBody"></div>
-  </div>
 </body>
 </html>
