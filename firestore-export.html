@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EduQuest &middot; Firestore Export</title>
+<style>
+  :root{
+    --parchment:#F3E9CF; --cream:#FAF4E4; --navy:#1F3A5F; --navy-ink:#16283F;
+    --gold:#C9A227; --green:#3E6B4F; --red:#A63A32; --amber:#B07A1E; --slate:#5A6E85;
+    --ui:"Trebuchet MS","Segoe UI",Verdana,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--ui);background:var(--navy);color:var(--navy-ink);padding:24px;line-height:1.5;}
+  .wrap{max-width:860px;margin:0 auto;background:var(--cream);border:3px solid var(--gold);border-radius:8px;overflow:hidden;}
+  header{background:linear-gradient(105deg,var(--navy-ink),var(--navy));color:var(--cream);padding:16px 22px;border-bottom:3px solid var(--gold);}
+  header h1{font-size:20px;letter-spacing:.04em;}
+  header p{font-size:13px;opacity:.85;margin-top:4px;}
+  .body{padding:22px;}
+  .note{background:var(--parchment);border-left:4px solid var(--gold);padding:12px 14px;font-size:13px;margin-bottom:18px;border-radius:0 4px 4px 0;}
+  .note strong{color:var(--navy);}
+  button{font-family:var(--ui);font-size:15px;font-weight:700;cursor:pointer;
+    background:var(--navy);color:var(--cream);border:2px solid var(--gold);
+    padding:11px 22px;border-radius:5px;letter-spacing:.03em;}
+  button:hover:not(:disabled){background:var(--navy-ink);}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  button.ghost{background:transparent;color:var(--navy);border-color:var(--slate);font-weight:400;font-size:13px;padding:7px 14px;}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+  #log{background:#12202f;color:#cfe3d4;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12.5px;padding:14px;border-radius:5px;min-height:220px;max-height:440px;
+    overflow-y:auto;white-space:pre-wrap;word-break:break-word;}
+  .ok{color:#8fd19e;} .warn{color:#e8c66a;} .err{color:#f0a09a;} .dim{color:#7f97ad;}
+  .count{font-weight:700;color:#fff;}
+  label{font-size:13px;display:block;margin-bottom:4px;color:var(--slate);}
+  input{font-family:ui-monospace,monospace;font-size:13px;padding:8px;width:100%;
+    border:1px solid var(--slate);border-radius:4px;background:#fff;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  details{margin-top:14px;font-size:13px;}
+  summary{cursor:pointer;color:var(--navy);font-weight:700;}
+  details p{margin-top:8px;color:var(--slate);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Firestore Export</h1>
+    <p>Reads everything out of the EduQuestHermes project and saves it as one JSON file.</p>
+  </header>
+  <div class="body">
+
+    <div class="note">
+      <strong>This only reads.</strong> Nothing is written, changed or deleted. It uses the same
+      public config already committed in your HTML files &mdash; no admin key, no service account.
+      If a collection is empty or blocked by your security rules, it says so and carries on.
+    </div>
+
+    <div class="grid">
+      <div>
+        <label for="proj">Project ID</label>
+        <input id="proj" value="eduquesthermes-d0d7a">
+      </div>
+      <div>
+        <label for="key">Web API key</label>
+        <input id="key" value="AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4">
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="go">Start export</button>
+      <button id="dl" class="ghost" disabled>Download JSON</button>
+      <button id="signin" class="ghost">Sign in as teacher&hellip;</button>
+    </div>
+
+    <div id="log"><span class="dim">Ready. Press "Start export".</span></div>
+
+    <details>
+      <summary>Why does it ask me to sign in?</summary>
+      <p>Only if your security rules require it. Firestore can't list collection names from a
+      browser &mdash; that's an admin-only operation &mdash; so this walks the specific paths your
+      activity files use. If a read comes back "permission denied", signing in with your teacher
+      account usually fixes it. If it still fails, the rules are locked tighter than the apps
+      need, which is worth knowing on its own.</p>
+    </details>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, initializeFirestore }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const logEl = document.getElementById('log');
+let out = null;
+
+function log(msg, cls){
+  const s = document.createElement('span');
+  if (cls) s.className = cls;
+  s.textContent = msg + '\n';
+  logEl.appendChild(s);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+let app, db, auth;
+let docCount = 0;   // incremented as documents are actually read
+
+function connect(){
+  if (app) return;
+  const cfg = {
+    apiKey: document.getElementById('key').value.trim(),
+    authDomain: document.getElementById('proj').value.trim() + '.firebaseapp.com',
+    projectId: document.getElementById('proj').value.trim()
+  };
+  app = initializeApp(cfg);
+  // Long polling: school and corporate networks often block the streaming
+  // transport. sociology-survey-2026.html already had to set this.
+  db = initializeFirestore(app, { experimentalForceLongPolling: true });
+  auth = getAuth(app);
+}
+
+/** Read every document in a collection path. Never throws -- reports instead. */
+async function readCollection(pathParts){
+  const label = pathParts.join('/');
+  try {
+    const snap = await getDocs(collection(db, ...pathParts));
+    const docs = {};
+    snap.forEach(d => { docs[d.id] = d.data(); });
+    const n = snap.size;
+    docCount += n;
+    if (n === 0) log('  ' + label + ' -- empty', 'dim');
+    else log('  ' + label + ' -- ' + n + ' doc' + (n===1?'':'s'), 'ok');
+    return { ok:true, count:n, docs };
+  } catch (e) {
+    const denied = /permission|insufficient/i.test(e.message || '');
+    log('  ' + label + ' -- ' + (denied ? 'PERMISSION DENIED' : 'error: ' + e.message),
+        denied ? 'warn' : 'err');
+    return { ok:false, error:String(e.message||e), docs:{} };
+  }
+}
+
+async function readDoc(pathParts){
+  try {
+    const s = await getDoc(doc(db, ...pathParts));
+    if (s.exists()) { docCount++; return s.data(); }
+    return null;
+  } catch (e) { return null; }
+}
+
+document.getElementById('signin').onclick = async () => {
+  connect();
+  const email = prompt('Teacher email for this Firebase project:');
+  if (!email) return;
+  const pw = prompt('Password:');
+  if (!pw) return;
+  try {
+    await signInWithEmailAndPassword(auth, email, pw);
+    log('Signed in as ' + email, 'ok');
+  } catch (e) { log('Sign-in failed: ' + e.message, 'err'); }
+};
+
+document.getElementById('go').onclick = async () => {
+  const btn = document.getElementById('go');
+  btn.disabled = true;
+  logEl.innerHTML = '';
+  docCount = 0;              // reset, so a second run doesn't double-count
+  connect();
+
+  const result = {
+    exported_at: new Date().toISOString(),
+    project: document.getElementById('proj').value.trim(),
+    collections: {},
+    errors: []
+  };
+
+  log('Exporting from ' + result.project + '\n');
+
+  // --- flat top-level collections the activity files write to ---------------
+  log('Top-level collections:');
+  for (const name of ['submissions','sociology_survey_2026','qt_sessions',
+                      'qt_classes','qt_card_states','ta_checklist']) {
+    const r = await readCollection([name]);
+    result.collections[name] = r.docs;
+    if (!r.ok) result.errors.push({ path:name, error:r.error });
+  }
+
+  // --- classes, and everything nested under them ---------------------------
+  // Firestore can't enumerate subcollection names from a browser, so this
+  // walks the specific paths hermes.html uses.
+  log('\nClasses and nested student data:');
+  const classes = await readCollection(['classes']);
+  result.collections.classes = {};
+  if (!classes.ok) result.errors.push({ path:'classes', error:classes.error });
+
+  for (const clsId of Object.keys(classes.docs)) {
+    log('\n  class "' + clsId + '"');
+    const entry = { _doc: classes.docs[clsId], students:{}, avatars:{}, meta:{} };
+
+    entry.meta.prompt = await readDoc(['classes', clsId, 'meta', 'prompt']);
+
+    const avatars = await readCollection(['classes', clsId, 'avatars']);
+    entry.avatars = avatars.docs;
+
+    const students = await readCollection(['classes', clsId, 'students']);
+    for (const sid of Object.keys(students.docs)) {
+      const s = { _doc: students.docs[sid], sessions:{}, documents:{}, meta:{} };
+
+      s.meta.quotes = await readDoc(['classes', clsId, 'students', sid, 'meta', 'quotes']);
+
+      const docsC = await readCollection(['classes', clsId, 'students', sid, 'documents']);
+      s.documents = docsC.docs;
+
+      const sess = await readCollection(['classes', clsId, 'students', sid, 'sessions']);
+      for (const sdate of Object.keys(sess.docs)) {
+        const one = { _doc: sess.docs[sdate] };
+        const snaps = await readCollection(
+          ['classes', clsId, 'students', sid, 'sessions', sdate, 'snapshots']);
+        one.snapshots = snaps.docs;
+        const srcs = await readCollection(
+          ['classes', clsId, 'students', sid, 'sessions', sdate, 'sources']);
+        one.sources = srcs.docs;
+        s.sessions[sdate] = one;
+      }
+      entry.students[sid] = s;
+    }
+    result.collections.classes[clsId] = entry;
+  }
+
+  // --- tally ---------------------------------------------------------------
+  // Counted at read time rather than by walking the result, so nested
+  // snapshots, sources and documents are included rather than skipped.
+  result.document_count = docCount;
+
+  log('\n----------------------------------------');
+  log('Done. ' + docCount + ' documents exported.', 'ok');
+  if (result.errors.length) {
+    log(result.errors.length + ' path(s) could not be read -- listed in the JSON.', 'warn');
+  }
+  log('Press "Download JSON", then send me the file.');
+
+  out = result;
+  document.getElementById('dl').disabled = false;
+  btn.disabled = false;
+};
+
+document.getElementById('dl').onclick = () => {
+  if (!out) return;
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'firestore-export-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+</script>
+</body>
+</html>
