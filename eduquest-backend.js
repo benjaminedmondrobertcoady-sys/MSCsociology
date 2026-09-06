@@ -36,7 +36,7 @@
   // ---------------------------------------------------------------------
   var CONFIG = {
     url: 'https://sxubawepfafszidgafrj.supabase.co',
-    anonKey: 'YOUR_SUPABASE_ANON_KEY',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4dWJhd2VwZmFmc3ppZGdhZnJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyMTg4NDksImV4cCI6MjEwMjc5NDg0OX0.8WiGzfObld3yfCTXz0sOtlnToBuhTebEndLQYLq2tXg',
     sdk: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
   };
 
