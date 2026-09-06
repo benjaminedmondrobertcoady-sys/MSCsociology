@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EduQuest &middot; Supabase Connection Check</title>
+<style>
+  :root{
+    --parchment:#F3E9CF; --cream:#FAF4E4; --navy:#1F3A5F; --navy-ink:#16283F;
+    --gold:#C9A227; --green:#2E7D4F; --red:#A63A32; --amber:#B07A1E; --slate:#5A6E85;
+    --ui:"Trebuchet MS","Segoe UI",Verdana,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--ui);background:var(--navy);color:var(--navy-ink);padding:24px;line-height:1.5;}
+  .wrap{max-width:820px;margin:0 auto;background:var(--cream);border:3px solid var(--gold);border-radius:8px;overflow:hidden;}
+  header{background:linear-gradient(105deg,var(--navy-ink),var(--navy));color:var(--cream);padding:16px 22px;border-bottom:3px solid var(--gold);}
+  header h1{font-size:20px;letter-spacing:.04em;}
+  header p{font-size:13px;opacity:.85;margin-top:4px;}
+  .body{padding:22px;}
+  button{font-family:var(--ui);font-size:15px;font-weight:700;cursor:pointer;
+    background:var(--navy);color:var(--cream);border:2px solid var(--gold);
+    padding:11px 22px;border-radius:5px;letter-spacing:.03em;}
+  button:hover:not(:disabled){background:var(--navy-ink);}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px;}
+  label{font-size:12px;color:var(--slate);display:block;margin-bottom:4px;}
+  input{font-family:ui-monospace,monospace;font-size:13px;padding:8px;width:100%;
+    border:1px solid var(--slate);border-radius:4px;background:#fff;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  .check{display:flex;gap:10px;padding:11px 12px;border-radius:5px;margin-bottom:7px;
+    background:var(--parchment);border-left:4px solid var(--slate);align-items:flex-start;}
+  .check.pass{border-left-color:var(--green);}
+  .check.fail{border-left-color:var(--red);}
+  .check.warn{border-left-color:var(--amber);}
+  .mark{font-weight:700;font-size:15px;min-width:20px;}
+  .check.pass .mark{color:var(--green);}
+  .check.fail .mark{color:var(--red);}
+  .check.warn .mark{color:var(--amber);}
+  .what{font-weight:700;font-size:14px;}
+  .detail{font-size:12.5px;color:var(--slate);margin-top:2px;}
+  .fixit{font-size:12.5px;margin-top:5px;padding:7px 9px;background:#fff;
+    border:1px dashed var(--gold);border-radius:4px;}
+  .summary{margin:16px 0;padding:13px 15px;border-radius:6px;font-weight:700;font-size:15px;}
+  .summary.ok{background:#E3F1E8;border:2px solid var(--green);color:#1B5E38;}
+  .summary.bad{background:#F7E4E2;border:2px solid var(--red);color:#7C2B24;}
+  code{font-family:ui-monospace,monospace;font-size:12px;background:#EDE4CC;padding:1px 4px;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Supabase Connection Check</h1>
+    <p>Checks the database is reachable, the tables exist, and the security rules actually hold.</p>
+  </header>
+  <div class="body">
+
+    <div class="grid">
+      <div>
+        <label for="url">Project URL</label>
+        <input id="url" value="https://sxubawepfafszidgafrj.supabase.co">
+      </div>
+      <div>
+        <label for="key">anon / publishable key</label>
+        <input id="key" placeholder="eyJ... or sb_publishable_...">
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <label for="email">Teacher email (optional &mdash; tests sign-in)</label>
+        <input id="email" type="email" placeholder="you@example.com">
+      </div>
+      <div>
+        <label for="pw">Teacher password (optional)</label>
+        <input id="pw" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+      </div>
+    </div>
+
+    <div class="row"><button id="go">Run checks</button></div>
+    <div id="out"></div>
+
+  </div>
+</div>
+
+<script src="eduquest-backend.js"></script>
+<script type="module">
+const out = document.getElementById('out');
+let pass = 0, fail = 0;
+
+function add(status, what, detail, fixit){
+  const d = document.createElement('div');
+  d.className = 'check ' + status;
+  d.innerHTML = '<div class="mark">' + (status==='pass'?'&#10003;':status==='fail'?'&#10007;':'!') + '</div>' +
+    '<div><div class="what"></div><div class="detail"></div>' +
+    (fixit ? '<div class="fixit"></div>' : '') + '</div>';
+  d.querySelector('.what').textContent = what;
+  d.querySelector('.detail').textContent = detail || '';
+  if (fixit) d.querySelector('.fixit').innerHTML = fixit;
+  out.appendChild(d);
+  if (status === 'pass') pass++; else if (status === 'fail') fail++;
+}
+
+document.getElementById('go').onclick = async () => {
+  const btn = document.getElementById('go');
+  btn.disabled = true;
+  out.innerHTML = '';
+  pass = 0; fail = 0;
+
+  const url = document.getElementById('url').value.trim();
+  const key = document.getElementById('key').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const pw = document.getElementById('pw').value;
+
+  if (!key) { add('fail','No key entered','Paste the anon / publishable key above.'); btn.disabled=false; return; }
+
+  // ---- 1. key shape --------------------------------------------------
+  if (key.startsWith('eyJ')) {
+    try {
+      const payload = JSON.parse(atob(key.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+      if (payload.role === 'service_role') {
+        add('fail','This is the SECRET key, not the public one',
+            'Its role is "service_role", which bypasses every security rule. Do not put this in a web page.',
+            'Go back to Settings &rarr; API Keys and copy the key labelled <code>anon</code> or <code>public</code> instead.');
+        btn.disabled = false; return;
+      }
+      add('pass','Key is the public one', 'role: ' + payload.role + ', project: ' + payload.ref);
+      if (!url.includes(payload.ref)) {
+        add('fail','Key and URL are for different projects',
+            'The key says project "' + payload.ref + '" but the URL does not match.');
+      }
+    } catch(e){ add('warn','Could not decode the key','It may be truncated or mistyped.'); }
+  } else if (key.startsWith('sb_secret')) {
+    add('fail','This is a SECRET key','Use the publishable key instead.'); btn.disabled=false; return;
+  } else {
+    add('pass','Key format looks like a publishable key', key.slice(0,20) + '...');
+  }
+
+  // ---- 2. can we reach it? -------------------------------------------
+  const H = { apikey: key, Authorization: 'Bearer ' + key };
+  let reachable = false;
+  try {
+    const r = await fetch(url + '/rest/v1/', { headers: H });
+    if (r.status === 401) {
+      const t = await r.text();
+      add('fail','The server rejected the key',
+          'HTTP 401. ' + t.slice(0,140),
+          'The key is wrong or was invalidated by a rotation. Copy it again from Settings &rarr; API Keys.');
+    } else {
+      reachable = true;
+      add('pass','Database is reachable and the key works','HTTP ' + r.status);
+    }
+  } catch(e){
+    add('fail','Could not reach the database', e.message,
+        'Check the Project URL, and whether a school firewall is blocking supabase.co.');
+  }
+  if (!reachable) { summarise(); btn.disabled=false; return; }
+
+  // ---- 3. do the tables exist? ---------------------------------------
+  const TABLES = ['posts','submissions','survey_responses','students','classes',
+                  'avatars','writing_sessions','quiz_sessions','teachers'];
+  let missing = [];
+  for (const t of TABLES) {
+    try {
+      const r = await fetch(url + '/rest/v1/' + t + '?select=count&limit=1', { headers: H });
+      // 200 = readable, 401/403 = exists but RLS blocks reads (expected for drop boxes)
+      if (r.status === 404 || r.status === 400) missing.push(t);
+    } catch(e){ missing.push(t); }
+  }
+  if (missing.length === 0) {
+    add('pass','All ' + TABLES.length + ' tables exist','posts, submissions, survey_responses, students, classes, avatars, writing_sessions, quiz_sessions, teachers');
+  } else {
+    add('fail','Missing tables: ' + missing.join(', '),
+        'The schema has not been run, or only partly.',
+        'Open the SQL Editor and run the whole of <code>supabase/schema.sql</code>.');
+  }
+
+  // ---- 4. can a student hand work in? --------------------------------
+  let inserted = false;
+  try {
+    const r = await fetch(url + '/rest/v1/posts', {
+      method: 'POST',
+      headers: Object.assign({'Content-Type':'application/json', 'Prefer':'return=minimal'}, H),
+      body: JSON.stringify({ class_code:'__CONNECTION_TEST__', student_name:'CHECK',
+                             word_count:3, body:'connection check row' })
+    });
+    if (r.ok) { inserted = true; add('pass','A student can hand work in','Insert into posts succeeded.'); }
+    else {
+      const t = await r.text();
+      add('fail','A student CANNOT hand work in','HTTP ' + r.status + '. ' + t.slice(0,160),
+          'The insert policy on <code>posts</code> is missing. Re-run the schema.');
+    }
+  } catch(e){ add('fail','Insert failed', e.message); }
+
+  // ---- 5. the important one: can a student READ the class's work? ----
+  try {
+    const r = await fetch(url + '/rest/v1/posts?select=*&limit=5', { headers: H });
+    const rows = r.ok ? await r.json() : null;
+    if (r.ok && Array.isArray(rows) && rows.length > 0) {
+      add('fail','A student CAN read other students\' work',
+          'Returned ' + rows.length + ' row(s) without signing in. This is a privacy problem.',
+          'The teacher-only SELECT policy on <code>posts</code> is missing. Re-run the schema.');
+    } else {
+      add('pass','Students cannot read the class\'s work','The drop box returns nothing without a teacher login.');
+    }
+  } catch(e){ add('warn','Could not test the read block', e.message); }
+
+  // ---- 6. teacher sign-in ---------------------------------------------
+  if (email && pw) {
+    try {
+      const r = await fetch(url + '/auth/v1/token?grant_type=password', {
+        method:'POST', headers: Object.assign({'Content-Type':'application/json'}, H),
+        body: JSON.stringify({ email, password: pw })
+      });
+      const j = await r.json();
+      if (!r.ok || !j.access_token) {
+        add('fail','Teacher sign-in failed', j.error_description || j.msg || ('HTTP ' + r.status),
+            'Create the user under Authentication &rarr; Users.');
+      } else {
+        add('pass','Teacher sign-in works','Signed in as ' + email);
+        const TH = { apikey: key, Authorization: 'Bearer ' + j.access_token };
+        const rr = await fetch(url + '/rest/v1/posts?select=*&limit=5', { headers: TH });
+        const rows = rr.ok ? await rr.json() : [];
+        if (rr.ok && Array.isArray(rows) && rows.length > 0) {
+          add('pass','Teacher can read student work','Read back ' + rows.length + ' row(s).');
+        } else {
+          add('fail','Teacher CANNOT read student work','Signed in, but the drop box returned nothing.',
+              'You are missing the row in <code>teachers</code>. Run:<br><code>insert into public.teachers (user_id, email) select id, email from auth.users where email = \'' + email + '\';</code>');
+        }
+        // tidy up the test row
+        if (inserted) {
+          await fetch(url + '/rest/v1/posts?class_code=eq.__CONNECTION_TEST__', { method:'DELETE', headers: TH });
+          add('pass','Test row cleaned up','The __CONNECTION_TEST__ row was deleted.');
+        }
+      }
+    } catch(e){ add('fail','Sign-in test failed', e.message); }
+  } else {
+    add('warn','Teacher sign-in not tested','Fill in the email and password fields to test it.');
+    if (inserted) add('warn','A test row was left behind',
+      'Remove it with: DELETE FROM posts WHERE class_code = \'__CONNECTION_TEST__\';');
+  }
+
+  summarise();
+  btn.disabled = false;
+};
+
+function summarise(){
+  const s = document.createElement('div');
+  if (fail === 0) { s.className='summary ok'; s.textContent='All ' + pass + ' checks passed. The backend is connected and the security rules hold.'; }
+  else { s.className='summary bad'; s.textContent = fail + ' check' + (fail===1?'':'s') + ' failed, ' + pass + ' passed. Fix the red items above, then run again.'; }
+  out.appendChild(s);
+}
+</script>
+</body>
+</html>

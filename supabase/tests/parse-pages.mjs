@@ -21,7 +21,8 @@ const PAGES = [
   'teacher-dashboard.html',
   'quiz-town.html',
   'index.html',
-  'firestore-export.html'
+  'firestore-export.html',
+  'supabase-check.html'
 ];
 
 let pass = 0, fail = 0;
