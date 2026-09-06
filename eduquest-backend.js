@@ -443,6 +443,41 @@
   }
 
   /**
+   * Teacher sign-in with a real email and password.
+   * Replaces the hardcoded passwords that were sitting in page source
+   * (hermes.html's TEACHER_PW, sociology-survey-results.html's PASSWORD).
+   * Reading student work requires this: the RLS policies check for a row in
+   * `teachers`, so a page-level password grants nothing on its own.
+   */
+  function signInTeacher(email, password) {
+    return getClient().then(function (sb) {
+      return sb.auth.signInWithPassword({ email: email, password: password });
+    }).then(function (res) {
+      if (res.error) throw new Error(describe(res.error));
+      return res.data;
+    });
+  }
+
+  /** Current signed-in user, or null. */
+  function getUser() {
+    return getClient().then(function (sb) {
+      return sb.auth.getUser();
+    }).then(function (res) {
+      return (res && res.data && res.data.user) || null;
+    }).catch(function () { return null; });
+  }
+
+  /** Fires with the user (or null) now and on every auth change. */
+  function onAuthChange(cb) {
+    return getClient().then(function (sb) {
+      sb.auth.onAuthStateChange(function (_evt, session) {
+        cb(session ? session.user : null);
+      });
+      return getUser().then(cb);
+    });
+  }
+
+  /**
    * Atomic avatar reservation. The Firestore version read, checked, then
    * wrote -- two students clicking at once could both win. This is one
    * statement on the server; exactly one caller gets true.
@@ -478,6 +513,9 @@
     emailFor: emailFor,
     signUpStudent: signUpStudent,
     signInStudent: signInStudent,
+    signInTeacher: signInTeacher,
+    getUser: getUser,
+    onAuthChange: onAuthChange,
     signOut: signOut,
     reserveAvatar: reserveAvatar,
 

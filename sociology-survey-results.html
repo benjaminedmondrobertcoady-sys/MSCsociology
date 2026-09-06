@@ -69,7 +69,8 @@
     color: var(--ink);
   }
 
-  .login-box input[type="password"] {
+  .login-box input[type="password"],
+  .login-box input[type="email"] {
     width: 100%;
     padding: 0.65rem 0.85rem;
     border: 1.5px solid var(--rule);
@@ -83,7 +84,8 @@
     margin-bottom: 1rem;
   }
 
-  .login-box input[type="password"]:focus { outline: none; border-color: var(--accent); }
+  .login-box input[type="password"]:focus,
+  .login-box input[type="email"]:focus { outline: none; border-color: var(--accent); }
 
   .login-btn {
     background: var(--accent);
@@ -376,9 +378,10 @@
   <div class="login-box">
     <div class="eyebrow">Teacher Access</div>
     <h1>Sociology Survey<br>Results</h1>
-    <input type="password" id="password-input" placeholder="Enter password" autofocus>
+    <input type="email" id="email-input" placeholder="Teacher email" autocomplete="username" autofocus>
+    <input type="password" id="password-input" placeholder="Password" autocomplete="current-password">
     <button class="login-btn" id="login-btn">View Results</button>
-    <div class="login-error" id="login-error">Incorrect password.</div>
+    <div class="login-error" id="login-error">Incorrect email or password.</div>
   </div>
 </div>
 
@@ -412,35 +415,39 @@
   </main>
 </div>
 
+<!-- Shared Supabase backend. Classic script, so it runs before the module below. -->
+<script src="eduquest-backend.js"></script>
+<script>EduQuest.init();</script>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
-    authDomain: "eduquesthermes-d0d7a.firebaseapp.com",
-    projectId: "eduquesthermes-d0d7a",
-    storageBucket: "eduquesthermes-d0d7a.firebasestorage.app",
-    messagingSenderId: "29558718923",
-    appId: "1:29558718923:web:585463b020a394d49bb64e"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const PASSWORD = 'puffin';
   let allResponses = [];
 
   // ── Login ──
-  function tryLogin() {
-    const val = document.getElementById('password-input').value;
-    if (val === PASSWORD) {
-      sessionStorage.setItem('sr_auth', '1');
+  // Was a literal password ('puffin') compared in the browser, which anyone
+  // could read in the page source. Now a real Supabase account: the database
+  // itself refuses to return survey responses unless the signed-in user has a
+  // row in `teachers`, so the gate is enforced server-side rather than by this
+  // page agreeing to show the results.
+  async function tryLogin() {
+    const email = document.getElementById('email-input').value.trim();
+    const pw    = document.getElementById('password-input').value;
+    const err   = document.getElementById('login-error');
+    const btn   = document.getElementById('login-btn');
+
+    err.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+    try {
+      await EduQuest.signInTeacher(email, pw);
       showResults();
-    } else {
-      document.getElementById('login-error').style.display = 'block';
+    } catch (e) {
+      err.textContent = e.message || 'Incorrect email or password.';
+      err.style.display = 'block';
       document.getElementById('password-input').value = '';
       document.getElementById('password-input').focus();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'View Results';
     }
   }
 
@@ -450,10 +457,8 @@
     loadResults();
   }
 
-  // Auto-login if already authenticated this session
-  if (sessionStorage.getItem('sr_auth') === '1') {
-    showResults();
-  }
+  // Supabase persists the session itself, so a returning teacher skips the gate.
+  EduQuest.getUser().then(u => { if (u) showResults(); });
 
   document.getElementById('login-btn').addEventListener('click', tryLogin);
   document.getElementById('password-input').addEventListener('keydown', e => {
@@ -463,9 +468,10 @@
   // ── Load ──
   async function loadResults() {
     try {
-      const q = query(collection(db, 'sociology_survey_2026'), orderBy('timestamp', 'asc'));
-      const snapshot = await getDocs(q);
-      allResponses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const rows = await EduQuest.listSurveyResponses('sociology_survey_2026');
+      // The payload is stored as one jsonb column, so flatten it back to the
+      // shape the render code below already expects.
+      allResponses = rows.map(r => ({ id: r.id, timestamp: r.created_at, ...r.payload }));
       document.getElementById('loading-msg').style.display = 'none';
       if (allResponses.length === 0) {
         document.getElementById('empty-msg').style.display = 'block';

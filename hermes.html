@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hermes</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- Shared Supabase backend. Must load before any script that calls EduQuest. -->
+<script src="eduquest-backend.js"></script>
+<script>EduQuest.init();</script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: "Courier New", Courier, monospace; background: #c0bdb0; color: #1a1a1a; min-height: 100vh; }
@@ -11942,20 +11945,50 @@ window.nextHint=function(){
 };
 
 // POST BOX
-window.sendToTeacher=function(){
+// POST BOX
+// This used to be EmailJS and nothing else. When EmailJS refused -- its free
+// tier is 200 emails/month plus burst rate limiting, and an end-of-class rush
+// hits both -- the essay existed only in this browser tab, and the student was
+// shown a raw JSON error.
+//
+// Now the database write is the hand-in. Email is a courtesy notification
+// afterwards, and is allowed to fail without the student losing anything.
+window.sendToTeacher=async function(){
   const text=el('writing-area').value.trim();
   if(!text){ alert('Nothing to send -- write something first.'); return; }
   const w=text.split(/\s+/).length;
   const modal=el('modal-send'); const msg=el('send-msg');
   msg.textContent='Sending your work to your teacher...';
   modal.style.display='flex'; playSound('snd-fluffy');
-  const ejs=window.emailjs;
-  if(!ejs){ msg.textContent='Email service not loaded. Try refreshing the page.'; return; }
-  try{ ejs.init({publicKey:'3fYd7Ad67oVpNSeZq'}); }catch(e){}
-  ejs.send('service_ac7kjyo','template_73git4p',{
-    student_name:name||'Unknown',student_class:cls||'Unknown',word_count:w,body:text
-  }).then(()=>{ msg.textContent='Sent! Your teacher has a copy of your work.'; playSound('snd-toggle'); },
-    err=>{ msg.textContent='Something went wrong. Ask your teacher for help. ('+JSON.stringify(err)+')'; });
+
+  const res=await EduQuest.savePost({
+    classCode: cls||'unknown',
+    studentName: name||'Unknown',
+    wordCount: w,
+    body: text
+  });
+
+  if(res.ok){
+    msg.textContent='Sent! Your teacher has a copy of your work.';
+    playSound('snd-toggle');
+  } else {
+    // Truthful: the work is safe on this device and will go up by itself.
+    // Nothing is lost, and the student is not told it arrived when it did not.
+    msg.textContent='Saved on this device. It will send itself as soon as you '+
+                    'have a connection -- you can close this and keep working.';
+  }
+
+  // Courtesy email. Never blocks the hand-in, never reports its own failure to
+  // the student, because the work is already stored either way.
+  try{
+    const ejs=window.emailjs;
+    if(ejs){
+      ejs.init({publicKey:'3fYd7Ad67oVpNSeZq'});
+      ejs.send('service_ac7kjyo','template_73git4p',{
+        student_name:name||'Unknown',student_class:cls||'Unknown',word_count:w,body:text
+      }).catch(e=>console.warn('[Hermes] notification email did not send:',e));
+    }
+  }catch(e){ console.warn('[Hermes] email notification skipped:',e); }
 };
 
 // CHECKER CARD OPEN/CLOSE

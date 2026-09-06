@@ -5,29 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Grammar Works &middot; Building the Sentence</title>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  const firebaseConfig = {
-    apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
-    authDomain: "eduquesthermes-d0d7a.firebaseapp.com",
-    projectId: "eduquesthermes-d0d7a",
-    storageBucket: "eduquesthermes-d0d7a.firebasestorage.app",
-    messagingSenderId: "29558718923",
-    appId: "1:29558718923:web:585463b020a394d49bb64e"
+<!-- Shared Supabase backend. Replaces the per-file Firebase block. -->
+<script src="eduquest-backend.js"></script>
+<script>
+  EduQuest.init();
+  // Returns a promise that REJECTS if the work is not on the server, so the
+  // caller can show a truthful state. The old version resolved either way and
+  // its caller swallowed the rejection, so a failed hand-in looked identical
+  // to a successful one.
+  window.__saveSubmission = function(rec){
+    return EduQuest.saveSubmission(rec).then(function(res){
+      if (!res.ok) throw new Error('queued');
+      return res;
+    });
   };
-  try {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    window.__saveSubmission = function(rec){
-      return addDoc(collection(db, "submissions"), {
-        classCode: rec.classCode, student: rec.student, lesson: rec.lesson,
-        round: rec.round, flag: rec.flag, tags: rec.tags, sentences: rec.sentences,
-        ts: serverTimestamp()
-      });
-    };
-  } catch(e){ /* offline or blocked: activity still works, localStorage keeps progress */ }
 </script>
 
 <style>
@@ -1748,7 +1739,11 @@
           flag: rag,
           tags: tags.slice(),
           sentences: samples.slice()
-        }).catch(function(){ /* offline: localStorage already has the RAG flag */ });
+        }).catch(function(){
+          // Not on the server yet. The outbox has it and will retry, but say so
+          // rather than leaving the success state showing.
+          var b=el('submitBtn'); if(b) b.textContent='Saved on this device - will send when back online';
+        });
       }catch(_){}
     }
     /* in a release round, a pass records THAT round and unlocks the next; the

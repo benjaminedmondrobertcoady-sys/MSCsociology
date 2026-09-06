@@ -656,26 +656,21 @@
 
 </main>
 
-<!-- Firebase SDK with long-polling to avoid WebSocket issues -->
+<!-- Shared Supabase backend. Classic script, so it runs before the module below. -->
+<script src="eduquest-backend.js"></script>
+<script>EduQuest.init();</script>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp, enableNetwork } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyB1Q3b2RR9x6amLuZWCrIxGk6k48Z3u2R4",
-    authDomain: "eduquesthermes-d0d7a.firebaseapp.com",
-    projectId: "eduquesthermes-d0d7a",
-    storageBucket: "eduquesthermes-d0d7a.firebasestorage.app",
-    messagingSenderId: "29558718923",
-    appId: "1:29558718923:web:585463b020a394d49bb64e"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = initializeFirestore(app, { experimentalForceLongPolling: true, useFetchStreams: false });
-
+  // Backed by Supabase. Every response is written to a localStorage outbox
+  // first and only cleared once the database confirms it, so a dropped
+  // connection queues the response instead of destroying it.
   async function saveToFirestore(payload) {
-    await addDoc(collection(db, 'sociology_survey_2026'), { ...payload, timestamp: serverTimestamp() });
+    const res = await EduQuest.saveSurvey(payload);
+    if (!res.ok) {
+      // Not saved to the server yet. It is safe on this device and will go up
+      // on the next page load -- but do not tell the student it is submitted.
+      throw new Error(res.error ? res.error.message : 'Saved on this device; not yet sent.');
+    }
   }
 
   // ── Drag-to-rank ──
