@@ -35,7 +35,7 @@
   // policies in supabase/schema.sql, not by hiding this string.
   // ---------------------------------------------------------------------
   var CONFIG = {
-    url: 'YOUR_SUPABASE_URL',        // https://xxxxxxxx.supabase.co
+    url: 'https://sxubawepfafszidgafrj.supabase.co',
     anonKey: 'YOUR_SUPABASE_ANON_KEY',
     sdk: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
   };
