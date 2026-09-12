@@ -1016,17 +1016,15 @@ function renderBankChips() {
   bank.innerHTML = '';
   drop.innerHTML = '';
   jumbleBuilt.forEach((w, i) => {
-    const chip = document.createElement('div');
-    chip.className = 'word-chip';
-    chip.textContent = w;
-    chip.onclick = () => { jumbleBuilt.splice(i, 1); jumbleBank.push(w); renderBankChips(); };
+    const chip = makeChipFromWord(w);
+    chip.classList.add('word-chip');
+    chip.onclick = () => { jumbleBuilt.splice(i, 1); jumbleBank.push(w); renderBankChips(); initChips(); };
     drop.appendChild(chip);
   });
   jumbleBank.forEach((w, i) => {
-    const chip = document.createElement('div');
-    chip.className = 'word-chip';
-    chip.textContent = w;
-    chip.onclick = () => { jumbleBuilt.push(w); jumbleBank.splice(i, 1); renderBankChips(); };
+    const chip = makeChipFromWord(w);
+    chip.classList.add('word-chip');
+    chip.onclick = () => { jumbleBuilt.push(w); jumbleBank.splice(i, 1); renderBankChips(); initChips(); };
     bank.appendChild(chip);
   });
 }
@@ -1344,8 +1342,7 @@ function applyDict(lang) {
   currentLang = lang;
   document.body.classList.toggle('dict', lang !== '');
   // Update banner select
-  var sel = document.getElementById('dictSelect');
-  if (sel) sel.value = lang;
+  document.querySelectorAll('#dictSelect').forEach(function(s){ s.value = lang; });
   // Update all chips
   document.querySelectorAll('.chip').forEach(function(c) {
     c.classList.remove('pinned');
@@ -1385,6 +1382,87 @@ function initChips() {
       if (!was) { chip.classList.add('pinned'); showTip(chip); }
     });
   });
+}
+
+
+// ── WORD TRANSLATION TABLE ──
+const WORD_TRANS = {
+  // Common words
+  'the':    {tl:'ang',      fa:'آن',      ja:'その',    th:'นั้น',    fj:'na'},
+  'a':      {tl:'isang',    fa:'یک',      ja:'ひとつの', th:'หนึ่ง',  fj:'e dua'},
+  'an':     {tl:'isang',    fa:'یک',      ja:'ひとつの', th:'หนึ่ง',  fj:'e dua'},
+  'and':    {tl:'at',       fa:'و',       ja:'そして',   th:'และ',     fj:'kei'},
+  'but':    {tl:'ngunit',   fa:'اما',     ja:'しかし',   th:'แต่',     fj:'ia tiko'},
+  'so':     {tl:'kaya',     fa:'پس',      ja:'だから',   th:'ดังนั้น', fj:'io'},
+  // B.1 words
+  'sheep':  {tl:'tupa',     fa:'گوسفند',  ja:'羊（hitsuji）', th:'แกะ', fj:'sipi'},
+  'grazes': {tl:'nanginginain', fa:'می‌چرد', ja:'草を食べる', th:'แทะเล็ม', fj:'kana'},
+  'farmer': {tl:'magsasaka', fa:'کشاورز', ja:'農家（nōka）', th:'ชาวนา', fj:'qele'},
+  'walks':  {tl:'naglalakad', fa:'راه می‌رود', ja:'歩く（aruku）', th:'เดิน', fj:'lako'},
+  'river':  {tl:'ilog',     fa:'رودخانه', ja:'川（kawa）', th:'แม่น้ำ', fj:'ua'},
+  'flows':  {tl:'umaagos',  fa:'جاری است', ja:'流れる（nagareru）', th:'ไหล', fj:'bula'},
+  'hiker':  {tl:'manlalakbay', fa:'کوهنورد', ja:'ハイカー', th:'นักเดิน', fj:'lewai'},
+  'climbs': {tl:'umaakyat', fa:'بالا می‌رود', ja:'登る（noboru）', th:'ปีน', fj:'cake'},
+  'birds':  {tl:'mga ibon', fa:'پرندگان', ja:'鳥たち（toritachi）', th:'นก', fj:'manu'},
+  'sing':   {tl:'umawit',   fa:'می‌خوانند', ja:'歌う（utau）', th:'ร้องเพลง', fj:'sere'},
+  // B.2 words  
+  'grey':   {tl:'kulay-abo', fa:'خاکستری', ja:'灰色（hairo）', th:'สีเทา', fj:'dravu'},
+  'tired':  {tl:'pagod',    fa:'خسته',    ja:'疲れた（tsukareta）', th:'เหนื่อย', fj:'dredre'},
+  'cold':   {tl:'malamig',  fa:'سرد',     ja:'冷たい（tsumetai）', th:'เย็น', fj:'batabata'},
+  'sky':    {tl:'langit',   fa:'آسمان',   ja:'空（sora）', th:'ท้องฟ้า', fj:'lomalagi'},
+  'path':   {tl:'landas',   fa:'مسیر',    ja:'道（michi）', th:'เส้นทาง', fj:'sala'},
+  // B.3 words
+  'wall':   {tl:'pader',    fa:'دیوار',   ja:'壁（kabe）', th:'กำแพง', fj:'idia'},
+  'slope':  {tl:'dalisdis', fa:'دامنه',   ja:'斜面（shamen）', th:'ลาดเขา', fj:'siqi'},
+  'bridge': {tl:'tulay',    fa:'پل',      ja:'橋（hashi）', th:'สะพาน', fj:'daku'},
+  // C.1 words
+  'fox':    {tl:'lobo',     fa:'روباه',   ja:'キツネ（kitsune）', th:'จิ้งจอก', fj:'bekibekiwa'},
+  'runs':   {tl:'tumatakbo', fa:'می‌دود',  ja:'走る（hashiru）', th:'วิ่ง', fj:'cici'},
+  'hound':  {tl:'aso',      fa:'سگ شکاری', ja:'猟犬（ryōken）', th:'สุนัขล่าสัตว์', fj:'qio'},
+  'stops':  {tl:'humihinto', fa:'می‌ایستد', ja:'止まる（tomaru）', th:'หยุด', fj:'dabe'},
+  'darkened':{tl:'dumilim', fa:'تاریک شد', ja:'暗くなった', th:'มืดลง', fj:'biau'},
+  'rose':   {tl:'tumaas',   fa:'بالا آمد', ja:'上がった', th:'พัดขึ้น', fj:'cake'},
+  // S.1 words
+  'lake':   {tl:'lawa',     fa:'دریاچه',  ja:'湖（mizumi）', th:'ทะเลสาบ', fj:'waitui'},
+  'pale':   {tl:'maputla',  fa:'رنگ‌پریده', ja:'青白い（aojiroi）', th:'ซีด', fj:'vudra'},
+  'mist':   {tl:'ulap',     fa:'مه',      ja:'霧（kiri）', th:'หมอก', fj:'duadua'},
+  'creature':{tl:'nilalang', fa:'موجود',  ja:'生き物（ikimono）', th:'สิ่งมีชีวิต', fj:'ika'},
+  'disappeared':{tl:'nawala', fa:'ناپدید شد', ja:'消えた（kieta）', th:'หายไป', fj:'liu'},
+  // S.2 words
+  'however':{tl:'gayunpaman', fa:'با این حال', ja:'しかしながら', th:'อย่างไรก็ตาม', fj:'ia tiko'},
+  'therefore':{tl:'kaya naman', fa:'بنابراین', ja:'したがって', th:'ดังนั้น', fj:'io kina'},
+  'nevertheless':{tl:'sa kabila nito', fa:'با این وجود', ja:'それにもかかわらず', th:'กระนั้น', fj:'e da'},
+  // S.3 words  
+  'silent': {tl:'tahimik',  fa:'ساکت',    ja:'静かな（shizuka na）', th:'เงียบ', fj:'sereki'},
+  'black':  {tl:'itim',     fa:'سیاه',    ja:'黒い（kuroi）', th:'ดำ', fj:'loaloa'},
+  'followed':{tl:'sumunod', fa:'دنبال کرد', ja:'追った（otta）', th:'ติดตาม', fj:'muri'},
+  // A.1 words
+  'discovery':{tl:'pagtuklas', fa:'کشف',  ja:'発見（hakken）', th:'การค้นพบ', fj:'kune'},
+  'migration':{tl:'paglipat', fa:'مهاجرت', ja:'移動（idō）', th:'การอพยพ', fj:'lako'},
+  'survival':{tl:'pag-iral', fa:'بقا',    ja:'生存（seizon）', th:'การอยู่รอด', fj:'tiko'},
+  'conservation':{tl:'pangangalaga', fa:'حفاظت', ja:'保護（hogo）', th:'การอนุรักษ์', fj:'taqomaki'},
+};
+
+function getWordTrans(word) {
+  return WORD_TRANS[word.toLowerCase().replace(/[^a-z]/g,'')] || null;
+}
+
+function makeChipFromWord(word) {
+  var t = getWordTrans(word);
+  var chip = document.createElement('div');
+  chip.className = 'chip';
+  chip.textContent = word;
+  if (t) {
+    chip.dataset.tl = t.tl || '';
+    chip.dataset.fa = t.fa || '';
+    chip.dataset.ja = t.ja || '';
+    chip.dataset.th = t.th || '';
+    chip.dataset.fj = t.fj || '';
+  }
+  var tr = document.createElement('span');
+  tr.className = 'tr';
+  chip.appendChild(tr);
+  return chip;
 }
 
 // ── INIT ──
