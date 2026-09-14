@@ -837,6 +837,7 @@ const SORT_ITEMS = [
 ];
 let sortAnswers = {};
 let sortPending = {};
+let noticePending = {};
 
 // ── UNJUMBLE STATE ──
 const JUMBLES = [
@@ -919,6 +920,7 @@ function renderRead(card) {
 // ── STEP 1: NOTICE ──
 function renderNotice(card) {
   noticeAnswers = {};
+  noticePending = {};
   const questions = [
     { q: 'In "The lake was still. However, something moved below." — what does "However" show?', options: ['A result','A contrast','An addition'], answer: 'A contrast' },
     { q: 'Which punctuation comes before a connective adverb?', options: ['A comma','A full stop or semicolon','Nothing'], answer: 'A full stop or semicolon' },
@@ -933,49 +935,46 @@ function renderNotice(card) {
       <div style="font-size:0.83rem;font-weight:600;">${q.q}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">`;
     q.options.forEach(opt => {
-      html += `<button class="sort-btn" onclick="checkNotice(${qi},'${opt}','${q.answer}',this)">${opt}</button>`;
+      html += `<button class="sort-btn" onclick="selectNotice(${qi},'${opt}','${q.answer}',this)">${opt}</button>`;
     });
     html += `</div></div>`;
   });
   html += `</div>
     <div class="feedback-box" id="noticeFb"></div>
     <div class="action-row">
-      <button class="btn-secondary" id="noticeRetry" style="display:none" onclick="renderNotice(document.getElementById('activityCard'))">Try again</button>
+      <button class="btn-primary" id="noticeSubmit" onclick="submitNotice()" style="display:none;">Check answers</button>
       <button class="btn-next" id="noticeNext" onclick="advanceStep()">Next step</button>
     </div>`;
   card.innerHTML = html;
 }
 
-function checkNotice(qi, chosen, answer, btn) {
-  const container = document.getElementById(`nq-${qi}`);
-  container.querySelectorAll('.sort-btn').forEach(b => {
-    b.classList.remove('s-correct','s-wrong');
-    b.disabled = true;
-  });
-  if (chosen === answer) {
-    btn.classList.add('s-correct');
-    noticeAnswers[qi] = true;
-  } else {
-    btn.classList.add('s-wrong');
-    noticeAnswers[qi] = false;
-    // show correct
-    container.querySelectorAll('.sort-btn').forEach(b => {
-      if (b.textContent === answer) b.classList.add('s-correct');
-    });
+function selectNotice(qi, chosen, answer, btn) {
+  noticePending[qi] = {chosen: chosen, answer: answer};
+  // Highlight selected only
+  const container = document.getElementById('nq-' + qi);
+  container.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('s-selected'));
+  btn.classList.add('s-selected');
+  // Show submit when all three answered
+  if (Object.keys(noticePending).length === 3) {
+    document.getElementById('noticeSubmit').style.display = 'inline-block';
   }
-  if (Object.keys(noticeAnswers).length === 3) {
-    const allRight = Object.values(noticeAnswers).every(v => v);
-    const fb = document.getElementById('noticeFb');
-    if (allRight) {
-      fb.className = 'feedback-box green';
-      fb.textContent = 'Well done — you can identify connective adverbs and how they work.';
-      document.getElementById('noticeNext').classList.add('visible');
-    } else {
-      fb.className = 'feedback-box red';
-      fb.textContent = 'Not all correct. A connective adverb starts the second sentence, followed by a comma. A full stop or semicolon comes before it. Try again.';
-      const retryBtn = document.getElementById('noticeRetry');
-      if (retryBtn) retryBtn.style.display = 'inline-block';
-    }
+}
+
+function submitNotice() {
+  const allCorrect = Object.values(noticePending).every(v => v.chosen === v.answer);
+  const fb = document.getElementById('noticeFb');
+  if (allCorrect) {
+    fb.className = 'feedback-box green';
+    fb.textContent = 'Perfect — all correct.';
+    document.getElementById('noticeNext').classList.add('visible');
+    document.getElementById('noticeSubmit').style.display = 'none';
+  } else {
+    fb.className = 'feedback-box amber';
+    fb.textContent = 'Not quite — try again. Think carefully before selecting.';
+    noticePending = {};
+    document.querySelectorAll('#noticeItems .sort-btn').forEach(b => b.classList.remove('s-selected'));
+    document.getElementById('noticeSubmit').style.display = 'none';
+    setTimeout(() => { fb.className = 'feedback-box'; }, 2000);
   }
 }
 
