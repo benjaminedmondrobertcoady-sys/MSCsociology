@@ -333,6 +333,7 @@ body {
 }
 .sort-btn.s-correct { background: #D4EDDA; border-color: #28a745; color: #155724; }
 .sort-btn.s-wrong   { background: #F8D7DA; border-color: #dc3545; color: #721c24; }
+  .sort-btn.s-selected { background: #EEF7F5; border-color: var(--base-col); font-weight:700; }
 .sort-btn:not(.s-correct):not(.s-wrong):hover { background: #EDE7D9; }
 
 /* SCRAMBLE */
@@ -811,6 +812,7 @@ const SORT_ITEMS = [
   { text: 'near the gate', answer: 'prepositional phrase' },
 ];
 let sortAnswers = {};
+let sortPending = {};
 
 // ── UNJUMBLE STATE ──
 const JUMBLES = [
@@ -956,6 +958,7 @@ function checkNotice(qi, chosen, answer, btn) {
 // ── STEP 2: SORT ──
 function renderSort(card) {
   sortAnswers = {};
+  sortPending = {};
   let html = `<div class="step-eyebrow">Step 3 of 7 — Sort</div>
     <h3>Prepositional phrase or not?</h3>
     <p style="font-size:0.82rem;color:#5A4A38;margin-bottom:12px;">A prepositional phrase starts with a preposition and tells us where, when, or how. Decide which of these is one.</p>
@@ -964,37 +967,48 @@ function renderSort(card) {
     html += `<div class="sort-item" id="si-${i}">
       <span class="sentence-text" style="font-weight:700;font-size:1rem;">${item.text}</span>
       <div class="sort-btns">
-        <button class="sort-btn" onclick="checkSort(${i},'prepositional phrase','${item.answer}',this)">Prep phrase</button>
-        <button class="sort-btn" onclick="checkSort(${i},'not one','${item.answer}',this)">Not one</button>
+        <button class="sort-btn" onclick="selectSort(${i},'prepositional phrase','${item.answer}',this)">Prep phrase</button>
+        <button class="sort-btn" onclick="selectSort(${i},'not one','${item.answer}',this)">Not one</button>
       </div>
     </div>`;
   });
   html += `</div>
     <div class="feedback-box" id="sortFb"></div>
     <div class="action-row">
+      <button class="btn-primary" id="sortSubmit" onclick="submitSort()" style="display:none;">Check answers</button>
       <button class="btn-next" id="sortNext" onclick="advanceStep()">Next step</button>
     </div>`;
   card.innerHTML = html;
 }
 
-function checkSort(i, chosen, answer, btn) {
-  const container = document.getElementById(`si-${i}`);
-  container.querySelectorAll('.sort-btn').forEach(b => { b.disabled = true; b.classList.remove('s-correct','s-wrong'); });
-  btn.classList.add(chosen === answer ? 's-correct' : 's-wrong');
-  if (chosen !== answer) {
-    container.querySelectorAll('.sort-btn').forEach(b => {
-      if (b.textContent.toLowerCase() === answer) b.classList.add('s-correct');
-    });
+function selectSort(i, chosen, answer, btn) {
+  // Store pending selection, highlight selected button only
+  sortPending[i] = {chosen: chosen, answer: answer};
+  const container = document.getElementById('si-' + i);
+  container.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('s-selected'));
+  btn.classList.add('s-selected');
+  // Show submit once all items selected
+  if (Object.keys(sortPending).length === SORT_ITEMS.length) {
+    document.getElementById('sortSubmit').style.display = 'inline-block';
   }
-  sortAnswers[i] = chosen === answer;
-  if (Object.keys(sortAnswers).length === SORT_ITEMS.length) {
-    const score = Object.values(sortAnswers).filter(v=>v).length;
-    const fb = document.getElementById('sortFb');
-    fb.className = 'feedback-box ' + (score >= 6 ? 'green' : 'amber');
-    fb.textContent = score === 8
-      ? 'Perfect — you can identify a prepositional phrase.'
-      : `${score} out of 8. A prepositional phrase starts with a preposition (on, near, under...) and is followed by a noun group.`;
+}
+
+function submitSort() {
+  const allCorrect = Object.values(sortPending).every(v => v.chosen === v.answer);
+  const fb = document.getElementById('sortFb');
+  if (allCorrect) {
+    fb.className = 'feedback-box green';
+    fb.textContent = 'Perfect — all correct.';
     document.getElementById('sortNext').classList.add('visible');
+    document.getElementById('sortSubmit').style.display = 'none';
+  } else {
+    fb.className = 'feedback-box amber';
+    fb.textContent = 'Not quite — try again. Read each one carefully before selecting.';
+    // Reset all selections
+    sortPending = {};
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('s-selected'));
+    document.getElementById('sortSubmit').style.display = 'none';
+    setTimeout(() => { fb.className = 'feedback-box'; }, 2000);
   }
 }
 
