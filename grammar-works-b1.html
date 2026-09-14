@@ -1319,8 +1319,10 @@ function postProgress(moduleName, step, result, error) {
 const REAL_WORDS = new Set(["a", "able", "about", "above", "across", "after", "again", "against", "age", "ago", "ahead", "all", "allow", "almost", "alone", "along", "already", "also", "although", "always", "am", "among", "and", "another", "any", "appear", "appears", "are", "around", "as", "ask", "at", "away", "back", "be", "because", "become", "been", "before", "begin", "begins", "behind", "being", "below", "beside", "between", "blows", "body", "both", "bring", "but", "by", "call", "calls", "calm", "can", "carry", "change", "changes", "choose", "circles", "clear", "climb", "climbs", "close", "cold", "colour", "come", "complete", "conserved", "consider", "continue", "could", "cover", "create", "creeps", "cross", "crosses", "curves", "dark", "darkened", "deep", "describe", "different", "discovered", "dives", "do", "does", "doing", "done", "down", "draw", "drifts", "drop", "drops", "during", "each", "early", "edge", "end", "ends", "enough", "even", "ever", "every", "example", "exist", "fades", "fall", "falls", "far", "feel", "few", "find", "first", "flow", "flows", "fly", "follow", "followed", "follows", "for", "form", "found", "from", "full", "further", "get", "give", "glimpsed", "go", "good", "grazes", "great", "grow", "grows", "had", "hand", "hangs", "happen", "hard", "has", "have", "he", "hear", "help", "her", "here", "hides", "high", "him", "his", "hold", "home", "how", "howls", "if", "in", "inside", "instead", "into", "is", "it", "its", "keep", "know", "lake", "land", "large", "last", "lead", "leads", "learn", "leave", "let", "lifts", "light", "like", "live", "long", "look", "low", "lures", "lurked", "make", "many", "may", "me", "mean", "meet", "might", "migrated", "miss", "more", "most", "move", "moves", "much", "must", "name", "near", "need", "never", "new", "next", "no", "not", "now", "of", "off", "often", "on", "once", "only", "open", "or", "other", "our", "out", "over", "own", "part", "pass", "path", "paused", "people", "place", "plan", "point", "pull", "push", "put", "reach", "reaches", "read", "real", "remains", "rest", "restored", "rests", "return", "rise", "rises", "river", "road", "rolls", "round", "run", "runs", "rushes", "same", "say", "see", "seem", "set", "she", "shines", "show", "silent", "since", "sit", "sits", "sleeps", "slow", "small", "so", "soared", "soars", "some", "speak", "spotted", "stand", "stands", "start", "stay", "stays", "step", "still", "stream", "stretches", "such", "survived", "take", "tell", "than", "that", "the", "their", "them", "then", "there", "these", "they", "think", "through", "time", "to", "together", "too", "top", "trickles", "turn", "turns", "under", "until", "up", "use", "very", "waits", "walk", "walks", "wanders", "want", "was", "watch", "watches", "way", "we", "weather", "were", "what", "when", "where", "which", "while", "who", "why", "will", "with", "within", "without", "word", "work", "world", "would", "year", "yet", "you", "your"]);
 function looksReal(text) {
   const words = text.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w => w.length > 1);
-  const realCount = words.filter(w => REAL_WORDS.has(w)).length;
-  return realCount >= 2;
+  // Require at least one real word beyond the first two words (skip subject/article)
+  const tail = words.slice(2);
+  const tailReal = tail.filter(w => REAL_WORDS.has(w)).length;
+  return tailReal >= 1 && words.length >= 3;
 }
 
 
@@ -1476,7 +1478,10 @@ function makeChipFromWord(word) {
 const _MODULE = 'B.1 Simple Sentences';
 function resumeOrStart() {
   const savedStep = parseInt(localStorage.getItem('gw_step_b1') || '0');
-  const startStep = (savedStep > 0 && savedStep < 6) ? savedStep : 0;
+  const hasName = !!localStorage.getItem('gw_student_name');
+  // Only resume if student is already named (returning student) and hasn't finished
+  const startStep = (hasName && savedStep > 0 && savedStep < 6) ? savedStep : 0;
+  for (let i = 0; i < startStep; i++) { stepDone[i] = true; }
   promptStudentName().then(() => renderStep(startStep));
 }
 
